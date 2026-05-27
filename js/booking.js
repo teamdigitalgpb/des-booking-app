@@ -1,18 +1,20 @@
 // Booking form — pricing, conflict check, GHL webhook submit
 
 const RATES = {
-  d1:    { 1: 650, 2: 750, 3: 750, 4: 900, 5: 900 },
+  d1:    { 1: 650, 2: 750, 3: 750, 4: 900 },
   d2:    { 1: 450, 2: 550, 3: 650, 4: 750 },
   whole: { 1: 1500, 2: 1500, 3: 1500, 4: 1500, 5: 1500, 6: 1500, 7: 1600, 8: 1700 },
 };
 
-const PAX_MAX  = { d1: 5, d2: 4, whole: 8 };
+const PAX_MAX       = { d1: 4, d2: 4, whole: 8 };
+const JW_DISCOUNT   = { d1: 100, d2: 50 };
 const A2A19_DISCOUNT = 100; // applies to d2 only
 
 function calcTotal(room, nights, pax, rateType) {
   if (!RATES[room] || !RATES[room][pax]) return 0;
   let ratePerNight = RATES[room][pax];
-  if (room === 'd2' && rateType === 'a2a19') ratePerNight -= A2A19_DISCOUNT;
+  if (rateType === 'jw'    && JW_DISCOUNT[room])              ratePerNight -= JW_DISCOUNT[room];
+  if (rateType === 'a2a19' && room === 'd2')                   ratePerNight -= A2A19_DISCOUNT;
   return ratePerNight * nights;
 }
 
@@ -23,9 +25,10 @@ function nightsBetween(checkin, checkout) {
 
 // ── Pax select builder ────────────────────────────────────────────────────────
 
-function populatePaxSelect(room) {
+function populatePaxSelect(room, rateType) {
   const sel      = document.getElementById('guests');
   const noteEl   = document.getElementById('guests-note');
+  const prevVal  = sel.value;
   sel.innerHTML  = '<option value="">— Select number of guests —</option>';
 
   if (!room || !RATES[room]) {
@@ -34,16 +37,21 @@ function populatePaxSelect(room) {
     return;
   }
 
-  const max = PAX_MAX[room];
+  const type = rateType || 'regular';
+  const max  = PAX_MAX[room];
   for (let i = 1; i <= max; i++) {
-    const rate  = RATES[room][i];
-    const label = `${i} guest${i > 1 ? 's' : ''} — ₱${rate.toLocaleString()}/night`;
-    const opt   = document.createElement('option');
-    opt.value   = i;
+    let rate = RATES[room][i];
+    if (type === 'jw'    && JW_DISCOUNT[room])   rate -= JW_DISCOUNT[room];
+    if (type === 'a2a19' && room === 'd2')        rate -= A2A19_DISCOUNT;
+    const suffix = (i === max) ? ' (max)' : '';
+    const label  = `${i} guest${i > 1 ? 's' : ''}${suffix} — ₱${rate.toLocaleString()}/night`;
+    const opt    = document.createElement('option');
+    opt.value    = i;
     opt.textContent = label;
     sel.appendChild(opt);
   }
 
+  if (prevVal && [...sel.options].some(o => o.value === prevVal)) sel.value = prevVal;
   if (noteEl) noteEl.classList.toggle('hidden', room !== 'whole');
 }
 
@@ -122,15 +130,20 @@ async function checkVoucher(code) {
       activeVoucherType = 'regular';
       statusEl.className = 'voucher-status invalid';
       statusEl.textContent = '✗ A2/A19 discount is only applicable to Room D2';
-    } else if (type === 'jw') {
+    } else if (type === 'jw' && !JW_DISCOUNT[room]) {
       activeVoucherType = 'regular';
       statusEl.className = 'voucher-status invalid';
-      statusEl.textContent = '✗ JW discount is no longer offered';
+      statusEl.textContent = '✗ JW discount is not applicable to this room';
+    } else if (type === 'jw') {
+      activeVoucherType = 'jw';
+      statusEl.className = 'voucher-status valid';
+      statusEl.textContent = `✓ Valid JW voucher — ₱${JW_DISCOUNT[room]} off/night applied`;
     } else {
       activeVoucherType = type;
       statusEl.className = 'voucher-status valid';
-      statusEl.textContent = '✓ Valid A2/A19 voucher — ₱100 off applied';
+      statusEl.textContent = '✓ Valid A2/A19 voucher — ₱100 off/night applied';
     }
+    populatePaxSelect(room, activeVoucherType);
   } else {
     activeVoucherType = 'regular';
     statusEl.className = 'voucher-status invalid';
@@ -225,7 +238,7 @@ document.getElementById('booking-form').addEventListener('submit', async (e) => 
 // ── Wire up listeners ────────────────────────────────────────────────────────
 
 document.getElementById('room').addEventListener('change', (e) => {
-  populatePaxSelect(e.target.value);
+  populatePaxSelect(e.target.value, 'regular');
   activeVoucherType = 'regular';
   const statusEl = document.getElementById('voucher-status');
   statusEl.className = 'voucher-status';
