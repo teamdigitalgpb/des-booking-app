@@ -1,0 +1,22 @@
+# Credentials — never commit
+.env
+js/config.local.js
+
+# macOS
+.DS_Store
+
+# Deployment artifacts
+.vercel/
+.cloudflare/
+.wrangler/
+
+# Node (if tooling is added later)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Editor
+.vscode/settings.json
+*.swp
+*.swo

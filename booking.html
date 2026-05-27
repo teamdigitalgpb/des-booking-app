@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Book a Room — D' Econo-Space</title>
+  <link rel="stylesheet" href="assets/style.css" />
+</head>
+<body class="form-page">
+
+  <nav class="nav">
+    <div class="container">
+      <a class="nav-logo" href="index.html">← D' Econo-Space</a>
+    </div>
+  </nav>
+
+  <div class="form-wrap">
+    <div class="form-card">
+      <h1>Book Your Stay</h1>
+      <p class="subtitle">Fill in your details and we'll confirm your reservation.</p>
+
+      <div id="booking-alert" class="alert hidden"></div>
+
+      <form id="booking-form" novalidate>
+
+        <!-- Name -->
+        <div class="form-group">
+          <label for="name">Full Name *</label>
+          <input type="text" id="name" name="name" placeholder="Maria Santos" required />
+        </div>
+
+        <!-- Mobile + Email -->
+        <div class="form-row">
+          <div class="form-group">
+            <label for="mobile">Mobile Number *</label>
+            <input type="tel" id="mobile" name="mobile" placeholder="09171234567" required />
+          </div>
+          <div class="form-group">
+            <label for="email">Email Address</label>
+            <input type="email" id="email" name="email" placeholder="maria@example.com" />
+          </div>
+        </div>
+
+        <!-- Room -->
+        <div class="form-group">
+          <label for="room">Room *</label>
+          <select id="room" name="room" required>
+            <option value="">— Select a room —</option>
+            <option value="d1">Room D1 (up to 4 pax, max 5) — Common AC</option>
+            <option value="d2">Room D2 (up to 2 pax, max 3) — Common AC</option>
+            <option value="bunk">Bunk Bed (1 per deck) — Fan only</option>
+            <option value="whole">D' Whole Space (up to 8 pax) — D1+D2 combined</option>
+          </select>
+        </div>
+
+        <!-- Check-in / Check-out -->
+        <div class="form-row">
+          <div class="form-group">
+            <label for="checkin">Check-in Date *</label>
+            <input type="date" id="checkin" name="checkin" required />
+          </div>
+          <div class="form-group">
+            <label for="checkout">Check-out Date *</label>
+            <input type="date" id="checkout" name="checkout" required />
+          </div>
+        </div>
+
+        <!-- Guests -->
+        <div class="form-group">
+          <label for="guests">Number of Guests *</label>
+          <input type="number" id="guests" name="guests" min="1" max="12" value="1" required />
+        </div>
+
+        <!-- Voucher code -->
+        <div class="form-group">
+          <label for="voucher">Discount Voucher Code <span style="font-weight:400;color:#6b5a4e;">(optional)</span></label>
+          <input type="text" id="voucher" name="voucher" placeholder="e.g. JW-ABCD1234" style="text-transform:uppercase;" />
+          <div id="voucher-status" class="voucher-status"></div>
+        </div>
+
+        <!-- Price display -->
+        <div class="price-display" id="price-display" style="display:none;">
+          <div class="total" id="price-total">₱0</div>
+          <div class="breakdown" id="price-breakdown"></div>
+        </div>
+
+        <!-- Special requests -->
+        <div class="form-group">
+          <label for="requests">Special Requests <span style="font-weight:400;color:#6b5a4e;">(optional)</span></label>
+          <textarea id="requests" name="requests" rows="3" placeholder="e.g. early check-in, extra blanket…"></textarea>
+        </div>
+
+        <!-- Conflict warning -->
+        <div id="conflict-warning" class="alert alert-error hidden">
+          The dates you selected may overlap with an existing booking for this room. Please choose different dates or contact us to confirm availability.
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-full" id="submit-btn">
+          Confirm Booking
+        </button>
+
+        <p style="text-align:center;margin-top:.75rem;font-size:.83rem;color:#6b5a4e;">
+          Full payment is required before or upon arrival. Check-in: 2:00 PM &nbsp;|&nbsp; Check-out: 12:00 NN
+        </p>
+
+      </form>
+    </div>
+  </div>
+
+  <footer>
+    <p>D' Econo-Space &copy; 2026 &nbsp;|&nbsp; Lapu-Lapu, Cebu</p>
+  </footer>
+
+  <script src="js/config.js"></script>
+  <script src="js/ghl.js"></script>
+  <script src="js/voucher.js"></script>
+  <script src="js/booking.js"></script>
+</body>
+</html>

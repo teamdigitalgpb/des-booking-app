@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Voucher Request Received — D' Econo-Space</title>
+  <link rel="stylesheet" href="assets/style.css" />
+</head>
+<body>
+
+  <div class="thankyou-wrap">
+    <div class="thankyou-card">
+      <div class="check">📋</div>
+      <h1>Request Received!</h1>
+      <p class="subtitle">Your voucher request is under review. We'll contact you within 24 hours.</p>
+
+      <div class="summary-box" id="summary-box">
+        <!-- filled by JS -->
+      </div>
+
+      <div style="background:var(--cream);border-radius:var(--radius);padding:1rem 1.25rem;margin-bottom:1.75rem;text-align:left;font-size:.93rem;border-left:3px solid var(--tan);">
+        <strong style="color:var(--brown);display:block;margin-bottom:.5rem;">What happens next?</strong>
+        <ol style="padding-left:1.25rem;line-height:1.9;">
+          <li>We review your request within 24 hours.</li>
+          <li>If approved, your unique voucher code will be sent to you via SMS or call.</li>
+          <li>Return to <strong>des.prime-assistant.com</strong> and enter the code when booking.</li>
+        </ol>
+      </div>
+
+      <div style="margin-bottom:1.75rem;font-size:.93rem;">
+        <strong style="color:var(--brown);">Questions? Contact us:</strong><br />
+        <a href="tel:+639176784871" style="color:var(--brown);">0917.678.4871</a> &nbsp;|&nbsp;
+        <a href="tel:+639261499002" style="color:var(--brown);">0926.149.9002</a>
+      </div>
+
+      <a href="index.html" class="btn btn-primary btn-full" style="margin-bottom:.75rem;">Back to Home</a>
+      <a href="booking.html" class="btn btn-secondary btn-full">Book Now (if you already have a code)</a>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      const raw = sessionStorage.getItem('des_voucher_summary');
+      const box = document.getElementById('summary-box');
+      if (!raw) { box.innerHTML = '<p style="color:#6b5a4e;font-size:.9rem;">Request submitted successfully.</p>'; return; }
+
+      const s = JSON.parse(raw);
+      const typeLabel = { jw: 'JW Member', a2: 'A2 Member', a19: 'A19 Member' };
+
+      box.innerHTML = `
+        <div class="row"><span>Name</span><strong>${s.name}</strong></div>
+        <div class="row"><span>Mobile</span><strong>${s.mobile}</strong></div>
+        <div class="row"><span>Discount Type</span><strong>${typeLabel[s.type] || s.type}</strong></div>
+        <div class="row"><span>Reference Code</span><strong style="color:var(--brown);">${s.refCode}</strong></div>
+      `;
+
+      sessionStorage.removeItem('des_voucher_summary');
+    })();
+  </script>
+
+</body>
+</html>

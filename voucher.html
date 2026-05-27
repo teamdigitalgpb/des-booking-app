@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Request a Discount Voucher — D' Econo-Space</title>
+  <link rel="stylesheet" href="assets/style.css" />
+</head>
+<body class="form-page">
+
+  <nav class="nav">
+    <div class="container">
+      <a class="nav-logo" href="index.html">← D' Econo-Space</a>
+    </div>
+  </nav>
+
+  <div class="form-wrap">
+    <div class="form-card">
+      <h1>Get a Discount Voucher</h1>
+      <p class="subtitle">We offer discounted rates for JW members and A2/A19 holders. Complete the steps below.</p>
+
+      <!-- Step progress dots -->
+      <div class="steps">
+        <div class="step-dot active" id="dot-1"></div>
+        <div class="step-dot" id="dot-2"></div>
+        <div class="step-dot" id="dot-3"></div>
+      </div>
+
+      <div id="voucher-alert" class="alert hidden"></div>
+
+      <!-- STEP 1: Personal info -->
+      <div class="step-panel active" id="step-1">
+        <p class="step-label">Step 1 of 3 — Your Information</p>
+        <div class="form-group">
+          <label for="v-name">Full Name *</label>
+          <input type="text" id="v-name" placeholder="Maria Santos" />
+        </div>
+        <div class="form-group">
+          <label for="v-mobile">Mobile Number *</label>
+          <input type="tel" id="v-mobile" placeholder="09171234567" />
+        </div>
+        <div class="form-group">
+          <label for="v-congregation">Congregation / Organization Name *</label>
+          <input type="text" id="v-congregation" placeholder="e.g. Bantayan Congregation" />
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="v-municipality">Municipality *</label>
+            <input type="text" id="v-municipality" placeholder="e.g. Bantayan" />
+          </div>
+          <div class="form-group">
+            <label for="v-province">Province *</label>
+            <input type="text" id="v-province" placeholder="e.g. Cebu" />
+          </div>
+        </div>
+        <div class="btn-row">
+          <button class="btn btn-primary" onclick="goStep(2)">Next →</button>
+        </div>
+      </div>
+
+      <!-- STEP 2: Rate type -->
+      <div class="step-panel" id="step-2">
+        <p class="step-label">Step 2 of 3 — Discount Type</p>
+        <div class="form-group">
+          <label>Which discount applies to you? *</label>
+          <div class="rate-selector" style="margin-top:.5rem;">
+            <div class="rate-option">
+              <input type="radio" name="rate-type" id="rt-jw" value="jw" />
+              <label for="rt-jw">JW Member</label>
+            </div>
+            <div class="rate-option">
+              <input type="radio" name="rate-type" id="rt-a2" value="a2" />
+              <label for="rt-a2">A2 Member</label>
+            </div>
+            <div class="rate-option">
+              <input type="radio" name="rate-type" id="rt-a19" value="a19" />
+              <label for="rt-a19">A19 Member</label>
+            </div>
+          </div>
+        </div>
+        <div style="background:var(--cream);border-radius:var(--radius);padding:1rem;font-size:.88rem;color:#6b5a4e;margin-bottom:1rem;">
+          <strong style="color:var(--brown);">JW:</strong> Verified by answering a weekly Bible reading question from wol.jw.org.<br />
+          <strong style="color:var(--brown);">A2 / A19:</strong> Enter your ID number — our host will verify and confirm within 24 hours.
+        </div>
+        <div class="btn-row">
+          <button class="btn btn-secondary" onclick="goStep(1)">← Back</button>
+          <button class="btn btn-primary" onclick="goStep(3)">Next →</button>
+        </div>
+      </div>
+
+      <!-- STEP 3: Verification -->
+      <div class="step-panel" id="step-3">
+        <p class="step-label">Step 3 of 3 — Verification</p>
+
+        <!-- JW verification -->
+        <div id="jw-verify" class="hidden">
+          <div class="form-group">
+            <label>This week's Bible reading question</label>
+            <p id="jw-question" style="background:var(--cream);border-radius:7px;padding:.75rem 1rem;font-size:.93rem;margin-top:.35rem;border:1.5px solid var(--sand);"></p>
+          </div>
+          <div class="form-group">
+            <label for="jw-answer">Your Answer *</label>
+            <input type="text" id="jw-answer" placeholder="Type your answer here…" />
+          </div>
+        </div>
+
+        <!-- A2/A19 verification -->
+        <div id="id-verify" class="hidden">
+          <div class="form-group">
+            <label for="member-id">Your ID Number *</label>
+            <input type="text" id="member-id" placeholder="Enter your A2 or A19 ID number" />
+            <p style="font-size:.83rem;color:#6b5a4e;margin-top:.4rem;">Our host will manually verify your ID and contact you within 24 hours.</p>
+          </div>
+        </div>
+
+        <div class="btn-row">
+          <button class="btn btn-secondary" onclick="goStep(2)">← Back</button>
+          <button class="btn btn-primary" id="submit-voucher" onclick="submitVoucher()">Submit Request</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <footer>
+    <p>D' Econo-Space &copy; 2026 &nbsp;|&nbsp; Lapu-Lapu, Cebu</p>
+  </footer>
+
+  <script src="js/config.js"></script>
+  <script src="js/ghl.js"></script>
+  <script src="js/voucher.js"></script>
+</body>
+</html>

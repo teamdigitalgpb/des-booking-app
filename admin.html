@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin — D' Econo-Space</title>
+  <link rel="stylesheet" href="assets/style.css" />
+</head>
+<body>
+
+  <!-- LOGIN SCREEN -->
+  <div class="login-wrap" id="login-screen">
+    <div class="login-card">
+      <h1>D' Econo-Space</h1>
+      <p>Admin access only. Enter your password to continue.</p>
+      <div class="form-group" style="text-align:left;">
+        <label for="pw-input">Password</label>
+        <input type="password" id="pw-input" placeholder="Enter password" onkeydown="if(event.key==='Enter')doLogin()" />
+      </div>
+      <button class="btn btn-primary btn-full" onclick="doLogin()">Sign In</button>
+      <p class="login-error" id="login-error"></p>
+    </div>
+  </div>
+
+  <!-- ADMIN PANEL -->
+  <div id="admin-panel" style="display:none;">
+
+    <div class="admin-header">
+      <h1>D' Econo-Space — Admin</h1>
+      <button class="btn" style="background:rgba(255,255,255,.15);color:#fff;padding:.4rem .9rem;font-size:.85rem;" onclick="doLogout()">Sign Out</button>
+    </div>
+
+    <div class="admin-body">
+
+      <!-- Stats -->
+      <div class="stats-row" id="stats-row"></div>
+
+      <!-- Tabs -->
+      <div class="tabs">
+        <button class="tab-btn active" onclick="showTab('bookings')">Bookings</button>
+        <button class="tab-btn" onclick="showTab('vouchers')">Voucher Requests</button>
+        <button class="tab-btn" onclick="showTab('settings')">Settings</button>
+      </div>
+
+      <!-- Bookings tab -->
+      <div class="tab-panel active" id="tab-bookings">
+        <div style="overflow-x:auto;">
+          <table class="data-table" id="bookings-table">
+            <thead>
+              <tr>
+                <th>Name</th><th>Mobile</th><th>Room</th><th>Check-in</th>
+                <th>Check-out</th><th>Guests</th><th>Total</th><th>Status</th><th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="bookings-body"></tbody>
+          </table>
+        </div>
+        <p id="no-bookings" style="color:#6b5a4e;font-size:.93rem;margin-top:1rem;display:none;">No bookings yet.</p>
+      </div>
+
+      <!-- Vouchers tab -->
+      <div class="tab-panel" id="tab-vouchers">
+        <div style="overflow-x:auto;">
+          <table class="data-table" id="vouchers-table">
+            <thead>
+              <tr>
+                <th>Name</th><th>Mobile</th><th>Type</th><th>Congregation</th>
+                <th>ID / Answer</th><th>Status</th><th>Code</th><th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="vouchers-body"></tbody>
+          </table>
+        </div>
+        <p id="no-vouchers" style="color:#6b5a4e;font-size:.93rem;margin-top:1rem;display:none;">No voucher requests yet.</p>
+      </div>
+
+      <!-- Settings tab -->
+      <div class="tab-panel" id="tab-settings">
+        <div class="form-card" style="max-width:540px;box-shadow:none;padding:0;">
+          <h2 style="color:var(--brown);margin-bottom:1.25rem;font-size:1.2rem;">JW Weekly Verification Question</h2>
+          <p style="font-size:.9rem;color:#6b5a4e;margin-bottom:1rem;">
+            Update this every week from
+            <a href="https://wol.jw.org" target="_blank" style="color:var(--brown);">wol.jw.org</a>
+            → This Week at a Glance → Bible reading question.
+          </p>
+          <div class="form-group">
+            <label for="jw-q-field">Question</label>
+            <textarea id="jw-q-field" rows="3" placeholder="Paste the JW question here…"></textarea>
+          </div>
+          <div class="form-group">
+            <label for="jw-a-field">Correct Answer</label>
+            <input type="text" id="jw-a-field" placeholder="Paste the correct answer here…" />
+          </div>
+          <button class="btn btn-primary" onclick="saveJWQuestion()">Save Question</button>
+          <p id="settings-saved" class="alert alert-success hidden" style="margin-top:.75rem;">Saved! The new question will appear on the voucher form.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script src="js/config.js"></script>
+  <script src="js/ghl.js"></script>
+  <script src="js/admin.js"></script>
+</body>
+</html>
