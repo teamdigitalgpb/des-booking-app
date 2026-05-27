@@ -1,50 +1,50 @@
 // Booking form — pricing, conflict check, GHL webhook submit
 
 const RATES = {
-  d1: {
-    regular: { '1-4': 950,  '5-7': 950,  '8-15': 900, '16-30': 800 },
-    jw:      { '1-4': 850,  '5-7': 850,  '8-15': 800, '16-30': 720 },
-    a2a19:   { '1-4': 750,  '5-7': 750,  '8-15': 700, '16-30': 650 },
-  },
-  d2: {
-    regular: { '1-4': 650,  '5-7': 650,  '8-15': 600, '16-30': 600 },
-    jw:      { '1-4': 600,  '5-7': 600,  '8-15': 550, '16-30': 550 },
-    a2a19:   { '1-4': 550,  '5-7': 550,  '8-15': 500, '16-30': 500 },
-  },
-  whole: { base: 1500, extraPax: 150 },
-  bunk:  { '1-7': 150, '8-15': 140, '16-30': 135 },
+  d1:    { 1: 650, 2: 750, 3: 750, 4: 900, 5: 900 },
+  d2:    { 1: 450, 2: 550, 3: 650, 4: 750 },
+  whole: { 1: 1500, 2: 1500, 3: 1500, 4: 1500, 5: 1500, 6: 1500, 7: 1600, 8: 1700 },
 };
 
-function bracket(nights) {
-  if (nights <= 4)  return '1-4';
-  if (nights <= 7)  return '5-7';
-  if (nights <= 15) return '8-15';
-  return '16-30';
-}
-
-function bunkBracket(nights) {
-  if (nights <= 7)  return '1-7';
-  if (nights <= 15) return '8-15';
-  return '16-30';
-}
+const PAX_MAX  = { d1: 5, d2: 4, whole: 8 };
+const A2A19_DISCOUNT = 100; // applies to d2 only
 
 function calcTotal(room, nights, pax, rateType) {
-  if (room === 'whole') {
-    return RATES.whole.base * nights + Math.max(0, pax - 8) * RATES.whole.extraPax * nights;
-  }
-  if (room === 'bunk') return RATES.bunk[bunkBracket(nights)] * pax * nights;
-  const rate = RATES[room][rateType][bracket(nights)];
-  let total = rate * nights;
-  // Extra-pax surcharge (5th person D1, 3rd person D2)
-  const maxFree = room === 'd1' ? 4 : 2;
-  const extraPax = Math.max(0, pax - maxFree);
-  total += extraPax * 150 * nights;
-  return total;
+  if (!RATES[room] || !RATES[room][pax]) return 0;
+  let ratePerNight = RATES[room][pax];
+  if (room === 'd2' && rateType === 'a2a19') ratePerNight -= A2A19_DISCOUNT;
+  return ratePerNight * nights;
 }
 
 function nightsBetween(checkin, checkout) {
   const ms = new Date(checkout) - new Date(checkin);
   return Math.round(ms / 86400000);
+}
+
+// ── Pax select builder ────────────────────────────────────────────────────────
+
+function populatePaxSelect(room) {
+  const sel      = document.getElementById('guests');
+  const noteEl   = document.getElementById('guests-note');
+  sel.innerHTML  = '<option value="">— Select number of guests —</option>';
+
+  if (!room || !RATES[room]) {
+    sel.innerHTML = '<option value="">— Select a room first —</option>';
+    noteEl && noteEl.classList.add('hidden');
+    return;
+  }
+
+  const max = PAX_MAX[room];
+  for (let i = 1; i <= max; i++) {
+    const rate  = RATES[room][i];
+    const label = `${i} guest${i > 1 ? 's' : ''} — ₱${rate.toLocaleString()}/night`;
+    const opt   = document.createElement('option');
+    opt.value   = i;
+    opt.textContent = label;
+    sel.appendChild(opt);
+  }
+
+  if (noteEl) noteEl.classList.toggle('hidden', room !== 'whole');
 }
 
 // ── Conflict checking (localStorage) ────────────────────────────────────────
@@ -86,14 +86,15 @@ function hideAlert() {
 
 function updatePriceDisplay(room, nights, pax, rateType) {
   const display = document.getElementById('price-display');
-  if (!room || !nights || nights < 1) { display.style.display = 'none'; return; }
+  if (!room || !nights || nights < 1 || !pax) { display.style.display = 'none'; return; }
 
   const total = calcTotal(room, nights, pax, rateType);
-  const roomLabels = { d1: 'Room D1', d2: 'Room D2', bunk: 'Bunk Bed', whole: 'D\' Whole Space' };
-  const rateLabels = { regular: 'Regular rate', jw: 'JW rate', a2a19: 'A2/A19 rate' };
+  if (!total) { display.style.display = 'none'; return; }
 
-  let breakdown = `${roomLabels[room] || room} · ${nights} night${nights > 1 ? 's' : ''} · ${pax} guest${pax > 1 ? 's' : ''}`;
-  if (room !== 'whole' && room !== 'bunk') breakdown += ` · ${rateLabels[rateType]}`;
+  const roomLabels = { d1: 'Room D1', d2: 'Room D2', whole: 'D\' Whole Space' };
+  const discountNote = (room === 'd2' && rateType === 'a2a19') ? ' · A2/A19 rate' : '';
+
+  const breakdown = `${roomLabels[room] || room} · ${nights} night${nights > 1 ? 's' : ''} · ${pax} guest${pax > 1 ? 's' : ''}${discountNote}`;
 
   document.getElementById('price-total').textContent = `₱${total.toLocaleString()}`;
   document.getElementById('price-breakdown').textContent = breakdown;
@@ -112,12 +113,24 @@ async function checkVoucher(code) {
     activeVoucherType = 'regular';
     return;
   }
-  const room = document.getElementById('room').value;
+  const room   = document.getElementById('room').value;
   const result = await validateVoucher(code.trim().toUpperCase(), room);
+
   if (result.valid) {
-    activeVoucherType = result.type === 'jw' ? 'jw' : 'a2a19';
-    statusEl.className = 'voucher-status valid';
-    statusEl.textContent = `✓ Valid ${result.type.toUpperCase()} voucher — discounted rate applied`;
+    const type = result.type === 'a2' || result.type === 'a19' ? 'a2a19' : result.type;
+    if (type === 'a2a19' && room !== 'd2') {
+      activeVoucherType = 'regular';
+      statusEl.className = 'voucher-status invalid';
+      statusEl.textContent = '✗ A2/A19 discount is only applicable to Room D2';
+    } else if (type === 'jw') {
+      activeVoucherType = 'regular';
+      statusEl.className = 'voucher-status invalid';
+      statusEl.textContent = '✗ JW discount is no longer offered';
+    } else {
+      activeVoucherType = type;
+      statusEl.className = 'voucher-status valid';
+      statusEl.textContent = '✓ Valid A2/A19 voucher — ₱100 off applied';
+    }
   } else {
     activeVoucherType = 'regular';
     statusEl.className = 'voucher-status invalid';
@@ -129,10 +142,10 @@ async function checkVoucher(code) {
 // ── Recalc on any field change ───────────────────────────────────────────────
 
 function recalc() {
-  const room    = document.getElementById('room').value;
-  const checkin = document.getElementById('checkin').value;
-  const checkout= document.getElementById('checkout').value;
-  const pax     = parseInt(document.getElementById('guests').value) || 1;
+  const room     = document.getElementById('room').value;
+  const checkin  = document.getElementById('checkin').value;
+  const checkout = document.getElementById('checkout').value;
+  const pax      = parseInt(document.getElementById('guests').value) || 0;
 
   if (!checkin || !checkout) { document.getElementById('price-display').style.display = 'none'; return; }
   const nights = nightsBetween(checkin, checkout);
@@ -140,7 +153,6 @@ function recalc() {
 
   updatePriceDisplay(room, nights, pax, activeVoucherType);
 
-  // Conflict check
   if (room && checkin && checkout) {
     const conflict = hasConflict(room, checkin, checkout);
     document.getElementById('conflict-warning').classList.toggle('hidden', !conflict);
@@ -163,12 +175,12 @@ document.getElementById('booking-form').addEventListener('submit', async (e) => 
   const voucher  = document.getElementById('voucher').value.trim().toUpperCase();
   const requests = document.getElementById('requests').value.trim();
 
-  // Basic validation
   if (!name)    return showAlert('Please enter your full name.');
   if (!mobile)  return showAlert('Please enter your mobile number.');
   if (!room)    return showAlert('Please select a room.');
   if (!checkin) return showAlert('Please select a check-in date.');
   if (!checkout)return showAlert('Please select a check-out date.');
+  if (!guests)  return showAlert('Please select the number of guests.');
 
   const nights = nightsBetween(checkin, checkout);
   if (nights < 1) return showAlert('Check-out must be after check-in.');
@@ -178,7 +190,6 @@ document.getElementById('booking-form').addEventListener('submit', async (e) => 
   }
 
   const totalPrice = calcTotal(room, nights, guests, activeVoucherType);
-
   const tags = ['DES', 'DES-booked', `DES-${room}`];
 
   const payload = {
@@ -195,13 +206,10 @@ document.getElementById('booking-form').addEventListener('submit', async (e) => 
   try {
     await postToWebhook(CONFIG.WEBHOOK_BOOKING, payload);
 
-    // Mark voucher used if one was applied
     if (voucher) markVoucherUsed(voucher);
 
-    // Save booking locally for conflict checking
     saveBooking({ room, checkin, checkout, name, id: Date.now() });
 
-    // Pass summary to thank-you page via sessionStorage
     sessionStorage.setItem('des_booking_summary', JSON.stringify({
       name, mobile, room, checkin, checkout, guests, totalPrice, nights, rateType: activeVoucherType,
     }));
@@ -216,10 +224,17 @@ document.getElementById('booking-form').addEventListener('submit', async (e) => 
 
 // ── Wire up listeners ────────────────────────────────────────────────────────
 
-document.getElementById('room').addEventListener('change', recalc);
+document.getElementById('room').addEventListener('change', (e) => {
+  populatePaxSelect(e.target.value);
+  activeVoucherType = 'regular';
+  const statusEl = document.getElementById('voucher-status');
+  statusEl.className = 'voucher-status';
+  statusEl.textContent = '';
+  recalc();
+});
 document.getElementById('checkin').addEventListener('change', recalc);
 document.getElementById('checkout').addEventListener('change', recalc);
-document.getElementById('guests').addEventListener('input', recalc);
+document.getElementById('guests').addEventListener('change', recalc);
 document.getElementById('voucher').addEventListener('blur', (e) => checkVoucher(e.target.value));
 document.getElementById('voucher').addEventListener('input', (e) => {
   e.target.value = e.target.value.toUpperCase();
@@ -229,18 +244,18 @@ document.getElementById('voucher').addEventListener('input', (e) => {
 
 (function () {
   const params = new URLSearchParams(window.location.search);
-  const room = params.get('room');
+  const room   = params.get('room');
   if (room) {
     const sel = document.getElementById('room');
     if ([...sel.options].some(o => o.value === room)) {
       sel.value = room;
+      populatePaxSelect(room);
       recalc();
     }
   }
 
-  // Set minimum date to today
   const today = new Date().toISOString().split('T')[0];
-  document.getElementById('checkin').min = today;
+  document.getElementById('checkin').min  = today;
   document.getElementById('checkout').min = today;
 
   document.getElementById('checkin').addEventListener('change', (e) => {

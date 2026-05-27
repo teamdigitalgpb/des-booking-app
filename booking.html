@@ -46,10 +46,9 @@
           <label for="room">Room *</label>
           <select id="room" name="room" required>
             <option value="">— Select a room —</option>
-            <option value="d1">Room D1 (up to 4 pax, max 5) — Common AC</option>
-            <option value="d2">Room D2 (up to 2 pax, max 3) — Common AC</option>
-            <option value="bunk">Bunk Bed (1 per deck) — Fan only</option>
-            <option value="whole">D' Whole Space (up to 8 pax) — D1+D2 combined</option>
+            <option value="d1">Room D1 — up to 5 guests · Common AC</option>
+            <option value="d2">Room D2 — up to 4 guests · Fan-cooled</option>
+            <option value="whole">D' Whole Space — D1 + D2 combined · up to 8 guests</option>
           </select>
         </div>
 
@@ -68,13 +67,16 @@
         <!-- Guests -->
         <div class="form-group">
           <label for="guests">Number of Guests *</label>
-          <input type="number" id="guests" name="guests" min="1" max="12" value="1" required />
+          <select id="guests" name="guests" required>
+            <option value="">— Select a room first —</option>
+          </select>
+          <p id="guests-note" class="card-note hidden" style="margin-top:.4rem;">For more than 8 guests, please <a href="mailto:d.econospace.cebu@gmail.com" style="color:var(--navy);">contact our support team</a> for a special arrangement.</p>
         </div>
 
         <!-- Voucher code -->
         <div class="form-group">
-          <label for="voucher">Discount Voucher Code <span style="font-weight:400;color:#6b5a4e;">(optional)</span></label>
-          <input type="text" id="voucher" name="voucher" placeholder="e.g. JW-ABCD1234" style="text-transform:uppercase;" />
+          <label for="voucher">Discount Voucher Code <span style="font-weight:400;color:var(--text-muted);">(optional — A2/A19 only, applies to Room D2)</span></label>
+          <input type="text" id="voucher" name="voucher" placeholder="Enter voucher code" style="text-transform:uppercase;" />
           <div id="voucher-status" class="voucher-status"></div>
         </div>
 
