@@ -37,6 +37,27 @@
     </div>
   </section>
 
+  <!-- VALUE CALLOUT -->
+  <section class="amenity-callout">
+    <div class="container">
+      <div class="callout-grid">
+        <div class="callout-text">
+          <h2>Skip the restaurant bill — cook your own meals.</h2>
+          <p>Every booking includes full use of the kitchen: gas stove, cooking utensils, plates, and a full-size refrigerator. Eat in, save money, feel at home.</p>
+          <p class="callout-location">📍 Along the main road — convenience stores and wet market nearby, with easy tricycle and taxi access right outside.</p>
+        </div>
+        <ul class="callout-list">
+          <li><span class="icon">🍳</span> Gas stove &amp; cooking utensils</li>
+          <li><span class="icon">❄️</span> Full-size refrigerator</li>
+          <li><span class="icon">🍽️</span> Dining area for your group</li>
+          <li><span class="icon">🏪</span> Stores &amp; wet market nearby</li>
+          <li><span class="icon">🛺</span> Tricycle &amp; taxi access outside</li>
+          <li><span class="icon">✈️</span> 5–10 min from Mactan Airport</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
   <!-- ROOMS -->
   <section class="rooms" id="rooms">
     <div class="container">
@@ -57,7 +78,7 @@
                 <option value="3">3 guests</option>
                 <option value="4">4 guests (max)</option>
               </select>
-              <div class="card-live-price" id="price-d1">₱650<span>/night</span></div>
+              <div class="card-live-price" id="price-d1">₱750<span>/night</span></div>
             </div>
             <p class="card-note">Rate is per room, per night. No voucher required.</p>
             <div style="margin-top:1rem;">
@@ -80,9 +101,9 @@
                 <option value="3">3 guests</option>
                 <option value="4">4 guests (max)</option>
               </select>
-              <div class="card-live-price" id="price-d2">₱450<span>/night</span></div>
+              <div class="card-live-price" id="price-d2">₱600<span>/night</span></div>
             </div>
-            <p class="card-note">Fan room — cool air carries in from D1's AC when occupied. A2/A19 voucher saves ₱100/night on any tier.</p>
+            <p class="card-note">Fan room — cool air carries in from D1's AC when occupied. Apply a voucher code at checkout to save ₱100/night.</p>
             <div style="margin-top:1rem;">
               <a href="booking.html?room=d2&guests=1" id="btn-d2" class="btn btn-gold btn-full" style="font-size:.9rem;padding:.6rem;">Book Room D2</a>
             </div>
@@ -126,21 +147,20 @@
       <h2>Full Rate Sheet</h2>
 
       <p style="margin-bottom:1.25rem;color:var(--text-muted);text-align:center;font-size:.93rem;">
-        All rates are per room, per night. <strong>A2/A19</strong> discount (₱100 off) applies to Room D2 only — requires a valid voucher code.
+        All rates are per room, per night. <strong>JW</strong> and <strong>A2/A19</strong> vouchers give ₱100 off/night on individual rooms and ₱200 off/night on D' Whole Space — requires a valid voucher code.
       </p>
 
       <div class="rates-table-wrap" style="margin-bottom:2rem;">
         <table>
           <thead>
-            <tr><th colspan="2">Room D1 — Common AC</th></tr>
-            <tr><th>Guests</th><th>Rate / Night</th></tr>
+            <tr><th colspan="3">Room D1 — Common AC</th></tr>
+            <tr><th>Guests</th><th>Regular</th><th>With Voucher</th></tr>
           </thead>
           <tbody>
-            <tr><td>1 guest</td><td>₱650</td></tr>
-            <tr><td>2 guests</td><td>₱750</td></tr>
-            <tr><td>3 guests</td><td>₱750</td></tr>
-            <tr><td>4 guests</td><td>₱900</td></tr>
-            <tr><td>5 guests (max)</td><td>₱900</td></tr>
+            <tr><td>1 guest</td><td>₱750</td><td class="discount">₱650</td></tr>
+            <tr><td>2 guests</td><td>₱800</td><td class="discount">₱700</td></tr>
+            <tr><td>3 guests</td><td>₱900</td><td class="discount">₱800</td></tr>
+            <tr><td>4 guests (max)</td><td>₱1,000</td><td class="discount">₱900</td></tr>
           </tbody>
         </table>
       </div>
@@ -149,13 +169,13 @@
         <table>
           <thead>
             <tr><th colspan="3">Room D2 — Fan-cooled</th></tr>
-            <tr><th>Guests</th><th>Regular</th><th>A2/A19</th></tr>
+            <tr><th>Guests</th><th>Regular</th><th>With Voucher</th></tr>
           </thead>
           <tbody>
-            <tr><td>1 guest</td><td>₱450</td><td class="discount">₱350</td></tr>
-            <tr><td>2 guests</td><td>₱550</td><td class="discount">₱450</td></tr>
-            <tr><td>3 guests</td><td>₱650</td><td class="discount">₱550</td></tr>
-            <tr><td>4 guests (max)</td><td>₱750</td><td class="discount">₱650</td></tr>
+            <tr><td>1 guest</td><td>₱600</td><td class="discount">₱500</td></tr>
+            <tr><td>2 guests</td><td>₱700</td><td class="discount">₱600</td></tr>
+            <tr><td>3 guests</td><td>₱750</td><td class="discount">₱650</td></tr>
+            <tr><td>4 guests (max)</td><td>₱850</td><td class="discount">₱750</td></tr>
           </tbody>
         </table>
       </div>
@@ -163,14 +183,14 @@
       <div class="rates-table-wrap">
         <table>
           <thead>
-            <tr><th colspan="2">D' Whole Space — D1 + D2 Combined</th></tr>
-            <tr><th>Guests</th><th>Rate / Night</th></tr>
+            <tr><th colspan="3">D' Whole Space — D1 + D2 Combined</th></tr>
+            <tr><th>Guests</th><th>Regular</th><th>With Voucher</th></tr>
           </thead>
           <tbody>
-            <tr><td>1–6 guests</td><td>₱1,500</td></tr>
-            <tr><td>7 guests</td><td>₱1,600</td></tr>
-            <tr><td>8 guests (max)</td><td>₱1,700</td></tr>
-            <tr><td>9+ guests</td><td>Contact support team</td></tr>
+            <tr><td>1–6 guests</td><td>₱1,500</td><td class="discount">₱1,300</td></tr>
+            <tr><td>7 guests</td><td>₱1,650</td><td class="discount">₱1,450</td></tr>
+            <tr><td>8 guests (max)</td><td>₱1,800</td><td class="discount">₱1,600</td></tr>
+            <tr><td>9+ guests</td><td colspan="2">Contact support team</td></tr>
           </tbody>
         </table>
       </div>
@@ -250,9 +270,9 @@
 
   <script>
     const CARD_RATES = {
-      d1:    { 1: 650,  2: 750,  3: 750,  4: 900  },
-      d2:    { 1: 450,  2: 550,  3: 650,  4: 750            },
-      whole: { 1: 1500, 2: 1500, 3: 1500, 4: 1500, 5: 1500, 6: 1500, 7: 1600, 8: 1700 },
+      d1:    { 1: 750,  2: 800,  3: 900,  4: 1000 },
+      d2:    { 1: 600,  2: 700,  3: 750,  4: 850  },
+      whole: { 1: 1500, 2: 1500, 3: 1500, 4: 1500, 5: 1500, 6: 1500, 7: 1650, 8: 1800 },
     };
 
     document.querySelectorAll('[data-room]').forEach(select => {

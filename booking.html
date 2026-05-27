@@ -75,7 +75,7 @@
 
         <!-- Voucher code -->
         <div class="form-group">
-          <label for="voucher">Discount Voucher Code <span style="font-weight:400;color:var(--text-muted);">(optional — A2/A19 only, applies to Room D2)</span></label>
+          <label for="voucher">Discount Voucher Code <span style="font-weight:400;color:var(--text-muted);">(optional — JW &amp; A2/A19, applies to all rooms)</span></label>
           <input type="text" id="voucher" name="voucher" placeholder="Enter voucher code" style="text-transform:uppercase;" />
           <div id="voucher-status" class="voucher-status"></div>
         </div>
@@ -95,6 +95,10 @@
         <!-- Conflict warning -->
         <div id="conflict-warning" class="alert alert-error hidden">
           The dates you selected may overlap with an existing booking for this room. Please choose different dates or contact us to confirm availability.
+        </div>
+
+        <div id="d2-availability-warning" class="alert alert-error hidden">
+          Room D2 is only available when Room D1 is occupied for the same dates. Please book Room D1 first, or contact us to arrange both rooms.
         </div>
 
         <button type="submit" class="btn btn-primary btn-full" id="submit-btn">

@@ -1,20 +1,20 @@
 // Booking form — pricing, conflict check, GHL webhook submit
 
 const RATES = {
-  d1:    { 1: 650, 2: 750, 3: 750, 4: 900 },
-  d2:    { 1: 450, 2: 550, 3: 650, 4: 750 },
-  whole: { 1: 1500, 2: 1500, 3: 1500, 4: 1500, 5: 1500, 6: 1500, 7: 1600, 8: 1700 },
+  d1:    { 1: 750,  2: 800,  3: 900,  4: 1000 },
+  d2:    { 1: 600,  2: 700,  3: 750,  4: 850  },
+  whole: { 1: 1500, 2: 1500, 3: 1500, 4: 1500, 5: 1500, 6: 1500, 7: 1650, 8: 1800 },
 };
 
-const PAX_MAX       = { d1: 4, d2: 4, whole: 8 };
-const JW_DISCOUNT   = { d1: 100, d2: 50 };
-const A2A19_DISCOUNT = 100; // applies to d2 only
+const PAX_MAX        = { d1: 4, d2: 4, whole: 8 };
+const JW_DISCOUNT    = { d1: 100, d2: 100, whole: 200 };
+const A2A19_DISCOUNT = { d1: 100, d2: 100, whole: 200 };
 
 function calcTotal(room, nights, pax, rateType) {
   if (!RATES[room] || !RATES[room][pax]) return 0;
   let ratePerNight = RATES[room][pax];
-  if (rateType === 'jw'    && JW_DISCOUNT[room])              ratePerNight -= JW_DISCOUNT[room];
-  if (rateType === 'a2a19' && room === 'd2')                   ratePerNight -= A2A19_DISCOUNT;
+  if (rateType === 'jw'    && JW_DISCOUNT[room])    ratePerNight -= JW_DISCOUNT[room];
+  if (rateType === 'a2a19' && A2A19_DISCOUNT[room]) ratePerNight -= A2A19_DISCOUNT[room];
   return ratePerNight * nights;
 }
 
@@ -41,8 +41,8 @@ function populatePaxSelect(room, rateType) {
   const max  = PAX_MAX[room];
   for (let i = 1; i <= max; i++) {
     let rate = RATES[room][i];
-    if (type === 'jw'    && JW_DISCOUNT[room])   rate -= JW_DISCOUNT[room];
-    if (type === 'a2a19' && room === 'd2')        rate -= A2A19_DISCOUNT;
+    if (type === 'jw'    && JW_DISCOUNT[room])    rate -= JW_DISCOUNT[room];
+    if (type === 'a2a19' && A2A19_DISCOUNT[room]) rate -= A2A19_DISCOUNT[room];
     const suffix = (i === max) ? ' (max)' : '';
     const label  = `${i} guest${i > 1 ? 's' : ''}${suffix} — ₱${rate.toLocaleString()}/night`;
     const opt    = document.createElement('option');
@@ -59,6 +59,17 @@ function populatePaxSelect(room, rateType) {
 
 function getBookings() {
   return JSON.parse(localStorage.getItem('des_bookings') || '[]');
+}
+
+function hasD1Booking(checkin, checkout) {
+  const newIn  = new Date(checkin).getTime();
+  const newOut = new Date(checkout).getTime();
+  return getBookings().some(b => {
+    if (b.room !== 'd1' && b.room !== 'whole') return false;
+    const bIn  = new Date(b.checkin).getTime();
+    const bOut = new Date(b.checkout).getTime();
+    return newIn < bOut && newOut > bIn;
+  });
 }
 
 function hasConflict(room, checkin, checkout) {
@@ -100,7 +111,7 @@ function updatePriceDisplay(room, nights, pax, rateType) {
   if (!total) { display.style.display = 'none'; return; }
 
   const roomLabels = { d1: 'Room D1', d2: 'Room D2', whole: 'D\' Whole Space' };
-  const discountNote = (room === 'd2' && rateType === 'a2a19') ? ' · A2/A19 rate' : '';
+  const discountNote = rateType === 'a2a19' ? ' · A2/A19 rate' : rateType === 'jw' ? ' · JW rate' : '';
 
   const breakdown = `${roomLabels[room] || room} · ${nights} night${nights > 1 ? 's' : ''} · ${pax} guest${pax > 1 ? 's' : ''}${discountNote}`;
 
@@ -126,22 +137,18 @@ async function checkVoucher(code) {
 
   if (result.valid) {
     const type = result.type === 'a2' || result.type === 'a19' ? 'a2a19' : result.type;
-    if (type === 'a2a19' && room !== 'd2') {
-      activeVoucherType = 'regular';
-      statusEl.className = 'voucher-status invalid';
-      statusEl.textContent = '✗ A2/A19 discount is only applicable to Room D2';
-    } else if (type === 'jw' && !JW_DISCOUNT[room]) {
-      activeVoucherType = 'regular';
-      statusEl.className = 'voucher-status invalid';
-      statusEl.textContent = '✗ JW discount is not applicable to this room';
-    } else if (type === 'jw') {
+    if (type === 'jw') {
       activeVoucherType = 'jw';
       statusEl.className = 'voucher-status valid';
-      statusEl.textContent = `✓ Valid JW voucher — ₱${JW_DISCOUNT[room]} off/night applied`;
-    } else {
-      activeVoucherType = type;
+      statusEl.textContent = `✓ Valid JW voucher — ₱${JW_DISCOUNT[room] || 0} off/night applied`;
+    } else if (type === 'a2a19') {
+      activeVoucherType = 'a2a19';
       statusEl.className = 'voucher-status valid';
-      statusEl.textContent = '✓ Valid A2/A19 voucher — ₱100 off/night applied';
+      statusEl.textContent = `✓ Valid A2/A19 voucher — ₱${A2A19_DISCOUNT[room] || 0} off/night applied`;
+    } else {
+      activeVoucherType = 'regular';
+      statusEl.className = 'voucher-status invalid';
+      statusEl.textContent = '✗ Unrecognized voucher type';
     }
     populatePaxSelect(room, activeVoucherType);
   } else {
@@ -160,15 +167,29 @@ function recalc() {
   const checkout = document.getElementById('checkout').value;
   const pax      = parseInt(document.getElementById('guests').value) || 0;
 
-  if (!checkin || !checkout) { document.getElementById('price-display').style.display = 'none'; return; }
+  function hideD2Warning() {
+    const el = document.getElementById('d2-availability-warning');
+    if (el) el.classList.add('hidden');
+  }
+
+  if (!checkin || !checkout) { document.getElementById('price-display').style.display = 'none'; hideD2Warning(); return; }
   const nights = nightsBetween(checkin, checkout);
-  if (nights < 1) { document.getElementById('price-display').style.display = 'none'; return; }
+  if (nights < 1) { document.getElementById('price-display').style.display = 'none'; hideD2Warning(); return; }
 
   updatePriceDisplay(room, nights, pax, activeVoucherType);
 
   if (room && checkin && checkout) {
     const conflict = hasConflict(room, checkin, checkout);
     document.getElementById('conflict-warning').classList.toggle('hidden', !conflict);
+  }
+
+  const d2WarnEl = document.getElementById('d2-availability-warning');
+  if (d2WarnEl) {
+    if (room === 'd2' && checkin && checkout && nights >= 1) {
+      d2WarnEl.classList.toggle('hidden', hasD1Booking(checkin, checkout));
+    } else {
+      d2WarnEl.classList.add('hidden');
+    }
   }
 }
 
@@ -197,6 +218,10 @@ document.getElementById('booking-form').addEventListener('submit', async (e) => 
 
   const nights = nightsBetween(checkin, checkout);
   if (nights < 1) return showAlert('Check-out must be after check-in.');
+
+  if (room === 'd2' && !hasD1Booking(checkin, checkout)) {
+    return showAlert('Room D2 is only available when Room D1 is occupied for the same dates. Please book Room D1 first, or contact us to arrange both rooms.');
+  }
 
   if (hasConflict(room, checkin, checkout)) {
     return showAlert('These dates conflict with an existing booking. Please choose different dates or contact us.');
