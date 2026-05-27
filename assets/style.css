@@ -130,6 +130,34 @@ section    { padding: 4rem 0; }
 .rate-tag strong { color: var(--navy); }
 .card-note { font-size: .82rem; color: var(--text-muted); margin-top: .75rem; font-style: italic; }
 
+/* ── Card interactive pax selector ── */
+.card-selector {
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+  margin: 1rem 0 .5rem;
+}
+.card-selector select {
+  flex: 1;
+  padding: .5rem .75rem;
+  border: 1.5px solid var(--border);
+  border-radius: 7px;
+  font-family: inherit;
+  font-size: .92rem;
+  background: var(--off-white);
+  color: var(--text-dark);
+  cursor: pointer;
+  transition: border-color .2s;
+}
+.card-selector select:focus { outline: none; border-color: var(--navy-light); }
+.card-live-price {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--navy);
+  white-space: nowrap;
+}
+.card-live-price span { font-size: .78rem; font-weight: 500; color: var(--text-muted); }
+
 /* ── Rates Table ── */
 .rates-section { background: var(--off-white); }
 .rates-section h2 { text-align: center; margin-bottom: 2rem; color: var(--navy); }

@@ -243,13 +243,18 @@ document.getElementById('voucher').addEventListener('input', (e) => {
 // ── Pre-select room from URL param ───────────────────────────────────────────
 
 (function () {
-  const params = new URLSearchParams(window.location.search);
-  const room   = params.get('room');
+  const params  = new URLSearchParams(window.location.search);
+  const room    = params.get('room');
+  const guests  = params.get('guests');
   if (room) {
     const sel = document.getElementById('room');
     if ([...sel.options].some(o => o.value === room)) {
       sel.value = room;
       populatePaxSelect(room);
+      if (guests) {
+        const gSel = document.getElementById('guests');
+        if ([...gSel.options].some(o => o.value === guests)) gSel.value = guests;
+      }
       recalc();
     }
   }

@@ -50,12 +50,19 @@
             <span class="capacity">Private Room · Common AC · Max 5 guests</span>
           </div>
           <div class="card-body">
-            <span class="rate-tag">1 guest: <strong>₱650</strong>/night</span>
-            <span class="rate-tag">2–3 guests: <strong>₱750</strong>/night</span>
-            <span class="rate-tag">4–5 guests: <strong>₱900</strong>/night</span>
+            <div class="card-selector">
+              <select data-room="d1" aria-label="Guests for Room D1">
+                <option value="1">1 guest</option>
+                <option value="2">2 guests</option>
+                <option value="3">3 guests</option>
+                <option value="4">4 guests</option>
+                <option value="5">5 guests (max)</option>
+              </select>
+              <div class="card-live-price" id="price-d1">₱650<span>/night</span></div>
+            </div>
             <p class="card-note">Rate is per room, per night. No voucher required.</p>
             <div style="margin-top:1rem;">
-              <a href="booking.html?room=d1" class="btn btn-gold btn-full" style="font-size:.9rem;padding:.6rem;">Book Room D1</a>
+              <a href="booking.html?room=d1&guests=1" id="btn-d1" class="btn btn-gold btn-full" style="font-size:.9rem;padding:.6rem;">Book Room D1</a>
             </div>
           </div>
         </div>
@@ -67,13 +74,18 @@
             <span class="capacity">Private Room · Fan-cooled · Max 4 guests</span>
           </div>
           <div class="card-body">
-            <span class="rate-tag">1 guest: <strong>₱450</strong>/night</span>
-            <span class="rate-tag">2 guests: <strong>₱550</strong>/night</span>
-            <span class="rate-tag">3 guests: <strong>₱650</strong>/night</span>
-            <span class="rate-tag">4 guests: <strong>₱750</strong>/night</span>
+            <div class="card-selector">
+              <select data-room="d2" aria-label="Guests for Room D2">
+                <option value="1">1 guest</option>
+                <option value="2">2 guests</option>
+                <option value="3">3 guests</option>
+                <option value="4">4 guests (max)</option>
+              </select>
+              <div class="card-live-price" id="price-d2">₱450<span>/night</span></div>
+            </div>
             <p class="card-note">Fan room — cool air carries in from D1's AC when occupied. A2/A19 voucher saves ₱100/night on any tier.</p>
             <div style="margin-top:1rem;">
-              <a href="booking.html?room=d2" class="btn btn-gold btn-full" style="font-size:.9rem;padding:.6rem;">Book Room D2</a>
+              <a href="booking.html?room=d2&guests=1" id="btn-d2" class="btn btn-gold btn-full" style="font-size:.9rem;padding:.6rem;">Book Room D2</a>
             </div>
           </div>
         </div>
@@ -85,12 +97,22 @@
             <span class="capacity">D1 + D2 Combined · Max 8 guests</span>
           </div>
           <div class="card-body">
-            <span class="rate-tag">1–6 guests: <strong>₱1,500</strong>/night</span>
-            <span class="rate-tag">7 guests: <strong>₱1,600</strong>/night</span>
-            <span class="rate-tag">8 guests: <strong>₱1,700</strong>/night</span>
+            <div class="card-selector">
+              <select data-room="whole" aria-label="Guests for Whole Space">
+                <option value="1">1 guest</option>
+                <option value="2">2 guests</option>
+                <option value="3">3 guests</option>
+                <option value="4">4 guests</option>
+                <option value="5">5 guests</option>
+                <option value="6">6 guests</option>
+                <option value="7">7 guests</option>
+                <option value="8">8 guests (max)</option>
+              </select>
+              <div class="card-live-price" id="price-whole">₱1,500<span>/night</span></div>
+            </div>
             <p class="card-note">Ideal for groups or families. For more than 8 guests, please contact our support team for a special arrangement.</p>
             <div style="margin-top:1rem;">
-              <a href="booking.html?room=whole" class="btn btn-gold btn-full" style="font-size:.9rem;padding:.6rem;">Book Whole Space</a>
+              <a href="booking.html?room=whole&guests=1" id="btn-whole" class="btn btn-gold btn-full" style="font-size:.9rem;padding:.6rem;">Book Whole Space</a>
             </div>
           </div>
         </div>
@@ -227,5 +249,27 @@
     <p>D' Econo-Space &copy; 2026 &nbsp;|&nbsp; Lapu-Lapu, Cebu &nbsp;|&nbsp; <a href="mailto:d.econospace.cebu@gmail.com">d.econospace.cebu@gmail.com</a></p>
   </footer>
 
+  <script>
+    const CARD_RATES = {
+      d1:    { 1: 650,  2: 750,  3: 750,  4: 900,  5: 900  },
+      d2:    { 1: 450,  2: 550,  3: 650,  4: 750            },
+      whole: { 1: 1500, 2: 1500, 3: 1500, 4: 1500, 5: 1500, 6: 1500, 7: 1600, 8: 1700 },
+    };
+
+    document.querySelectorAll('[data-room]').forEach(select => {
+      const room    = select.dataset.room;
+      const priceEl = document.getElementById('price-' + room);
+      const btnEl   = document.getElementById('btn-' + room);
+
+      function update() {
+        const pax  = parseInt(select.value);
+        const rate = CARD_RATES[room][pax];
+        priceEl.innerHTML = '₱' + rate.toLocaleString() + '<span>/night</span>';
+        btnEl.href = 'booking.html?room=' + room + '&guests=' + pax;
+      }
+
+      select.addEventListener('change', update);
+    });
+  </script>
 </body>
 </html>
