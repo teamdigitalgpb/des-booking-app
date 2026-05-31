@@ -229,6 +229,7 @@ document.getElementById('booking-form').addEventListener('submit', async (e) => 
   const checkout = document.getElementById('checkout').value;
   const guests   = parseInt(document.getElementById('guests').value);
   const voucher  = document.getElementById('voucher').value.trim().toUpperCase();
+  const referral = document.getElementById('referral').value.trim();
   const requests = document.getElementById('requests').value.trim();
 
   if (!firstName) return showAlert('Please enter your first name.');
@@ -255,7 +256,7 @@ document.getElementById('booking-form').addEventListener('submit', async (e) => 
 
   const payload = {
     firstName, lastName, name, mobile, email, room, checkin, checkout,
-    guests, voucherCode: voucher, specialRequests: requests,
+    guests, voucherCode: voucher, referral, specialRequests: requests,
     totalPrice, nights, rateType: activeVoucherType,
     tags: tags.join(','),
   };

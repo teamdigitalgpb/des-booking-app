@@ -39,6 +39,6 @@ const CONFIG = {
 
   // ── JW Weekly Verification ────────────────────────────────────────────────
   // Update every Monday from: wol.jw.org > This Week at a Glance > Bible reading
-  JW_QUESTION: 'PLACEHOLDER_paste_this_weeks_question',
-  JW_ANSWER:   'PLACEHOLDER_paste_this_weeks_answer',
+  JW_QUESTION: 'What is the last song number for this week\'s midweek meeting?',
+  JW_ANSWER:   '84',
 };

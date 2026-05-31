@@ -8,6 +8,15 @@ function genVoucherCode(type) {
 }
 
 async function validateVoucher(code, room) {
+  // JW: midweek meeting song number — accept "42", "Song 42", "song42", etc.
+  if (CONFIG.JW_ANSWER && CONFIG.JW_ANSWER !== 'PLACEHOLDER_update_every_monday') {
+    const normalize = s => s.replace(/\D/g, '');
+    if (normalize(code) === normalize(CONFIG.JW_ANSWER)) {
+      return { valid: true, type: 'jw' };
+    }
+  }
+
+  // A2/A19: owner-issued code stored in localStorage
   const vouchers = JSON.parse(localStorage.getItem('des_vouchers') || '[]');
   const v = vouchers.find(v => v.code === code);
   if (!v) return { valid: false, reason: 'Code not found' };
