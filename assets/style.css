@@ -133,6 +133,36 @@ section    { padding: 4rem 0; }
 .card-upsell a { color: var(--gold); font-weight: 600; text-decoration: none; }
 .card-upsell a:hover { text-decoration: underline; }
 
+/* Flashy voucher badge — premium gold shimmer, amounts stay hidden */
+.voucher-badge {
+  display: block;
+  margin-top: .9rem;
+  padding: .65rem .75rem;
+  border-radius: 8px;
+  text-align: center;
+  text-decoration: none;
+  font-size: .84rem;
+  font-weight: 700;
+  letter-spacing: .2px;
+  color: var(--navy);
+  background: linear-gradient(110deg,
+    var(--gold) 0%, var(--gold-light) 25%, #FFF3C9 50%,
+    var(--gold-light) 75%, var(--gold) 100%);
+  background-size: 220% 100%;
+  box-shadow: 0 2px 10px rgba(201, 162, 39, .45);
+  animation: voucherShimmer 3s linear infinite, voucherPulse 2.4s ease-in-out infinite;
+  transition: transform .15s ease;
+}
+.voucher-badge:hover { transform: translateY(-1px); filter: brightness(1.04); }
+@keyframes voucherShimmer { to { background-position: -220% 0; } }
+@keyframes voucherPulse {
+  0%, 100% { box-shadow: 0 2px 10px rgba(201, 162, 39, .4); }
+  50%      { box-shadow: 0 4px 18px rgba(201, 162, 39, .75); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .voucher-badge { animation: none; }
+}
+
 /* ── Card interactive pax selector ── */
 .card-selector {
   display: flex;
