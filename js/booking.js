@@ -1,21 +1,29 @@
 // Booking form — pricing, conflict check, GHL webhook submit
 
 const RATES = {
-  d1:    { 1: 750,  2: 800,  3: 900,  4: 1000 },
-  d2:    { 1: 600,  2: 700,  3: 750,  4: 850  },
-  whole: { 1: 1500, 2: 1500, 3: 1500, 4: 1500, 5: 1500, 6: 1500, 7: 1650, 8: 1800 },
+  d1: {
+    regular: { 1: 750,  2: 750,  3: 850,  4: 950  },
+    jw:      { 1: 700,  2: 700,  3: 800,  4: 850  },
+    a2a19:   { 1: 650,  2: 650,  3: 750,  4: 800  },
+  },
+  d2: {
+    regular: { 1: 550,  2: 600,  3: 750,  4: 750  },
+    jw:      { 1: 500,  2: 500,  3: 700,  4: 700  },
+    a2a19:   { 1: 450,  2: 500,  3: 700,  4: 700  },
+  },
+  whole: {
+    regular: { 1: 1700, 2: 1700, 3: 1700, 4: 1700, 5: 1700, 6: 1700, 7: 1800, 8: 1900 },
+    jw:      { 1: 1500, 2: 1500, 3: 1500, 4: 1500, 5: 1500, 6: 1500, 7: 1600, 8: 1700 },
+    a2a19:   { 1: 1300, 2: 1300, 3: 1300, 4: 1300, 5: 1300, 6: 1300, 7: 1450, 8: 1500 },
+  },
 };
 
-const PAX_MAX        = { d1: 4, d2: 4, whole: 8 };
-const JW_DISCOUNT    = { d1: 100, d2: 100, whole: 200 };
-const A2A19_DISCOUNT = { d1: 100, d2: 100, whole: 200 };
+const PAX_MAX = { d1: 4, d2: 4, whole: 8 };
 
 function calcTotal(room, nights, pax, rateType) {
-  if (!RATES[room] || !RATES[room][pax]) return 0;
-  let ratePerNight = RATES[room][pax];
-  if (rateType === 'jw'    && JW_DISCOUNT[room])    ratePerNight -= JW_DISCOUNT[room];
-  if (rateType === 'a2a19' && A2A19_DISCOUNT[room]) ratePerNight -= A2A19_DISCOUNT[room];
-  return ratePerNight * nights;
+  const tier = RATES[room]?.[rateType || 'regular'];
+  if (!tier || !tier[pax]) return 0;
+  return tier[pax] * nights;
 }
 
 function nightsBetween(checkin, checkout) {
@@ -37,12 +45,14 @@ function populatePaxSelect(room, rateType) {
     return;
   }
 
-  const type = rateType || 'regular';
-  const max  = PAX_MAX[room];
+  const type    = rateType || 'regular';
+  const checkin = document.getElementById('checkin').value;
+  let   max     = PAX_MAX[room];
+  if (checkin && CONFIG.PAX_OVERRIDES?.[room]?.[checkin]) {
+    max = Math.min(max, CONFIG.PAX_OVERRIDES[room][checkin]);
+  }
   for (let i = 1; i <= max; i++) {
-    let rate = RATES[room][i];
-    if (type === 'jw'    && JW_DISCOUNT[room])    rate -= JW_DISCOUNT[room];
-    if (type === 'a2a19' && A2A19_DISCOUNT[room]) rate -= A2A19_DISCOUNT[room];
+    const rate   = RATES[room][type]?.[i] ?? RATES[room].regular[i];
     const suffix = (i === max) ? ' (max)' : '';
     const label  = `${i} guest${i > 1 ? 's' : ''}${suffix} — ₱${rate.toLocaleString()}/night`;
     const opt    = document.createElement('option');
@@ -140,11 +150,11 @@ async function checkVoucher(code) {
     if (type === 'jw') {
       activeVoucherType = 'jw';
       statusEl.className = 'voucher-status valid';
-      statusEl.textContent = `✓ Valid JW voucher — ₱${JW_DISCOUNT[room] || 0} off/night applied`;
+      statusEl.textContent = '✓ Valid JW voucher — JW rates applied';
     } else if (type === 'a2a19') {
       activeVoucherType = 'a2a19';
       statusEl.className = 'voucher-status valid';
-      statusEl.textContent = `✓ Valid A2/A19 voucher — ₱${A2A19_DISCOUNT[room] || 0} off/night applied`;
+      statusEl.textContent = '✓ Valid A2/A19 voucher — A2/A19 rates applied';
     } else {
       activeVoucherType = 'regular';
       statusEl.className = 'voucher-status invalid';
@@ -270,7 +280,11 @@ document.getElementById('room').addEventListener('change', (e) => {
   statusEl.textContent = '';
   recalc();
 });
-document.getElementById('checkin').addEventListener('change', recalc);
+document.getElementById('checkin').addEventListener('change', () => {
+  const room = document.getElementById('room').value;
+  if (room) populatePaxSelect(room, activeVoucherType);
+  recalc();
+});
 document.getElementById('checkout').addEventListener('change', recalc);
 document.getElementById('guests').addEventListener('change', recalc);
 document.getElementById('voucher').addEventListener('blur', (e) => checkVoucher(e.target.value));
