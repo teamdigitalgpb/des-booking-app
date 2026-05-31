@@ -219,7 +219,9 @@ document.getElementById('booking-form').addEventListener('submit', async (e) => 
   e.preventDefault();
   hideAlert();
 
-  const name     = document.getElementById('name').value.trim();
+  const firstName = document.getElementById('firstName').value.trim();
+  const lastName  = document.getElementById('lastName').value.trim();
+  const name      = `${firstName} ${lastName}`.trim();
   const mobile   = document.getElementById('mobile').value.trim();
   const email    = document.getElementById('email').value.trim();
   const room     = document.getElementById('room').value;
@@ -229,7 +231,8 @@ document.getElementById('booking-form').addEventListener('submit', async (e) => 
   const voucher  = document.getElementById('voucher').value.trim().toUpperCase();
   const requests = document.getElementById('requests').value.trim();
 
-  if (!name)    return showAlert('Please enter your full name.');
+  if (!firstName) return showAlert('Please enter your first name.');
+  if (!lastName)  return showAlert('Please enter your last name.');
   if (!mobile)  return showAlert('Please enter your mobile number.');
   if (!room)    return showAlert('Please select a room.');
   if (!checkin) return showAlert('Please select a check-in date.');
@@ -251,7 +254,7 @@ document.getElementById('booking-form').addEventListener('submit', async (e) => 
   const tags = ['DES', 'DES-booked', `DES-${room}`];
 
   const payload = {
-    name, mobile, email, room, checkin, checkout,
+    firstName, lastName, name, mobile, email, room, checkin, checkout,
     guests, voucherCode: voucher, specialRequests: requests,
     totalPrice, nights, rateType: activeVoucherType,
     tags: tags.join(','),
