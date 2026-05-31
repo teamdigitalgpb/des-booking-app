@@ -85,11 +85,35 @@
           <p id="guests-note" class="card-note hidden" style="margin-top:.4rem;">For more than 8 guests, please <a href="mailto:d.econospace.cebu@gmail.com" style="color:var(--navy);">contact our support team</a> for a special arrangement.</p>
         </div>
 
-        <!-- Voucher code -->
+        <!-- Discount eligibility -->
         <div class="form-group">
-          <label for="voucher">Discount Voucher Code <span style="font-weight:400;color:var(--text-muted);">(optional — JW &amp; A2/A19, applies to all rooms)</span></label>
-          <input type="text" id="voucher" name="voucher" placeholder="Enter voucher code" style="text-transform:uppercase;" />
-          <div id="voucher-status" class="voucher-status"></div>
+          <label>Discount Eligibility <span style="font-weight:400;color:var(--text-muted);">(optional)</span></label>
+          <div class="disc-checks">
+            <label class="disc-option" id="opt-jw">
+              <input type="checkbox" id="disc-jw">
+              <span>I am a Jehovah's Witness (JW)</span>
+            </label>
+            <label class="disc-option" id="opt-a2a19">
+              <input type="checkbox" id="disc-a2a19">
+              <span>I am an A2 / A19 Special Volunteer</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- JW verification panel -->
+        <div id="jw-panel" class="disc-panel hidden">
+          <p class="disc-intro">You may qualify for a JW discount — confirm by answering:</p>
+          <p id="jw-q" class="disc-question"></p>
+          <input type="text" id="jw-ans" placeholder="Enter song number" inputmode="numeric" autocomplete="off" />
+          <div id="jw-ans-status" class="voucher-status" style="margin-top:.5rem;"></div>
+        </div>
+
+        <!-- A2/A19 panel -->
+        <div id="a2a19-panel" class="disc-panel hidden">
+          <div id="a2a19-msg">
+            <p class="disc-intro">A2/A19 discount applied.</p>
+            <p class="disc-info">Complete your booking — we'll verify your details and send your confirmation voucher to your email.</p>
+          </div>
         </div>
 
         <!-- Price display -->
@@ -132,8 +156,16 @@
   </div>
 
   <footer>
-    <p>D' Econo-Space &copy; 2026 &nbsp;|&nbsp; Lapu-Lapu, Cebu</p>
+    <p>D' Econo-Space &copy; 2026 &nbsp;|&nbsp; Lapu-Lapu, Cebu &nbsp;|&nbsp; <a href="https://www.facebook.com/d.econo.space.agus" target="_blank">Facebook</a></p>
   </footer>
+
+  <a href="https://m.me/d.econo.space.agus" target="_blank" class="messenger-fab" title="Chat with us on Messenger">
+    <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="24" cy="24" r="24" fill="#0078FF"/>
+      <path d="M24 7C14.06 7 6 14.61 6 24c0 5.16 2.37 9.78 6.12 12.95L12 41l4.29-2.13C18.07 39.58 20.98 40 24 40c9.94 0 18-7.61 18-17S33.94 7 24 7z" fill="white"/>
+      <path d="M21.5 27.5l-4-4.5L10.5 27.5l8.5-9 4 4.5 7-9-8.5 9z" fill="#0078FF"/>
+    </svg>
+  </a>
 
   <script src="js/config.js"></script>
   <script src="js/ghl.js"></script>

@@ -646,6 +646,80 @@ footer a { color: var(--gold); }
 .summary-box .row:last-child { border-bottom: none; }
 .summary-box .row strong { color: var(--navy); }
 
+/* ── Discount eligibility checkboxes ── */
+.disc-checks { display: flex; flex-direction: column; gap: .6rem; margin-top: .3rem; }
+.disc-option {
+  display: flex;
+  align-items: center;
+  gap: .7rem;
+  padding: .7rem 1rem;
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: .95rem;
+  font-weight: 600;
+  color: var(--text-dark);
+  transition: border-color .2s, background .2s;
+}
+.disc-option:hover { border-color: var(--navy-light); background: var(--light); }
+.disc-option input[type="checkbox"] { width: 1.1rem; height: 1.1rem; accent-color: var(--navy); cursor: pointer; flex-shrink: 0; }
+.disc-option.selected { border-color: var(--navy); background: var(--light); }
+
+.disc-panel {
+  background: linear-gradient(135deg, var(--navy) 0%, var(--navy-mid) 100%);
+  border: 1px solid var(--gold);
+  border-radius: 9px;
+  padding: 1.1rem 1.2rem;
+  margin: -.4rem 0 1.2rem;
+}
+.disc-panel input[type="text"] {
+  width: 100%;
+  padding: .6rem .9rem;
+  border: 1.5px solid var(--gold);
+  border-radius: 7px;
+  font-family: inherit;
+  font-size: .97rem;
+  background: rgba(255,255,255,.1);
+  color: var(--white);
+  margin-top: .6rem;
+}
+.disc-panel input[type="text"]::placeholder { color: rgba(255,255,255,.5); }
+.disc-panel input[type="text"]:focus { outline: none; border-color: var(--gold-light); background: rgba(255,255,255,.15); }
+.disc-intro { color: var(--gold-light); font-size: .88rem; font-weight: 600; margin-bottom: .3rem; }
+.disc-question { color: var(--white); font-size: .97rem; font-weight: 600; line-height: 1.4; }
+.disc-congrats { color: var(--gold-light); font-size: .93rem; font-weight: 700; margin-bottom: .4rem; }
+.disc-info { color: var(--light); font-size: .87rem; line-height: 1.5; }
+.disc-savings {
+  display: inline-block;
+  background: var(--gold);
+  color: var(--navy);
+  border-radius: 5px;
+  padding: .15rem .55rem;
+  font-size: .82rem;
+  font-weight: 700;
+  margin-top: .4rem;
+}
+
+/* ── Messenger FAB ── */
+.messenger-fab {
+  position: fixed;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  width: 3.4rem;
+  height: 3.4rem;
+  border-radius: 50%;
+  background: #0078FF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 16px rgba(0,0,0,.25);
+  z-index: 999;
+  transition: transform .2s, box-shadow .2s;
+  text-decoration: none;
+}
+.messenger-fab:hover { transform: scale(1.08); box-shadow: 0 6px 20px rgba(0,120,255,.45); }
+.messenger-fab svg { width: 1.9rem; height: 1.9rem; }
+
 /* ── Utility ── */
 .text-center { text-align: center; }
 .mt-1 { margin-top: .5rem; }

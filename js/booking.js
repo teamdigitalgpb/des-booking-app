@@ -130,43 +130,43 @@ function updatePriceDisplay(room, nights, pax, rateType) {
   display.style.display = 'block';
 }
 
-// ── Voucher check ────────────────────────────────────────────────────────────
+// ── Discount eligibility ──────────────────────────────────────────────────────
 
 let activeVoucherType = 'regular';
 
-async function checkVoucher(code) {
-  const statusEl = document.getElementById('voucher-status');
-  if (!code) {
-    statusEl.className = 'voucher-status';
-    statusEl.textContent = '';
-    activeVoucherType = 'regular';
+function getWeekRange() {
+  const today = new Date();
+  const day   = today.getDay();
+  const mon   = new Date(today);
+  mon.setDate(today.getDate() - (day === 0 ? 6 : day - 1));
+  const sun   = new Date(mon);
+  sun.setDate(mon.getDate() + 6);
+  const fmt = d => d.toLocaleDateString('en-PH', { month: 'long', day: 'numeric' });
+  return `${fmt(mon)}–${fmt(sun)}`;
+}
+
+function updateA2A19Panel() {
+  const room    = document.getElementById('room').value;
+  const pax     = parseInt(document.getElementById('guests').value) || 0;
+  const msgEl   = document.getElementById('a2a19-msg');
+  if (!room || !pax) {
+    msgEl.innerHTML = `<p class="disc-intro">A2/A19 discount applied.</p><p class="disc-info">Complete your booking — we'll verify your details and send your confirmation voucher to your email.</p>`;
     return;
   }
-  const room   = document.getElementById('room').value;
-  const result = await validateVoucher(code.trim().toUpperCase(), room);
-
-  if (result.valid) {
-    const type = result.type === 'a2' || result.type === 'a19' ? 'a2a19' : result.type;
-    if (type === 'jw') {
-      activeVoucherType = 'jw';
-      statusEl.className = 'voucher-status valid';
-      statusEl.textContent = '✓ Valid JW voucher — JW rates applied';
-    } else if (type === 'a2a19') {
-      activeVoucherType = 'a2a19';
-      statusEl.className = 'voucher-status valid';
-      statusEl.textContent = '✓ Valid A2/A19 voucher — A2/A19 rates applied';
-    } else {
-      activeVoucherType = 'regular';
-      statusEl.className = 'voucher-status invalid';
-      statusEl.textContent = '✗ Unrecognized voucher type';
-    }
-    populatePaxSelect(room, activeVoucherType);
+  const reg    = RATES[room]?.regular?.[pax] || 0;
+  const jw     = RATES[room]?.jw?.[pax] || 0;
+  const a2a19  = RATES[room]?.a2a19?.[pax] || 0;
+  if (a2a19 < jw) {
+    msgEl.innerHTML = `
+      <p class="disc-congrats">✓ A2/A19 rate applied — ₱${a2a19.toLocaleString()}/night</p>
+      <span class="disc-savings">You save ₱${(reg - a2a19).toLocaleString()} per night vs. regular rate</span>
+      <p class="disc-info" style="margin-top:.6rem;">Complete your booking — we'll verify your details and send your confirmation voucher to your email.</p>`;
   } else {
-    activeVoucherType = 'regular';
-    statusEl.className = 'voucher-status invalid';
-    statusEl.textContent = `✗ ${result.reason}`;
+    msgEl.innerHTML = `
+      <p class="disc-congrats">✓ Maximum discount applied — ₱${a2a19.toLocaleString()}/night</p>
+      <span class="disc-savings">You save ₱${(reg - a2a19).toLocaleString()} per night</span>
+      <p class="disc-info" style="margin-top:.6rem;">Congratulations! For this selection, you already qualify for the maximum discount available — our way of honoring special volunteers like you.</p>`;
   }
-  recalc();
 }
 
 // ── Whole Space recommendation ───────────────────────────────────────────────
@@ -197,6 +197,7 @@ function recalc() {
   if (nights < 1) { document.getElementById('price-display').style.display = 'none'; hideD2Warning(); return; }
 
   updatePriceDisplay(room, nights, pax, activeVoucherType);
+  if (activeVoucherType === 'a2a19') updateA2A19Panel();
 
   if (room && checkin && checkout) {
     const conflict = hasConflict(room, checkin, checkout);
@@ -228,7 +229,6 @@ document.getElementById('booking-form').addEventListener('submit', async (e) => 
   const checkin  = document.getElementById('checkin').value;
   const checkout = document.getElementById('checkout').value;
   const guests   = parseInt(document.getElementById('guests').value);
-  const voucher  = document.getElementById('voucher').value.trim().toUpperCase();
   const referral = document.getElementById('referral').value.trim();
   const requests = document.getElementById('requests').value.trim();
 
@@ -256,7 +256,7 @@ document.getElementById('booking-form').addEventListener('submit', async (e) => 
 
   const payload = {
     firstName, lastName, name, mobile, email, room, checkin, checkout,
-    guests, voucherCode: voucher, referral, specialRequests: requests,
+    guests, discountType: activeVoucherType !== 'regular' ? activeVoucherType : '', referral, specialRequests: requests,
     totalPrice, nights, rateType: activeVoucherType,
     tags: tags.join(','),
   };
@@ -267,8 +267,6 @@ document.getElementById('booking-form').addEventListener('submit', async (e) => 
 
   try {
     await postToWebhook(CONFIG.WEBHOOK_BOOKING, payload);
-
-    if (voucher) markVoucherUsed(voucher);
 
     saveBooking({ room, checkin, checkout, name, id: Date.now() });
 
@@ -311,9 +309,79 @@ document.getElementById('checkin').addEventListener('change', () => {
 });
 document.getElementById('checkout').addEventListener('change', recalc);
 document.getElementById('guests').addEventListener('change', recalc);
-document.getElementById('voucher').addEventListener('blur', (e) => checkVoucher(e.target.value));
-document.getElementById('voucher').addEventListener('input', (e) => {
-  e.target.value = e.target.value.toUpperCase();
+// ── Discount checkbox listeners ───────────────────────────────────────────────
+
+document.getElementById('jw-q').textContent =
+  `What is the last song number for the ${getWeekRange()} midweek meeting?`;
+
+document.getElementById('disc-jw').addEventListener('change', (e) => {
+  const jwPanel    = document.getElementById('jw-panel');
+  const a2Panel    = document.getElementById('a2a19-panel');
+  const optJW      = document.getElementById('opt-jw');
+  const optA2      = document.getElementById('opt-a2a19');
+  const statusEl   = document.getElementById('jw-ans-status');
+
+  if (e.target.checked) {
+    document.getElementById('disc-a2a19').checked = false;
+    optA2.classList.remove('selected');
+    a2Panel.classList.add('hidden');
+    jwPanel.classList.remove('hidden');
+    optJW.classList.add('selected');
+    activeVoucherType = 'regular';
+    statusEl.className = 'voucher-status';
+    statusEl.textContent = '';
+    document.getElementById('jw-ans').value = '';
+  } else {
+    jwPanel.classList.add('hidden');
+    optJW.classList.remove('selected');
+    activeVoucherType = 'regular';
+  }
+  const room = document.getElementById('room').value;
+  populatePaxSelect(room, activeVoucherType);
+  recalc();
+});
+
+document.getElementById('disc-a2a19').addEventListener('change', (e) => {
+  const jwPanel  = document.getElementById('jw-panel');
+  const a2Panel  = document.getElementById('a2a19-panel');
+  const optJW    = document.getElementById('opt-jw');
+  const optA2    = document.getElementById('opt-a2a19');
+
+  if (e.target.checked) {
+    document.getElementById('disc-jw').checked = false;
+    optJW.classList.remove('selected');
+    jwPanel.classList.add('hidden');
+    a2Panel.classList.remove('hidden');
+    optA2.classList.add('selected');
+    activeVoucherType = 'a2a19';
+    updateA2A19Panel();
+  } else {
+    a2Panel.classList.add('hidden');
+    optA2.classList.remove('selected');
+    activeVoucherType = 'regular';
+  }
+  const room = document.getElementById('room').value;
+  populatePaxSelect(room, activeVoucherType);
+  recalc();
+});
+
+document.getElementById('jw-ans').addEventListener('input', async (e) => {
+  const code     = e.target.value.trim();
+  const statusEl = document.getElementById('jw-ans-status');
+  if (!code) { statusEl.className = 'voucher-status'; statusEl.textContent = ''; activeVoucherType = 'regular'; recalc(); return; }
+  const result = await validateVoucher(code, '');
+  if (result.valid && result.type === 'jw') {
+    activeVoucherType = 'jw';
+    statusEl.className = 'voucher-status valid';
+    statusEl.textContent = '✓ Correct — JW rates applied';
+  } else {
+    activeVoucherType = 'regular';
+    statusEl.className = 'voucher-status invalid';
+    statusEl.textContent = '✗ Incorrect answer — try again';
+  }
+  const room = document.getElementById('room').value;
+  populatePaxSelect(room, activeVoucherType);
+  recalc();
 });
 
 // ── Pre-select room from URL param ───────────────────────────────────────────
