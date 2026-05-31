@@ -163,6 +163,30 @@ section    { padding: 4rem 0; }
   .voucher-badge { animation: none; }
 }
 
+/* ── Card "From" price anchor ── */
+.card-from {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: .4rem;
+  margin-top: .25rem;
+}
+.card-from .from-label {
+  font-size: .7rem;
+  font-weight: 600;
+  letter-spacing: .07em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+.card-from .from-price {
+  font-size: 1.65rem;
+  font-weight: 800;
+  line-height: 1;
+  color: var(--gold);
+}
+.card-from .from-night { font-size: .8rem; font-weight: 500; color: var(--text-muted); }
+.card-from .from-cap { font-size: .8rem; font-weight: 500; color: var(--text-muted); }
+
 /* ── Card interactive pax selector ── */
 .card-selector {
   display: flex;
