@@ -129,6 +129,9 @@ section    { padding: 4rem 0; }
 }
 .rate-tag strong { color: var(--navy); }
 .card-note { font-size: .82rem; color: var(--text-muted); margin-top: .75rem; font-style: italic; }
+.card-upsell { font-size: .8rem; color: var(--text-muted); margin-top: .65rem; text-align: center; }
+.card-upsell a { color: var(--gold); font-weight: 600; text-decoration: none; }
+.card-upsell a:hover { text-decoration: underline; }
 
 /* ── Card interactive pax selector ── */
 .card-selector {
@@ -580,6 +583,18 @@ footer a { color: var(--gold); }
 .alert-success { background: #d4edda; color: #155724; }
 .alert-error   { background: #f8d7da; color: #721c24; }
 .alert-info    { background: #cce5ff; color: #004085; }
+
+/* ── Whole Space recommendation banner ── */
+.rec-banner {
+  background: linear-gradient(135deg, var(--navy) 0%, var(--navy-mid) 100%);
+  border: 1px solid var(--gold);
+  border-radius: 9px;
+  padding: 1rem 1.15rem;
+  margin: -.5rem 0 1.25rem;
+}
+.rec-banner p { color: var(--light); font-size: .9rem; margin: 0 0 .75rem; line-height: 1.45; }
+.rec-banner p strong { color: var(--gold-light); }
+.rec-banner .btn { font-size: .88rem; padding: .55rem 1.1rem; display: inline-block; width: auto; }
 
 /* ── Responsive nav ── */
 @media (max-width: 600px) {

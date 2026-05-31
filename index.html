@@ -83,6 +83,7 @@
             <div style="margin-top:1rem;">
               <a href="booking.html?room=d1&guests=1" id="btn-d1" class="btn btn-gold btn-full" style="font-size:.9rem;padding:.6rem;">Book Room D1</a>
             </div>
+            <p class="card-upsell">More than 4 guests? <a href="booking.html?room=whole&guests=5">Book D' Whole Space →</a></p>
           </div>
         </div>
 
@@ -106,6 +107,7 @@
             <div style="margin-top:1rem;">
               <a href="booking.html?room=d2&guests=1" id="btn-d2" class="btn btn-gold btn-full" style="font-size:.9rem;padding:.6rem;">Book Room D2</a>
             </div>
+            <p class="card-upsell">More than 4 guests? <a href="booking.html?room=whole&guests=5">Book D' Whole Space →</a></p>
           </div>
         </div>
 
@@ -211,7 +213,7 @@
     const CARD_RATES = {
       d1:    { 1: 750,  2: 750,  3: 850,  4: 950  },
       d2:    { 1: 550,  2: 600,  3: 750,  4: 750  },
-      whole: { 1: 1700, 2: 1700, 3: 1700, 4: 1700, 5: 1700, 6: 1700, 7: 1800, 8: 1900 },
+      whole: { 1: 1700, 2: 1700, 3: 1700, 4: 1700, 5: 1700, 6: 1800, 7: 1800, 8: 1900 },
     };
 
     document.querySelectorAll('[data-room]').forEach(select => {

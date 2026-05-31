@@ -46,10 +46,16 @@
           <label for="room">Room *</label>
           <select id="room" name="room" required>
             <option value="">— Select a room —</option>
-            <option value="d1">Room D1 — up to 5 guests · Common AC</option>
+            <option value="d1">Room D1 — up to 4 guests · Common AC</option>
             <option value="d2">Room D2 — up to 4 guests · Fan-cooled</option>
             <option value="whole">D' Whole Space — D1 + D2 combined · up to 8 guests</option>
           </select>
+        </div>
+
+        <!-- Whole Space recommendation -->
+        <div id="whole-space-rec" class="rec-banner hidden">
+          <p>Rooms D1 and D2 each fit up to 4 guests. Booking for 5 or more? <strong>D' Whole Space</strong> sleeps up to 8.</p>
+          <button type="button" id="switch-to-whole" class="btn btn-gold">Switch to Whole Space</button>
         </div>
 
         <!-- Check-in / Check-out -->

@@ -12,9 +12,9 @@ const RATES = {
     a2a19:   { 1: 450,  2: 500,  3: 700,  4: 700  },
   },
   whole: {
-    regular: { 1: 1700, 2: 1700, 3: 1700, 4: 1700, 5: 1700, 6: 1700, 7: 1800, 8: 1900 },
-    jw:      { 1: 1500, 2: 1500, 3: 1500, 4: 1500, 5: 1500, 6: 1500, 7: 1600, 8: 1700 },
-    a2a19:   { 1: 1300, 2: 1300, 3: 1300, 4: 1300, 5: 1300, 6: 1300, 7: 1450, 8: 1500 },
+    regular: { 1: 1700, 2: 1700, 3: 1700, 4: 1700, 5: 1700, 6: 1800, 7: 1800, 8: 1900 },
+    jw:      { 1: 1500, 2: 1500, 3: 1500, 4: 1500, 5: 1500, 6: 1700, 7: 1700, 8: 1800 },
+    a2a19:   { 1: 1450, 2: 1450, 3: 1450, 4: 1450, 5: 1450, 6: 1650, 7: 1650, 8: 1700 },
   },
 };
 
@@ -169,6 +169,16 @@ async function checkVoucher(code) {
   recalc();
 }
 
+// ── Whole Space recommendation ───────────────────────────────────────────────
+// D1 and D2 cap at 4 guests, so any party of 5+ must take the Whole Space.
+// Show the nudge whenever an individual room is selected; hide for Whole Space.
+
+function toggleWholeRec(room) {
+  const rec = document.getElementById('whole-space-rec');
+  if (!rec) return;
+  rec.classList.toggle('hidden', !(room === 'd1' || room === 'd2'));
+}
+
 // ── Recalc on any field change ───────────────────────────────────────────────
 
 function recalc() {
@@ -278,8 +288,18 @@ document.getElementById('room').addEventListener('change', (e) => {
   const statusEl = document.getElementById('voucher-status');
   statusEl.className = 'voucher-status';
   statusEl.textContent = '';
+  toggleWholeRec(e.target.value);
   recalc();
 });
+
+const switchBtn = document.getElementById('switch-to-whole');
+if (switchBtn) {
+  switchBtn.addEventListener('click', () => {
+    const roomSel = document.getElementById('room');
+    roomSel.value = 'whole';
+    roomSel.dispatchEvent(new Event('change'));
+  });
+}
 document.getElementById('checkin').addEventListener('change', () => {
   const room = document.getElementById('room').value;
   if (room) populatePaxSelect(room, activeVoucherType);
@@ -307,6 +327,7 @@ document.getElementById('voucher').addEventListener('input', (e) => {
         const gSel = document.getElementById('guests');
         if ([...gSel.options].some(o => o.value === guests)) gSel.value = guests;
       }
+      toggleWholeRec(room);
       recalc();
     }
   }
