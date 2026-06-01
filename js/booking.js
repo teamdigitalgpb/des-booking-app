@@ -248,7 +248,7 @@ document.getElementById('booking-form').addEventListener('submit', async (e) => 
   }
 
   if (hasConflict(room, checkin, checkout)) {
-    return showAlert('These dates conflict with an existing booking. Please choose different dates or contact us.');
+    showAlert('Note: these dates may overlap with a recent booking from this device. Your request will still be submitted — our team will confirm availability.', 'info');
   }
 
   const totalPrice = calcTotal(room, nights, guests, activeVoucherType);
