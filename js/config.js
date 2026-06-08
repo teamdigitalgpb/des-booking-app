@@ -10,7 +10,6 @@ const CONFIG = {
 
   // ── GHL IDs ───────────────────────────────────────────────────────────────
   LOCATION_ID:      '2P0dvOfUyN4ijmvG9KpL',
-  CALENDAR_ID:      'PLACEHOLDER_paste_calendar_id',
   PIPELINE_ID:      'PLACEHOLDER_paste_pipeline_id',
 
   STAGE: {
@@ -36,6 +35,19 @@ const CONFIG = {
   // ── Admin ─────────────────────────────────────────────────────────────────
   // Basic deterrent — change before going live.
   ADMIN_PASSWORD:   'PLACEHOLDER_set_your_admin_password',
+
+  // ── Donation ──────────────────────────────────────────────────────────────
+  // Webhook to capture donor info (name, email, purpose) into GHL.
+  WEBHOOK_DONATION: 'PLACEHOLDER_paste_donation_webhook_url',
+
+  // QR code images — export non-expiring QR from each app, save to assets/
+  QR_GCASH:    'assets/qr-gcash.png',
+  QR_MAYA:     'assets/qr-maya.png',
+  QR_BANK:     'assets/qr-bank.png',
+
+  // External donation links (donor enters own amount on their platform)
+  LINK_PAYPAL: 'PLACEHOLDER_paste_paypal_link',   // e.g. https://paypal.me/yourname
+  LINK_WISE:   'PLACEHOLDER_paste_wise_link',     // e.g. https://wise.com/pay/me/...
 
   // ── JW Weekly Verification ────────────────────────────────────────────────
   // Update every Monday from: wol.jw.org > This Week at a Glance > Bible reading

@@ -7,6 +7,7 @@
   <meta name="description" content="Affordable rooms in Lapu-Lapu, Cebu. Near Mactan Airport. Beddings, WiFi, kitchen included. Book directly — no hidden fees." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="stylesheet" href="assets/style.css" />
+  <script src="js/config.js"></script>
 </head>
 <body>
 
@@ -15,6 +16,7 @@
     <div class="container">
       <a class="nav-logo" href="index.html">D' Econo-Space</a>
       <ul class="nav-links">
+        <li><a href="#our-story">Our Story</a></li>
         <li><a href="#rooms">Rooms</a></li>
         <li><a href="#amenities">Amenities</a></li>
         <li><a href="#location">Location</a></li>
@@ -27,11 +29,11 @@
   <section class="hero">
     <div class="container">
       <h1>D' Econo-Space</h1>
-      <p class="tagline">Fits your budget without compromising your essentials</p>
-      <p style="color:var(--light);margin-bottom:2rem;font-size:.97rem;">Basak Agus Rd, Gisi, Lapu-Lapu, Cebu &nbsp;·&nbsp; Near Mactan Airport &nbsp;·&nbsp; Near CBEC</p>
+      <p class="tagline">A home kept by volunteers. Welcome to all.</p>
+      <p style="color:var(--light);margin-bottom:2.25rem;font-size:.94rem;opacity:.85;">Basak Agus Rd, Gisi, Lapu-Lapu, Cebu &nbsp;·&nbsp; Near Mactan Airport &nbsp;·&nbsp; Steps from CBEC</p>
       <div class="hero-ctas">
         <a href="booking.html" class="btn btn-gold">Book a Room</a>
-        <a href="voucher.html" class="btn btn-secondary">Get Discount Voucher</a>
+        <a href="#our-story" class="btn btn-secondary">Our Story</a>
       </div>
     </div>
   </section>
@@ -57,6 +59,55 @@
     </div>
   </section>
 
+  <!-- OUR STORY -->
+  <section class="story" id="our-story">
+    <div class="container">
+      <div class="story-inner">
+        <div class="story-text">
+          <p class="story-eyebrow">Why this place exists</p>
+          <h2>Our Story</h2>
+          <p class="story-opener">D' Econo-Space began with a simple question: <em>How can the burden be lightened for those who willingly sacrifice their time, energy, and personal resources in support of theocratic projects?</em></p>
+          <p>Every year, many volunteers travel from different islands and provinces, willingly giving their time, energy, skills, and personal resources to support sacred assignments. Their love, self-sacrifice, and willingness to serve are deeply appreciated.</p>
+          <p>The vision for D' Econo-Space grew from personal experience. One of its advocates regularly traveled from a distant island to participate in volunteer projects. Like many others, each trip involved searching for accommodations, managing expenses, and finding a place close enough to make daily service practical. This experience inspired a simple desire: to provide a comfortable and affordable place where volunteers could rest without carrying an unnecessary financial burden.</p>
+          <p>What began as an empty space gradually became a welcoming home near CBEC — a place where volunteers could find rest, fellowship, and encouragement after a day spent in meaningful service. Its purpose has always been simple: <strong>to support those who are supporting others.</strong></p>
+          <p>D' Econo-Space is sustained through volunteer effort. The cleaning, maintenance, and daily operations are cared for by part-time volunteers who support themselves through cleaning services, errands, and other practical work while continuing to share in volunteer service. Their example reminds us that even small acts of kindness and hard work can contribute to something much larger than ourselves.</p>
+          <p>More than a place to stay, D' Econo-Space reflects a spirit of mutual support and hospitality. It is not a hotel. It is a home that happens to have extra rooms — a place built by volunteers, for volunteers.</p>
+          <p>It is our hope that everyone who stays here feels welcomed, valued, and appreciated for the sacrifices they make in support of theocratic projects. If, during your stay, you are moved to help in some way — whether by caring for the facilities, encouraging fellow volunteers, or sharing toward the ongoing upkeep of the space — you become part of the same spirit that made D' Econo-Space possible.</p>
+          <p>Together, this spirit of generosity helps ensure that this simple home continues to be a source of comfort, refreshment, and support for those who willingly spend themselves in behalf of others.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SPACE GALLERY -->
+  <section class="space-gallery">
+    <div class="container">
+      <p class="gallery-eyebrow">The Space</p>
+      <div class="gallery-grid">
+        <div class="gallery-item">
+          <img src="assets/images/des-front.jpg" alt="D' Econo-Space — ground floor of the white building" loading="lazy" />
+          <span class="gallery-caption">Front exterior</span>
+        </div>
+        <div class="gallery-item">
+          <img src="assets/images/room-d1.jpg" alt="Room D1 — bunk bed and double bed" loading="lazy" />
+          <span class="gallery-caption">Room D1 · bunk + double bed</span>
+        </div>
+        <div class="gallery-item">
+          <img src="assets/images/room-d2.png" alt="Room D2 — solid wood bunk bed" loading="lazy" />
+          <span class="gallery-caption">Room D2 · wood bunk bed</span>
+        </div>
+        <div class="gallery-item">
+          <img src="assets/images/dining-area.png" alt="Common dining and living area" loading="lazy" />
+          <span class="gallery-caption">Dining &amp; common area</span>
+        </div>
+        <div class="gallery-item">
+          <img src="assets/images/key-holder.jpg" alt="Key holder by the door" loading="lazy" />
+          <span class="gallery-caption">Key holder door</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- ROOMS -->
   <section class="rooms" id="rooms">
     <div class="container">
@@ -70,6 +121,7 @@
             <span class="capacity">Private Room · Common AC</span>
           </div>
           <div class="card-body">
+            <p class="card-note"><span class="regular-badge">Regular price</span> · per room, per night.</p>
             <div class="card-from">
               <span class="from-label">From</span>
               <span class="from-price">₱750</span>
@@ -79,14 +131,13 @@
             <div class="card-selector">
               <select data-room="d1" aria-label="Guests for Room D1">
                 <option value="1">1 guest</option>
-                <option value="2">2 guests</option>
+                <option value="2" selected>2 guests</option>
                 <option value="3">3 guests</option>
                 <option value="4">4 guests (max)</option>
               </select>
               <div class="card-live-price" id="price-d1">₱750<span>/night</span></div>
             </div>
-            <p class="card-note">Rate is per room, per night.</p>
-            <a href="voucher.html" class="voucher-badge">🎟️ JW or A2/A19? Unlock your discount →</a>
+            <button type="button" class="voucher-badge" data-room="d1">JW or A2/A19? There's a special rate for you →</button>
             <div style="margin-top:1rem;">
               <a href="booking.html?room=d1&guests=1" id="btn-d1" class="btn btn-gold btn-full" style="font-size:.9rem;padding:.6rem;">Book Room D1</a>
             </div>
@@ -101,6 +152,7 @@
             <span class="capacity">Private Room · Fan-cooled</span>
           </div>
           <div class="card-body">
+            <p class="card-note"><span class="regular-badge">Regular price</span> · per room, per night.</p>
             <div class="card-from">
               <span class="from-label">From</span>
               <span class="from-price">₱550</span>
@@ -110,14 +162,13 @@
             <div class="card-selector">
               <select data-room="d2" aria-label="Guests for Room D2">
                 <option value="1">1 guest</option>
-                <option value="2">2 guests</option>
+                <option value="2" selected>2 guests</option>
                 <option value="3">3 guests</option>
                 <option value="4">4 guests (max)</option>
               </select>
               <div class="card-live-price" id="price-d2">₱550<span>/night</span></div>
             </div>
-            <p class="card-note">Rate is per room, per night.</p>
-            <a href="voucher.html" class="voucher-badge">🎟️ JW or A2/A19? Unlock your discount →</a>
+            <button type="button" class="voucher-badge" data-room="d2">JW or A2/A19? There's a special rate for you →</button>
             <div style="margin-top:1rem;">
               <a href="booking.html?room=d2&guests=1" id="btn-d2" class="btn btn-gold btn-full" style="font-size:.9rem;padding:.6rem;">Book Room D2</a>
             </div>
@@ -132,6 +183,7 @@
             <span class="capacity">D1 + D2 Combined</span>
           </div>
           <div class="card-body">
+            <p class="card-note"><span class="regular-badge">Regular price</span> · per room, per night.</p>
             <div class="card-from">
               <span class="from-label">From</span>
               <span class="from-price">₱1,700</span>
@@ -144,22 +196,23 @@
                 <option value="2">2 guests</option>
                 <option value="3">3 guests</option>
                 <option value="4">4 guests</option>
-                <option value="5">5 guests</option>
+                <option value="5" selected>5 guests</option>
                 <option value="6">6 guests</option>
                 <option value="7">7 guests</option>
                 <option value="8">8 guests (max)</option>
               </select>
               <div class="card-live-price" id="price-whole">₱1,700<span>/night</span></div>
             </div>
-            <p class="card-note">Ideal for groups or families. For more than 8 guests, please contact our support team for a special arrangement.</p>
-            <a href="voucher.html" class="voucher-badge">🎟️ JW or A2/A19? Unlock your discount →</a>
+            <button type="button" class="voucher-badge" data-room="whole">JW or A2/A19? There's a special rate for you →</button>
             <div style="margin-top:1rem;">
               <a href="booking.html?room=whole&guests=1" id="btn-whole" class="btn btn-gold btn-full" style="font-size:.9rem;padding:.6rem;">Book Whole Space</a>
             </div>
+            <p class="card-upsell">More than 8 guests? <a href="mailto:d.econospace.cebu@gmail.com">Ask us in advance.</a></p>
           </div>
         </div>
 
       </div>
+      <p class="long-stay-note">Staying more than 7 days? Eligible for vouchers and discounts!!</p>
     </div>
   </section>
 
@@ -216,11 +269,11 @@
   <!-- CTA BANNER -->
   <section class="cta-banner">
     <div class="container">
-      <h2>Ready to book your stay?</h2>
-      <p>Select your room, pick your dates, and confirm in minutes — no registration required.</p>
+      <h2>Come and stay with us.</h2>
+      <p>Pick your room, choose your dates, confirm in minutes. If you're a volunteer — let us know when you book.</p>
       <div class="btn-group">
         <a href="booking.html" class="btn btn-gold">Book Now</a>
-        <a href="voucher.html" class="btn btn-secondary">Get a Discount Voucher First</a>
+        <a href="voucher.html" class="btn btn-secondary">Volunteer? Get Your Code</a>
       </div>
     </div>
   </section>
@@ -229,6 +282,33 @@
   <footer>
     <p>D' Econo-Space &copy; 2026 &nbsp;|&nbsp; Lapu-Lapu, Cebu &nbsp;|&nbsp; <a href="mailto:d.econospace.cebu@gmail.com">d.econospace.cebu@gmail.com</a> &nbsp;|&nbsp; <a href="https://www.facebook.com/d.econo.space.agus" target="_blank">Facebook</a></p>
   </footer>
+
+  <!-- Volunteer Rates Modal -->
+  <div id="vol-modal-overlay" class="vol-modal-overlay" aria-hidden="true">
+    <div class="vol-modal" role="dialog" aria-modal="true" aria-labelledby="vol-modal-title">
+      <button class="vol-modal-close" id="vol-modal-close" aria-label="Close">✕</button>
+      <p class="vol-modal-eyebrow">Volunteer rates</p>
+      <h3 id="vol-modal-title"></h3>
+      <div id="vol-modal-rates"></div>
+      <div class="vol-verify">
+        <p class="vol-verify-label">Prove you qualify</p>
+        <div class="vol-options">
+          <button type="button" class="vol-opt-btn" id="vol-opt-jw">I am a JW</button>
+          <button type="button" class="vol-opt-btn" id="vol-opt-a2a19">I am A2/A19</button>
+        </div>
+        <div id="vol-jw-panel" class="vol-sub-panel hidden">
+          <p id="vol-jw-q" class="vol-jw-q"></p>
+          <input type="text" id="vol-jw-ans" placeholder="Enter song number" inputmode="numeric" autocomplete="off" />
+          <div id="vol-jw-status" class="vol-status"></div>
+          <a id="vol-jw-book-btn" href="#" class="btn btn-gold vol-book-btn hidden">Book at JW rate →</a>
+        </div>
+        <div id="vol-a2a19-panel" class="vol-sub-panel hidden">
+          <p class="vol-a2a19-note">Your A2/A19 rate will be applied in the booking form. You'll verify your ID number there — it only takes a moment.</p>
+          <a id="vol-a2a19-book-btn" href="#" class="btn btn-gold vol-book-btn">Book and verify →</a>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <a href="https://m.me/d.econo.space.agus" target="_blank" class="messenger-fab" title="Chat with us on Messenger">
     <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
@@ -258,6 +338,97 @@
       }
 
       select.addEventListener('change', update);
+    });
+
+    // ── Volunteer Rates Modal ────────────────────────────────────────────────
+    const VOL_RATES = {
+      d1:    { regular:{1:750,2:750,3:850,4:950},     jw:{1:700,2:700,3:800,4:850},     a2a19:{1:650,2:650,3:750,4:800}   },
+      d2:    { regular:{1:550,2:550,3:750,4:800},     jw:{1:500,2:500,3:700,4:700},     a2a19:{1:450,2:500,3:700,4:750}   },
+      whole: { regular:{1:1700,2:1700,3:1700,4:1700,5:1700,6:1800,7:1800,8:1900}, jw:{1:1450,2:1450,3:1450,4:1450,5:1450,6:1650,7:1650,8:1800}, a2a19:{1:1400,2:1400,3:1400,4:1400,5:1400,6:1550,7:1550,8:1650} }
+    };
+    const ROOM_NAMES = { d1: 'Room D1', d2: 'Room D2', whole: "D’ Whole Space" };
+    const ROOM_MAX   = { d1: 4, d2: 4, whole: 8 };
+
+    let volRoom = null;
+
+    document.querySelectorAll('button.voucher-badge').forEach(btn => {
+      btn.addEventListener('click', () => { volRoom = btn.dataset.room; openVolModal(volRoom); });
+    });
+
+    function openVolModal(room) {
+      const reg = VOL_RATES[room].regular;
+      const jw  = VOL_RATES[room].jw;
+      const a2  = VOL_RATES[room].a2a19;
+      let rows  = '';
+      for (let i = 1; i <= ROOM_MAX[room]; i++) {
+        rows += `<tr>
+          <td>${i} guest${i>1?'s':''}</td>
+          <td class="rate-reg">&#8369;${reg[i].toLocaleString()}</td>
+          <td class="rate-vol">&#8369;${jw[i].toLocaleString()}</td>
+          <td class="rate-vol">&#8369;${a2[i].toLocaleString()}</td>
+        </tr>`;
+      }
+      document.getElementById('vol-modal-title').textContent = ROOM_NAMES[room];
+      document.getElementById('vol-modal-rates').innerHTML = `
+        <table class="vol-rates-table">
+          <thead><tr><th>Guests</th><th>Regular</th><th>JW</th><th>A2/A19</th></tr></thead>
+          <tbody>${rows}</tbody>
+        </table>
+        <p style="font-size:.76rem;color:rgba(242,229,204,.5);margin-top:.4rem;">Per room, per night.</p>`;
+      document.getElementById('vol-jw-q').textContent = CONFIG.JW_QUESTION;
+      document.getElementById('vol-jw-book-btn').href     = 'booking.html?room=' + room;
+      document.getElementById('vol-a2a19-book-btn').href  = 'booking.html?room=' + room;
+      document.getElementById('vol-jw-panel').classList.add('hidden');
+      document.getElementById('vol-a2a19-panel').classList.add('hidden');
+      document.getElementById('vol-jw-ans').value = '';
+      document.getElementById('vol-jw-status').className = 'vol-status';
+      document.getElementById('vol-jw-book-btn').classList.add('hidden');
+      document.querySelectorAll('.vol-opt-btn').forEach(b => b.classList.remove('active'));
+      const overlay = document.getElementById('vol-modal-overlay');
+      overlay.setAttribute('aria-hidden', 'false');
+      overlay.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeVolModal() {
+      const overlay = document.getElementById('vol-modal-overlay');
+      overlay.setAttribute('aria-hidden', 'true');
+      overlay.classList.remove('active');
+      document.body.style.overflow = '';
+    }
+
+    document.getElementById('vol-modal-close').addEventListener('click', closeVolModal);
+    document.getElementById('vol-modal-overlay').addEventListener('click', e => { if (e.target === e.currentTarget) closeVolModal(); });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeVolModal(); });
+
+    document.getElementById('vol-opt-jw').addEventListener('click', function() {
+      document.getElementById('vol-jw-panel').classList.remove('hidden');
+      document.getElementById('vol-a2a19-panel').classList.add('hidden');
+      document.querySelectorAll('.vol-opt-btn').forEach(b => b.classList.remove('active'));
+      this.classList.add('active');
+    });
+
+    document.getElementById('vol-opt-a2a19').addEventListener('click', function() {
+      document.getElementById('vol-a2a19-panel').classList.remove('hidden');
+      document.getElementById('vol-jw-panel').classList.add('hidden');
+      document.querySelectorAll('.vol-opt-btn').forEach(b => b.classList.remove('active'));
+      this.classList.add('active');
+    });
+
+    document.getElementById('vol-jw-ans').addEventListener('input', function() {
+      const val      = this.value.replace(/\D/g, '');
+      const statusEl = document.getElementById('vol-jw-status');
+      const bookBtn  = document.getElementById('vol-jw-book-btn');
+      if (!val) { statusEl.className = 'vol-status'; statusEl.textContent = ''; bookBtn.classList.add('hidden'); return; }
+      if (val === CONFIG.JW_ANSWER) {
+        statusEl.className = 'vol-status valid';
+        statusEl.textContent = '✓ Verified — JW rate unlocked';
+        bookBtn.classList.remove('hidden');
+      } else {
+        statusEl.className = 'vol-status invalid';
+        statusEl.textContent = '✗ Incorrect — try again';
+        bookBtn.classList.add('hidden');
+      }
     });
   </script>
 </body>

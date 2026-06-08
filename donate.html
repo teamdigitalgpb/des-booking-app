@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Give a Donation — D' Econo-Space</title>
+  <link rel="stylesheet" href="assets/style.css" />
+</head>
+<body class="form-page">
+
+  <nav class="nav">
+    <div class="container">
+      <a class="nav-logo" href="index.html">← D' Econo-Space</a>
+    </div>
+  </nav>
+
+  <div class="form-wrap">
+    <div class="form-card donate-card">
+
+      <!-- ── State 1: Form ── -->
+      <div id="donate-state-form">
+        <div style="text-align:center;margin-bottom:1.75rem;">
+          <div style="font-size:2.2rem;margin-bottom:.6rem;">🤲</div>
+          <h1 style="font-size:1.55rem;margin-bottom:.4rem;">Give a Donation</h1>
+          <p class="subtitle" style="margin-bottom:0;">Your generosity helps keep this place running for those who serve. Please leave your details — we'll send you a thank-you.</p>
+        </div>
+
+        <div id="donate-alert" class="alert hidden"></div>
+
+        <form id="donate-form" novalidate>
+          <div class="form-group">
+            <label for="don-name">Full Name *</label>
+            <input type="text" id="don-name" name="don-name" placeholder="Maria Santos" required />
+          </div>
+          <div class="form-group">
+            <label for="don-email">Email Address * <span style="font-weight:400;color:var(--text-muted);">(we'll send your thank-you here)</span></label>
+            <input type="email" id="don-email" name="don-email" placeholder="maria@example.com" required />
+          </div>
+          <div class="form-group">
+            <label for="don-purpose">Purpose *</label>
+            <textarea id="don-purpose" name="don-purpose" rows="3" placeholder="e.g. For the ongoing upkeep of the space, in support of the A2 crew visiting this season…" required></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary btn-full" id="don-submit" style="margin-top:.5rem;">
+            Continue to Payment →
+          </button>
+          <p style="text-align:center;margin-top:.85rem;font-size:.82rem;color:var(--text-muted);">
+            You'll choose your payment method on the next step.
+          </p>
+        </form>
+      </div>
+
+      <!-- ── State 2: Payment method grid ── -->
+      <div id="donate-state-payment" class="hidden">
+        <div style="text-align:center;margin-bottom:1.75rem;">
+          <div style="font-size:2rem;margin-bottom:.5rem;">💛</div>
+          <h1 style="font-size:1.45rem;margin-bottom:.35rem;">How would you like to give?</h1>
+          <p class="subtitle" style="margin-bottom:0;">Choose a method. You set the amount — any amount is welcome.</p>
+        </div>
+        <div class="payment-grid">
+
+          <button type="button" class="pay-card" data-method="gcash">
+            <div class="pay-icon" style="background:#0070E0;">
+              <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <text x="50%" y="58%" dominant-baseline="middle" text-anchor="middle" font-size="22" font-weight="800" font-family="Montserrat,sans-serif" fill="white">G</text>
+              </svg>
+            </div>
+            <span>GCash</span>
+          </button>
+
+          <button type="button" class="pay-card" data-method="maya">
+            <div class="pay-icon" style="background:#00BFA5;">
+              <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <text x="50%" y="58%" dominant-baseline="middle" text-anchor="middle" font-size="20" font-weight="800" font-family="Montserrat,sans-serif" fill="white">M</text>
+              </svg>
+            </div>
+            <span>Maya</span>
+          </button>
+
+          <button type="button" class="pay-card" data-method="bank">
+            <div class="pay-icon" style="background:#5C4033;">
+              <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect x="8" y="20" width="4" height="10" fill="white"/>
+                <rect x="14" y="17" width="4" height="13" fill="white"/>
+                <rect x="20" y="20" width="4" height="10" fill="white"/>
+                <rect x="26" y="17" width="4" height="13" fill="white"/>
+                <polygon points="20,7 6,17 34,17" fill="white"/>
+                <rect x="6" y="30" width="28" height="3" fill="white"/>
+              </svg>
+            </div>
+            <span>Bank</span>
+            <span class="pay-sub">InstaPay</span>
+          </button>
+
+          <button type="button" class="pay-card" data-method="paypal">
+            <div class="pay-icon" style="background:#003087;">
+              <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <text x="50%" y="58%" dominant-baseline="middle" text-anchor="middle" font-size="18" font-weight="800" font-family="Montserrat,sans-serif" fill="white">PP</text>
+              </svg>
+            </div>
+            <span>PayPal</span>
+          </button>
+
+          <button type="button" class="pay-card" data-method="wise">
+            <div class="pay-icon" style="background:#163300;">
+              <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <text x="50%" y="58%" dominant-baseline="middle" text-anchor="middle" font-size="20" font-weight="800" font-family="Montserrat,sans-serif" fill="#9FE870">W</text>
+              </svg>
+            </div>
+            <span>Wise</span>
+          </button>
+
+        </div>
+      </div>
+
+      <!-- ── State 3: QR code view ── -->
+      <div id="donate-state-qr" class="hidden">
+        <button type="button" id="qr-back" class="qr-back-btn">← Back</button>
+        <div style="text-align:center;margin-top:.75rem;">
+          <h2 id="qr-title" style="font-size:1.3rem;margin-bottom:.35rem;"></h2>
+          <p style="color:var(--text-muted);font-size:.88rem;margin-bottom:1.5rem;line-height:1.6;">Scan this QR code with your <span id="qr-app-name"></span> app.<br>You'll be able to enter the amount you'd like to give.</p>
+          <div class="qr-wrap">
+            <img id="qr-image" src="" alt="QR Code" class="qr-img" />
+            <div id="qr-placeholder" class="qr-placeholder hidden">
+              <p>QR image not yet uploaded.</p>
+              <code id="qr-path-hint" style="font-size:.78rem;color:var(--text-muted);"></code>
+            </div>
+          </div>
+          <p style="margin-top:1.25rem;font-size:.82rem;color:var(--text-muted);">Any amount you choose is deeply appreciated.</p>
+        </div>
+      </div>
+
+      <!-- ── State 4: Fallback (webhook down) ── -->
+      <div id="donate-state-fallback" class="hidden" style="text-align:center;">
+        <div style="font-size:2.5rem;margin-bottom:.75rem;">✉️</div>
+        <h1 style="font-size:1.45rem;margin-bottom:.5rem;">We've received your details.</h1>
+        <p style="color:var(--text-body);margin-bottom:1.5rem;line-height:1.7;">Thank you, <strong id="don-thankyou-name"></strong>. We'll be in touch at <strong id="don-thankyou-email"></strong> to guide you on how to send your donation.</p>
+        <div style="background:var(--navy);border-radius:var(--radius);padding:1.25rem;margin-bottom:1.5rem;">
+          <p style="color:var(--gold);font-weight:700;margin-bottom:.5rem;">Contact Us</p>
+          <p style="color:var(--light);font-size:.95rem;">📞 0917.678.4871 &nbsp;|&nbsp; 0926.149.9002</p>
+          <p style="color:var(--light);font-size:.95rem;margin-top:.35rem;">✉️ d.econospace.cebu@gmail.com</p>
+        </div>
+        <a href="index.html" class="btn btn-gold">Back to Home</a>
+      </div>
+
+    </div>
+  </div>
+
+  <footer>
+    <p>D' Econo-Space &copy; 2026 &nbsp;|&nbsp; Lapu-Lapu, Cebu &nbsp;|&nbsp; <a href="mailto:d.econospace.cebu@gmail.com">d.econospace.cebu@gmail.com</a></p>
+  </footer>
+
+  <script src="js/config.js"></script>
+  <script src="js/ghl.js"></script>
+  <script src="js/donate.js"></script>
+</body>
+</html>

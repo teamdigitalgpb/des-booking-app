@@ -87,7 +87,7 @@
 
         <!-- Discount eligibility -->
         <div class="form-group">
-          <label>Discount Eligibility <span style="font-weight:400;color:var(--text-muted);">(optional)</span></label>
+          <label>Are you a volunteer? <span style="font-weight:400;color:var(--text-muted);">(optional)</span></label>
           <div class="disc-checks">
             <label class="disc-option" id="opt-jw">
               <input type="checkbox" id="disc-jw">
@@ -106,6 +106,10 @@
           <p id="jw-q" class="disc-question"></p>
           <input type="text" id="jw-ans" placeholder="Enter song number" inputmode="numeric" autocomplete="off" />
           <div id="jw-ans-status" class="voucher-status" style="margin-top:.5rem;"></div>
+          <div id="jw-donate-wrap" class="donate-wrap hidden">
+            <p class="donate-note">As a fellow volunteer, you're welcome to give what you're able — or simply pay on arrival. No pressure either way.</p>
+            <a id="jw-donate-btn" href="#" target="_blank" rel="noopener" class="btn btn-donate">Give a Donation Instead</a>
+          </div>
         </div>
 
         <!-- A2/A19 panel -->
@@ -113,6 +117,10 @@
           <div id="a2a19-msg">
             <p class="disc-intro">A2/A19 discount applied.</p>
             <p class="disc-info">Complete your booking — we'll verify your details and send your confirmation voucher to your email.</p>
+          </div>
+          <div id="a2a19-donate-wrap" class="donate-wrap hidden">
+            <p class="donate-note">As a fellow volunteer, you're welcome to give what you're able — or simply pay on arrival. No pressure either way.</p>
+            <a id="a2a19-donate-btn" href="#" target="_blank" rel="noopener" class="btn btn-donate">Give a Donation Instead</a>
           </div>
         </div>
 
@@ -147,8 +155,8 @@
           Confirm Booking
         </button>
 
-        <p style="text-align:center;margin-top:.75rem;font-size:.83rem;color:#6b5a4e;">
-          Full payment is required before or upon arrival. Check-in: 2:00 PM &nbsp;|&nbsp; Check-out: 12:00 NN
+        <p id="payment-note" style="text-align:center;margin-top:.75rem;font-size:.83rem;color:#6b5a4e;">
+          Full payment is required before or upon arrival.<br>Check-in: 2:00 PM &nbsp;|&nbsp; Check-out: 12:00 NN
         </p>
 
       </form>
