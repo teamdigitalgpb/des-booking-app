@@ -86,7 +86,7 @@ section    { padding: 4rem 0; }
   background:
     radial-gradient(ellipse at 50% 110%, rgba(196,120,42,.18) 0%, transparent 65%),
     linear-gradient(150deg, rgba(20,22,22,.82) 0%, rgba(45,48,47,.74) 100%),
-    url(images/des-front.jpg) center/cover no-repeat;
+    url(images/des-front2.png) center/cover no-repeat;
   color: var(--white);
   padding: 5.5rem 0 4.5rem;
   text-align: center;
@@ -338,9 +338,10 @@ tr:nth-child(even) td { background: var(--off-white); }
 .amenities h2 { text-align: center; margin-bottom: 2rem; color: var(--navy); }
 .amenity-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  grid-template-columns: repeat(4, 1fr);
   gap: 1rem;
 }
+.amenity-spacer { visibility: hidden; pointer-events: none; }
 .amenity-item {
   display: flex;
   align-items: center;

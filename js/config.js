@@ -49,8 +49,14 @@ const CONFIG = {
   LINK_PAYPAL: 'PLACEHOLDER_paste_paypal_link',   // e.g. https://paypal.me/yourname
   LINK_WISE:   'PLACEHOLDER_paste_wise_link',     // e.g. https://wise.com/pay/me/...
 
-  // ── JW Weekly Verification ────────────────────────────────────────────────
-  // Update every Monday from: wol.jw.org > This Week at a Glance > Bible reading
-  JW_QUESTION: 'What is the last song number for this week\'s midweek meeting?',
+  // ── Live Settings (Google Sheet "Settings" tab) ───────────────────────────
+  // Published CSV of the Settings tab holding the JW Question + Answer. The site
+  // fetches this on load and overrides the JW fallbacks below, so the answer can
+  // be updated weekly from the Sheet with no code change. Leave as PLACEHOLDER to
+  // use the fallbacks only. Setup: File > Share > Publish to web > Settings tab > CSV.
+  SETTINGS_CSV_URL: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRn__x3k4QkwjhiexqZEdCYxt4FqKvb555qTRL4pdzjismSEyn32ZYlDCvboNkfsLhtTGwnhLNERWqw/pub?gid=1197321735&single=true&output=csv',
+
+  // ── JW Weekly Verification (fallback if SETTINGS_CSV_URL is unset/unreachable) ─
+  JW_QUESTION: 'What is the first midweek song for the week of ____?',
   JW_ANSWER:   '18',
 };

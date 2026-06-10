@@ -1,0 +1,204 @@
+<!DOCTYPE html><html><head><meta charset='utf-8'><style>
+@page { margin: 1.4cm 1.7cm; }
+body { font-family: -apple-system,'Helvetica Neue',Arial,sans-serif; color:#2C1A0E; line-height:1.55; font-size:11pt; }
+h1 { font-family:Georgia,serif; color:#3A2010; font-size:23pt; border-bottom:3px solid #C4782A; padding-bottom:6px; margin:0 0 14px; }
+h2 { font-family:Georgia,serif; color:#6B4226; font-size:15pt; margin:22px 0 8px; border-left:4px solid #C4782A; padding-left:10px; }
+h3 { color:#6B4226; font-size:12pt; margin:14px 0 6px; }
+a { color:#B85A18; word-break:break-all; } strong { color:#3A2010; }
+table { border-collapse:collapse; width:100%; margin:10px 0; font-size:10pt; }
+th { background:#F2E5CC; color:#3A2010; text-align:left; padding:6px 9px; border:1px solid #DCCBA8; }
+td { padding:6px 9px; border:1px solid #DCCBA8; vertical-align:top; }
+blockquote { background:#FAF6EF; border-left:4px solid #C4782A; margin:10px 0; padding:8px 14px; color:#5A3E2B; }
+code { background:#F2E5CC; padding:1px 5px; border-radius:3px; font-family:Menlo,monospace; font-size:9.5pt; color:#7B3A10; }
+hr { border:none; border-top:1px solid #DCCBA8; margin:18px 0; }
+ul,ol { padding-left:22px; } li { margin:3px 0; }
+</style></head><body><h1>D' Econo-Space — Assistant Handbook</h1>
+<p><em>Your simple guide to handling bookings. You only need </em><em>two things</em><em>: the Bookings Sheet and the DES email. No technical tools, no complicated logins.</em></p>
+<hr />
+<h2>👋 Welcome &amp; Your Role</h2>
+<p>Welcome to the D' Econo-Space team! This handbook is your full training — read it once, keep it open while you work, and you'll be handling bookings confidently in no time.</p>
+<p><strong>Your role, in one sentence:</strong> turn every new booking into a <em>confirmed, paid, happy guest</em> — all from <strong>one Google Sheet</strong> and <strong>one email inbox</strong>.</p>
+<p>You don't need any technical skills or special software. If you can use Google Sheets and Gmail, you can do this job. Take it one booking at a time, follow the steps below, and when something feels unclear — it's always okay to pause and ask.</p>
+<hr />
+<h2>1. What you'll use</h2>
+<table>
+<thead>
+<tr>
+<th>Tool</th>
+<th>Where to go</th>
+<th>What it's for</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Bookings Sheet</strong></td>
+<td><code>[PASTE YOUR DES - BOOKINGS SHEET LINK HERE]</code></td>
+<td>Your command center — every booking appears here by itself</td>
+</tr>
+<tr>
+<td><strong>DES Email (Gmail)</strong></td>
+<td><a href="https://mail.google.com">mail.google.com</a> — sign in as <strong>d.econospace.cebu@gmail.com</strong></td>
+<td>Where you send guests their confirmations and thank-yous</td>
+</tr>
+<tr>
+<td><strong>Facebook Page inbox</strong></td>
+<td>The <strong>D' Econo-Space near CBEC</strong> Page → Messages</td>
+<td>Where guests message you and send <strong>payment screenshots</strong></td>
+</tr>
+<tr>
+<td><strong>Booking website</strong> <em>(reference only)</em></td>
+<td><a href="https://des-booking-app.vercel.app">des-booking-app.vercel.app</a></td>
+<td>Where guests book. <strong>You never edit this</strong> — just good to know it exists.</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>You do <strong>not</strong> use GoHighLevel or any other system. Just the Sheet and the Email.</p>
+</blockquote>
+<hr />
+<h2>2. The big picture (how a booking flows)</h2>
+<p>A guest books on the website → the booking <strong>appears automatically</strong> in your Bookings Sheet as a new row, with <strong>Status = New</strong>.</p>
+<p>Your whole job is to move each booking along by updating the <strong>Status</strong> column:</p>
+<blockquote>
+<p><strong>New → Confirmed → Paid → Checked-in → Checked-out</strong>
+<em>(or </em><em>Declined</em><em>, if you can't accommodate them)</em></p>
+</blockquote>
+<p>That's it. Everything else is just doing each step well.</p>
+<hr />
+<h2>3. Your step-by-step for every booking</h2>
+<h3>① A NEW booking appears (Status = New)</h3>
+<ol>
+<li>Open the <strong>Bookings Sheet</strong>. New rows have <strong>Status = New</strong>.</li>
+<li><strong>Check the dates are free.</strong> Look down the sheet for the <strong>same Room</strong> with <strong>overlapping check-in/check-out dates</strong>.
+   - <strong>No clash</strong> → you can confirm.
+   - <strong>Clash</strong> with another <em>Confirmed/Paid</em> booking → you'll decline (see ④).</li>
+<li><strong>To confirm:</strong>
+   - Click the <strong>Status</strong> cell → choose <strong>Confirmed</strong> from the dropdown.
+   - Send the guest the <strong>Confirmation email</strong> (template in §4) from the DES email.</li>
+</ol>
+<h3>② The guest pays</h3>
+<p>Guests pay by <strong>GCash / Maya / Bank QR</strong> and send a <strong>screenshot through Facebook Messenger</strong>.</p>
+<ol>
+<li>Open the screenshot — does the <strong>amount</strong> and <strong>name</strong> match the booking?</li>
+<li>In the booking's row, fill in:
+   - <strong>Amount Paid</strong> · <strong>Payment Method</strong> (GCash / Maya / Bank-InstaPay) · <strong>Payment Ref No.</strong> (the reference number on their screenshot)</li>
+<li>Click the <strong>Status</strong> cell → choose <strong>Paid</strong>.</li>
+<li>Send the <strong>Payment Received</strong> thank-you email (template in §4).</li>
+</ol>
+<h3>③ Check-in &amp; Check-out</h3>
+<ul>
+<li><strong>On arrival day</strong> → set <strong>Status</strong> to <strong>Checked-in</strong>.</li>
+<li><strong>After they leave</strong> → set <strong>Status</strong> to <strong>Checked-out</strong>.</li>
+</ul>
+<h3>④ If you can't accommodate them</h3>
+<ul>
+<li>Set <strong>Status</strong> to <strong>Declined</strong>.</li>
+<li>Send the <strong>Decline email</strong> (template in §4).</li>
+</ul>
+<hr />
+<h2>4. Email templates</h2>
+<p><em>Open the DES Gmail → Compose → paste a template → fill in the </em><em>[brackets]</em><em> → send to the guest's email (it's in column G of the sheet).</em></p>
+<h3>✉️ Confirmation Email</h3>
+<blockquote>
+<p><strong>Subject:</strong> Your Reservation is Confirmed — D' Econo-Space</p>
+<p>Hi <strong>[First Name]</strong>,</p>
+<p>Good news — your reservation at D' Econo-Space is confirmed!</p>
+<p><strong>Booking Details</strong>
+- Room: <strong>[Room]</strong>
+- Check-in: <strong>[Date]</strong> at 2:00 PM
+- Check-out: <strong>[Date]</strong> at 12:00 NN
+- Guests: <strong>[Number]</strong>
+- Total: ₱<strong>[Amount]</strong></p>
+<p><strong>Payment:</strong> Full payment is required before or upon arrival. You may pay via GCash, Maya, or bank transfer — just send us a screenshot of your payment here or on Messenger.</p>
+<p><strong>Address:</strong> Basak Agus Rd, Gisi, Lapu-Lapu, 6015 Cebu (near CBEC / Junrey's Store)</p>
+<p>Questions? Message us anytime, or call 0917.678.4871 / 0926.149.9002.</p>
+<p>See you soon!
+— D' Econo-Space Team</p>
+</blockquote>
+<h3>✉️ Payment Received Email</h3>
+<blockquote>
+<p><strong>Subject:</strong> Payment Received — Thank You! — D' Econo-Space</p>
+<p>Hi <strong>[First Name]</strong>,</p>
+<p>We've received your payment of ₱<strong>[Amount]</strong> — thank you! Your stay is all set.</p>
+<ul>
+<li>Room: <strong>[Room]</strong> · Check-in <strong>[Date]</strong> 2:00 PM · Check-out <strong>[Date]</strong> 12:00 NN</li>
+</ul>
+<p>We look forward to welcoming you. Safe travels!
+— D' Econo-Space Team</p>
+</blockquote>
+<h3>✉️ Decline Email</h3>
+<blockquote>
+<p><strong>Subject:</strong> Regarding Your Booking Request — D' Econo-Space</p>
+<p>Hi <strong>[First Name]</strong>,</p>
+<p>Thank you for your interest in D' Econo-Space. Unfortunately, we're unable to accommodate your request for <strong>[dates]</strong>, as the room is already reserved for those dates.</p>
+<p>We'd love to host you another time — feel free to check other dates with us.
+— D' Econo-Space Team</p>
+</blockquote>
+<hr />
+<h2>5. Answering guests on Messenger</h2>
+<p>Guests reach you through the <strong>D' Econo-Space near CBEC</strong> Facebook Page inbox. Common messages:</p>
+<ul>
+<li><em>"Is [date] available?"</em> → check the Sheet for that room + dates, then reply.</li>
+<li><em>"I already paid"</em> → ask for the screenshot, then follow step ② above.</li>
+<li><em>"Can I change my room / dates?"</em> → check availability in the Sheet, update the row, reply.</li>
+</ul>
+<p>Keep replies warm and simple. When unsure, it's always okay to say <em>"Let me check and get back to you."</em></p>
+<hr />
+<h2>6. Weekly task — update the JW question</h2>
+<p>Every <strong>Monday</strong>, the JW rate question needs this week's song. You do it in <strong>one place — the <code>Settings</code> tab of your Bookings Sheet</strong> (no code, no website):</p>
+<ol>
+<li>Find this week's <strong>first midweek song number</strong> (from wol.jw.org → <em>This Week at a Glance</em> → midweek meeting — or as the owner tells you).</li>
+<li>Open <strong>DES - Bookings</strong> → click the <strong><code>Settings</code></strong> tab.</li>
+<li>Update the two cells:
+   - <strong>JW Question</strong> → fill in this week's dates, e.g. <em>"What is the first midweek song for the week of June 9–15?"</em>
+   - <strong>JW Answer</strong> → the song number, e.g. <em>18</em></li>
+<li>Done — it auto-saves. The booking site picks it up within a few minutes.</li>
+</ol>
+<blockquote>
+<p>⚠️ If you skip this, real JWs who enter this week's correct song get wrongly rejected. Do it <strong>every Monday</strong>.</p>
+</blockquote>
+<hr />
+<h2>7. Golden rules</h2>
+<ul>
+<li>✅ You only ever touch the <strong>Sheet</strong> and the <strong>DES Email</strong> (and Messenger).</li>
+<li>❌ Never edit the booking <strong>website</strong>.</li>
+<li>❌ You don't need GoHighLevel or any other tool — ignore them.</li>
+<li>🆘 <strong>When unsure</strong> — a double-booking, a payment that doesn't match, a special request you can't decide — <strong>don't guess. Ask [OWNER NAME] at [OWNER CONTACT].</strong></li>
+</ul>
+<hr />
+<h2>8. Quick reference</h2>
+<table>
+<thead>
+<tr>
+<th>Room</th>
+<th>Sleeps</th>
+<th>A/C</th>
+<th>Starting Rate</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Room D1</td>
+<td>up to 4</td>
+<td>Common AC</td>
+<td>₱750/night</td>
+</tr>
+<tr>
+<td>Room D2</td>
+<td>up to 4</td>
+<td>Fan-cooled</td>
+<td>₱550/night</td>
+</tr>
+<tr>
+<td>D' Whole Space</td>
+<td>up to 8</td>
+<td>Common AC</td>
+<td>₱1,700/night</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Check-in:</strong> 2:00 PM  ·  <strong>Check-out:</strong> 12:00 NN
+<strong>Address:</strong> Basak Agus Rd, Gisi, Lapu-Lapu, 6015 Cebu (near CBEC / Junrey's Store)
+<strong>Property contacts:</strong> 0917.678.4871 · 0926.149.9002 · d.econospace.cebu@gmail.com</p>
+<hr />
+<p><em>Note: For now you send the emails yourself using the templates above. Some of these may become automatic later — you'll be told if anything changes.</em></p></body></html>
