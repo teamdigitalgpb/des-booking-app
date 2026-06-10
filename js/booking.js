@@ -7,14 +7,14 @@ const RATES = {
     a2a19:   { 1: 650,  2: 650,  3: 750,  4: 800  },
   },
   d2: {
-    regular: { 1: 550,  2: 600,  3: 750,  4: 750  },
+    regular: { 1: 550,  2: 550,  3: 750,  4: 800  },
     jw:      { 1: 500,  2: 500,  3: 700,  4: 700  },
-    a2a19:   { 1: 450,  2: 500,  3: 700,  4: 700  },
+    a2a19:   { 1: 450,  2: 500,  3: 700,  4: 750  },
   },
   whole: {
     regular: { 1: 1700, 2: 1700, 3: 1700, 4: 1700, 5: 1700, 6: 1800, 7: 1800, 8: 1900 },
-    jw:      { 1: 1500, 2: 1500, 3: 1500, 4: 1500, 5: 1500, 6: 1700, 7: 1700, 8: 1800 },
-    a2a19:   { 1: 1450, 2: 1450, 3: 1450, 4: 1450, 5: 1450, 6: 1650, 7: 1650, 8: 1700 },
+    jw:      { 1: 1450, 2: 1450, 3: 1450, 4: 1450, 5: 1450, 6: 1650, 7: 1650, 8: 1800 },
+    a2a19:   { 1: 1400, 2: 1400, 3: 1400, 4: 1400, 5: 1400, 6: 1550, 7: 1550, 8: 1650 },
   },
 };
 
@@ -121,7 +121,7 @@ function updatePriceDisplay(room, nights, pax, rateType) {
   if (!total) { display.style.display = 'none'; return; }
 
   const roomLabels = { d1: 'Room D1', d2: 'Room D2', whole: 'D\' Whole Space' };
-  const discountNote = rateType === 'a2a19' ? ' · A2/A19 rate' : rateType === 'jw' ? ' · JW rate' : '';
+  const discountNote = rateType === 'a2a19' ? ' · A2/A19 volunteer rate' : rateType === 'jw' ? ' · JW volunteer rate' : '';
 
   const breakdown = `${roomLabels[room] || room} · ${nights} night${nights > 1 ? 's' : ''} · ${pax} guest${pax > 1 ? 's' : ''}${discountNote}`;
 
@@ -158,15 +158,21 @@ function updateA2A19Panel() {
   const a2a19  = RATES[room]?.a2a19?.[pax] || 0;
   if (a2a19 < jw) {
     msgEl.innerHTML = `
-      <p class="disc-congrats">✓ A2/A19 rate applied — ₱${a2a19.toLocaleString()}/night</p>
-      <span class="disc-savings">You save ₱${(reg - a2a19).toLocaleString()} per night vs. regular rate</span>
-      <p class="disc-info" style="margin-top:.6rem;">Complete your booking — we'll verify your details and send your confirmation voucher to your email.</p>`;
+      <p class="disc-congrats">✓ Volunteer rate — ₱${a2a19.toLocaleString()}/night</p>
+      <p class="disc-info" style="margin-top:.6rem;">Submit your booking to hold your dates. If you can, a donation helps keep this place running for everyone.</p>`;
   } else {
     msgEl.innerHTML = `
-      <p class="disc-congrats">✓ Maximum discount applied — ₱${a2a19.toLocaleString()}/night</p>
-      <span class="disc-savings">You save ₱${(reg - a2a19).toLocaleString()} per night</span>
-      <p class="disc-info" style="margin-top:.6rem;">Congratulations! For this selection, you already qualify for the maximum discount available — our way of honoring special volunteers like you.</p>`;
+      <p class="disc-congrats">✓ Volunteer rate — ₱${a2a19.toLocaleString()}/night</p>
+      <p class="disc-info" style="margin-top:.6rem;">This is the lowest rate for this room and guest count. Submit your booking to hold your dates.</p>`;
   }
+}
+
+function updatePaymentNote(isVolunteer) {
+  const note = document.getElementById('payment-note');
+  if (!note) return;
+  note.innerHTML = isVolunteer
+    ? 'Donate what you\'re able, or pay on arrival — whichever works for you.<br>Check-in: 2:00 PM &nbsp;|&nbsp; Check-out: 12:00 NN'
+    : 'Full payment is required before or upon arrival.<br>Check-in: 2:00 PM &nbsp;|&nbsp; Check-out: 12:00 NN';
 }
 
 // ── Whole Space recommendation ───────────────────────────────────────────────
@@ -335,6 +341,8 @@ document.getElementById('disc-jw').addEventListener('change', (e) => {
     jwPanel.classList.add('hidden');
     optJW.classList.remove('selected');
     activeVoucherType = 'regular';
+    document.getElementById('jw-donate-wrap').classList.add('hidden');
+    updatePaymentNote(false);
   }
   const room = document.getElementById('room').value;
   populatePaxSelect(room, activeVoucherType);
@@ -355,10 +363,17 @@ document.getElementById('disc-a2a19').addEventListener('change', (e) => {
     optA2.classList.add('selected');
     activeVoucherType = 'a2a19';
     updateA2A19Panel();
+    const donateWrap = document.getElementById('a2a19-donate-wrap');
+    const donateBtn  = document.getElementById('a2a19-donate-btn');
+    donateBtn.href = 'donate.html?room=' + document.getElementById('room').value + '&rate=a2a19';
+    donateWrap.classList.remove('hidden');
+    updatePaymentNote(true);
   } else {
     a2Panel.classList.add('hidden');
     optA2.classList.remove('selected');
     activeVoucherType = 'regular';
+    document.getElementById('a2a19-donate-wrap').classList.add('hidden');
+    updatePaymentNote(false);
   }
   const room = document.getElementById('room').value;
   populatePaxSelect(room, activeVoucherType);
@@ -373,11 +388,18 @@ document.getElementById('jw-ans').addEventListener('input', async (e) => {
   if (result.valid && result.type === 'jw') {
     activeVoucherType = 'jw';
     statusEl.className = 'voucher-status valid';
-    statusEl.textContent = '✓ Correct — JW rates applied';
+    statusEl.textContent = '✓ Correct — JW volunteer rate applied';
+    const donateWrap = document.getElementById('jw-donate-wrap');
+    const donateBtn  = document.getElementById('jw-donate-btn');
+    donateBtn.href = 'donate.html?room=' + document.getElementById('room').value + '&rate=jw';
+    donateWrap.classList.remove('hidden');
+    updatePaymentNote(true);
   } else {
     activeVoucherType = 'regular';
     statusEl.className = 'voucher-status invalid';
     statusEl.textContent = '✗ Incorrect answer — try again';
+    document.getElementById('jw-donate-wrap').classList.add('hidden');
+    updatePaymentNote(false);
   }
   const room = document.getElementById('room').value;
   populatePaxSelect(room, activeVoucherType);

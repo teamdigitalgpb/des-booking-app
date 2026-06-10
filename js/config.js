@@ -10,7 +10,6 @@ const CONFIG = {
 
   // ── GHL IDs ───────────────────────────────────────────────────────────────
   LOCATION_ID:      '2P0dvOfUyN4ijmvG9KpL',
-  CALENDAR_ID:      'PLACEHOLDER_paste_calendar_id',
   PIPELINE_ID:      'PLACEHOLDER_paste_pipeline_id',
 
   STAGE: {
@@ -37,8 +36,27 @@ const CONFIG = {
   // Basic deterrent — change before going live.
   ADMIN_PASSWORD:   'PLACEHOLDER_set_your_admin_password',
 
-  // ── JW Weekly Verification ────────────────────────────────────────────────
-  // Update every Monday from: wol.jw.org > This Week at a Glance > Bible reading
-  JW_QUESTION: 'What is the last song number for this week\'s midweek meeting?',
+  // ── Donation ──────────────────────────────────────────────────────────────
+  // Webhook to capture donor info (name, email, purpose) into GHL.
+  WEBHOOK_DONATION: 'PLACEHOLDER_paste_donation_webhook_url',
+
+  // QR code images — export non-expiring QR from each app, save to assets/
+  QR_GCASH:    'assets/qr-gcash.png',
+  QR_MAYA:     'assets/qr-maya.png',
+  QR_BANK:     'assets/qr-bank.png',
+
+  // External donation links (donor enters own amount on their platform)
+  LINK_PAYPAL: 'PLACEHOLDER_paste_paypal_link',   // e.g. https://paypal.me/yourname
+  LINK_WISE:   'PLACEHOLDER_paste_wise_link',     // e.g. https://wise.com/pay/me/...
+
+  // ── Live Settings (Google Sheet "Settings" tab) ───────────────────────────
+  // Published CSV of the Settings tab holding the JW Question + Answer. The site
+  // fetches this on load and overrides the JW fallbacks below, so the answer can
+  // be updated weekly from the Sheet with no code change. Leave as PLACEHOLDER to
+  // use the fallbacks only. Setup: File > Share > Publish to web > Settings tab > CSV.
+  SETTINGS_CSV_URL: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRn__x3k4QkwjhiexqZEdCYxt4FqKvb555qTRL4pdzjismSEyn32ZYlDCvboNkfsLhtTGwnhLNERWqw/pub?gid=1197321735&single=true&output=csv',
+
+  // ── JW Weekly Verification (fallback if SETTINGS_CSV_URL is unset/unreachable) ─
+  JW_QUESTION: 'What is the first midweek song for the week of ____?',
   JW_ANSWER:   '18',
 };
