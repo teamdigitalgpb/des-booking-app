@@ -865,6 +865,7 @@ footer a { color: var(--gold-light); }
 
 /* ── Donate page ── */
 .donate-card { max-width: 520px; }
+#don-purpose::placeholder { font-style: italic; color: var(--text-muted); }
 .payment-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
