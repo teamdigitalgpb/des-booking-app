@@ -199,6 +199,14 @@ function toggleShareWaitlist() {
   if (!eligible) document.getElementById('share-optin').checked = false;
 }
 
+function toggleExclusiveNote() {
+  const el = document.getElementById('exclusive-note');
+  if (!el) return;
+  const room   = document.getElementById('room').value;
+  const guests = parseInt(document.getElementById('guests').value) || 0;
+  el.classList.toggle('hidden', !(room === 'whole' && guests >= 5));
+}
+
 // ── Recalc on any field change ───────────────────────────────────────────────
 
 function recalc() {
@@ -317,6 +325,7 @@ document.getElementById('room').addEventListener('change', (e) => {
   statusEl.textContent = '';
   toggleWholeRec(e.target.value);
   toggleShareWaitlist();
+  toggleExclusiveNote();
   recalc();
 });
 
@@ -334,7 +343,7 @@ document.getElementById('checkin').addEventListener('change', () => {
   recalc();
 });
 document.getElementById('checkout').addEventListener('change', recalc);
-document.getElementById('guests').addEventListener('change', () => { toggleShareWaitlist(); recalc(); });
+document.getElementById('guests').addEventListener('change', () => { toggleShareWaitlist(); toggleExclusiveNote(); recalc(); });
 // ── Discount checkbox listeners ───────────────────────────────────────────────
 
 document.getElementById('jw-q').textContent =
@@ -443,6 +452,7 @@ document.getElementById('jw-ans').addEventListener('input', async (e) => {
       }
       toggleWholeRec(room);
       toggleShareWaitlist();
+      toggleExclusiveNote();
       recalc();
     }
   }
