@@ -186,15 +186,15 @@ function toggleWholeRec(room) {
 }
 
 // ── Solo Share Waitlist ───────────────────────────────────────────────────────
-// Show the opt-in only when a guest books a single private room (D1/D2) alone,
-// since that's the only case where matching a second solo guest helps.
+// Show the opt-in for D1/D2 when 1–3 guests are booking, so they can opt in
+// to share the room with another group and split the cost.
 
 function toggleShareWaitlist() {
   const wrap = document.getElementById('share-waitlist');
   if (!wrap) return;
   const room   = document.getElementById('room').value;
   const guests = parseInt(document.getElementById('guests').value) || 0;
-  const eligible = (room === 'd1' || room === 'd2') && guests === 1;
+  const eligible = (room === 'd1' || room === 'd2') && guests >= 1 && guests <= 3;
   wrap.classList.toggle('hidden', !eligible);
   if (!eligible) document.getElementById('share-optin').checked = false;
 }
