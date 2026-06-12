@@ -57,6 +57,6 @@ const CONFIG = {
   SETTINGS_CSV_URL: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRn__x3k4QkwjhiexqZEdCYxt4FqKvb555qTRL4pdzjismSEyn32ZYlDCvboNkfsLhtTGwnhLNERWqw/pub?gid=1197321735&single=true&output=csv',
 
   // ── JW Weekly Verification (fallback if SETTINGS_CSV_URL is unset/unreachable) ─
-  JW_QUESTION: 'What is the first midweek song for the week of ____?',
-  JW_ANSWER:   '18',
+  JW_QUESTION: 'What is the first midweek song for the week of June 8–14?',
+  JW_ANSWER:   '56',
 };
