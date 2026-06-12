@@ -13,7 +13,6 @@ Budget accommodation booking system for D' Econo-Space, Cebu.
 | `index.html` | Landing page — rooms, rates, Book Now CTA |
 | `booking.html` | Booking form with pricing calculator and GHL sync |
 | `voucher.html` | 4-step voucher request form (JW / A2 / A19) |
-| `admin.html` | Password-protected admin panel |
 
 ## Setup
 

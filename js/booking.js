@@ -2,19 +2,19 @@
 
 const RATES = {
   d1: {
-    regular: { 1: 750,  2: 750,  3: 850,  4: 950  },
-    jw:      { 1: 700,  2: 700,  3: 800,  4: 850  },
-    a2a19:   { 1: 650,  2: 650,  3: 750,  4: 800  },
+    regular: { 1: 650,  2: 800,  3: 850,  4: 950  },
+    jw:      { 1: 500,  2: 600,  3: 800,  4: 900  },
+    a2a19:   { 1: 400,  2: 550,  3: 750,  4: 850  },
   },
   d2: {
-    regular: { 1: 550,  2: 550,  3: 750,  4: 800  },
-    jw:      { 1: 500,  2: 500,  3: 700,  4: 700  },
-    a2a19:   { 1: 450,  2: 500,  3: 700,  4: 750  },
+    regular: { 1: 550,  2: 600,  3: 750,  4: 800  },
+    jw:      { 1: 450,  2: 550,  3: 650,  4: 750  },
+    a2a19:   { 1: 350,  2: 500,  3: 600,  4: 700  },
   },
   whole: {
     regular: { 1: 1700, 2: 1700, 3: 1700, 4: 1700, 5: 1700, 6: 1800, 7: 1800, 8: 1900 },
     jw:      { 1: 1450, 2: 1450, 3: 1450, 4: 1450, 5: 1450, 6: 1650, 7: 1650, 8: 1800 },
-    a2a19:   { 1: 1400, 2: 1400, 3: 1400, 4: 1400, 5: 1400, 6: 1550, 7: 1550, 8: 1650 },
+    a2a19:   { 1: 1350, 2: 1350, 3: 1350, 4: 1350, 5: 1350, 6: 1550, 7: 1550, 8: 1650 },
   },
 };
 
@@ -185,6 +185,20 @@ function toggleWholeRec(room) {
   rec.classList.toggle('hidden', !(room === 'd1' || room === 'd2'));
 }
 
+// ── Solo Share Waitlist ───────────────────────────────────────────────────────
+// Show the opt-in only when a guest books a single private room (D1/D2) alone,
+// since that's the only case where matching a second solo guest helps.
+
+function toggleShareWaitlist() {
+  const wrap = document.getElementById('share-waitlist');
+  if (!wrap) return;
+  const room   = document.getElementById('room').value;
+  const guests = parseInt(document.getElementById('guests').value) || 0;
+  const eligible = (room === 'd1' || room === 'd2') && guests === 1;
+  wrap.classList.toggle('hidden', !eligible);
+  if (!eligible) document.getElementById('share-optin').checked = false;
+}
+
 // ── Recalc on any field change ───────────────────────────────────────────────
 
 function recalc() {
@@ -257,13 +271,18 @@ document.getElementById('booking-form').addEventListener('submit', async (e) => 
     showAlert('Note: these dates may overlap with a recent booking from this device. Your request will still be submitted — our team will confirm availability.', 'info');
   }
 
+  const shareWrap     = document.getElementById('share-waitlist');
+  const shareWaitlist = !!(shareWrap && !shareWrap.classList.contains('hidden') && document.getElementById('share-optin').checked);
+
   const totalPrice = calcTotal(room, nights, guests, activeVoucherType);
   const tags = ['DES', 'DES-booked', `DES-${room}`];
+  if (shareWaitlist) tags.push('DES-share-waitlist');
 
   const payload = {
     firstName, lastName, name, mobile, email, room, checkin, checkout,
     guests, discountType: activeVoucherType !== 'regular' ? activeVoucherType : '', referral, specialRequests: requests,
     totalPrice, nights, rateType: activeVoucherType,
+    shareWaitlist: shareWaitlist ? 'yes' : '',
     tags: tags.join(','),
   };
 
@@ -297,6 +316,7 @@ document.getElementById('room').addEventListener('change', (e) => {
   statusEl.className = 'voucher-status';
   statusEl.textContent = '';
   toggleWholeRec(e.target.value);
+  toggleShareWaitlist();
   recalc();
 });
 
@@ -314,7 +334,7 @@ document.getElementById('checkin').addEventListener('change', () => {
   recalc();
 });
 document.getElementById('checkout').addEventListener('change', recalc);
-document.getElementById('guests').addEventListener('change', recalc);
+document.getElementById('guests').addEventListener('change', () => { toggleShareWaitlist(); recalc(); });
 // ── Discount checkbox listeners ───────────────────────────────────────────────
 
 document.getElementById('jw-q').textContent =
@@ -422,6 +442,7 @@ document.getElementById('jw-ans').addEventListener('input', async (e) => {
         if ([...gSel.options].some(o => o.value === guests)) gSel.value = guests;
       }
       toggleWholeRec(room);
+      toggleShareWaitlist();
       recalc();
     }
   }
