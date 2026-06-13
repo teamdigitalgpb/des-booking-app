@@ -1,5 +1,20 @@
 // Voucher request form — step navigation, verification, webhook submit
 
+(function checkAlreadyVerified() {
+  try {
+    const rec = JSON.parse(localStorage.getItem('des_verified') || 'null');
+    if (!rec || !rec.type) return;
+    if (rec.type === 'jw' && Date.now() - (rec.verifiedAt || 0) > 7 * 24 * 60 * 60 * 1000) return;
+    const label = rec.type === 'jw' ? 'JW volunteer' : 'A2/A19 volunteer';
+    const card  = document.querySelector('.form-card');
+    if (!card) return;
+    const banner = document.createElement('div');
+    banner.style.cssText = 'background:#e8f5e9;border:1.5px solid #66bb6a;border-radius:8px;padding:1rem 1.25rem;margin-bottom:1.5rem;text-align:center;';
+    banner.innerHTML = `<strong style="color:#1b5e20;">✓ You're already verified as a ${label}!</strong><br><a href="index.html#rooms" style="color:#1a7a4a;font-weight:600;text-decoration:none;display:inline-block;margin-top:.5rem;">Browse rooms and book →</a>`;
+    card.insertBefore(banner, card.firstChild);
+  } catch (e) {}
+})();
+
 // ── Voucher validation (used by booking.js) ──────────────────────────────────
 
 function genVoucherCode(type) {
@@ -201,6 +216,8 @@ async function submitVoucher() {
     await postToWebhook(CONFIG.WEBHOOK_VOUCHER, payload);
     saveVoucherRequest({ ...payload, code: null });
     const discountType = finalType === 'jw' ? 'jw' : 'a2a19';
+    const storedEmail = (document.getElementById('a2-email')?.value || '').trim().toLowerCase();
+    localStorage.setItem('des_verified', JSON.stringify({ type: discountType, email: storedEmail, verifiedAt: Date.now() }));
     sessionStorage.setItem('des_voucher_approved', JSON.stringify({ type: discountType }));
     window.location.href = 'index.html#rooms';
   } catch (err) {

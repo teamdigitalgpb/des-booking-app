@@ -135,6 +135,48 @@ function updatePriceDisplay(room, nights, pax, rateType) {
 let activeVoucherType = 'regular';
 let preVerified       = false;
 
+function saveVerification(type, email) {
+  localStorage.setItem('des_verified', JSON.stringify({
+    type, email: (email || '').toLowerCase(), verifiedAt: Date.now(),
+  }));
+}
+
+function checkStoredVerification(email) {
+  try {
+    const rec = JSON.parse(localStorage.getItem('des_verified') || 'null');
+    if (!rec || !rec.type) return null;
+    if (rec.type === 'jw' && Date.now() - (rec.verifiedAt || 0) > 7 * 24 * 60 * 60 * 1000) return null;
+    if (email && rec.email && rec.email !== email.toLowerCase()) return null;
+    return rec;
+  } catch (e) { return null; }
+}
+
+function applyVerified(type) {
+  preVerified = true;
+  activeVoucherType = type;
+  const discGroup = document.querySelector('.disc-checks')?.closest('.form-group');
+  if (discGroup) discGroup.style.display = 'none';
+  const room = document.getElementById('room').value;
+  if (type === 'jw') {
+    document.getElementById('jw-panel').classList.remove('hidden');
+    document.getElementById('jw-q').style.display = 'none';
+    document.getElementById('jw-ans').style.display = 'none';
+    const statusEl = document.getElementById('jw-ans-status');
+    statusEl.className   = 'voucher-status valid';
+    statusEl.textContent = '✓ Verified — JW volunteer rate applied';
+    document.getElementById('jw-donate-btn').href = `payment.html?donate=1&verified=1&room=${room}&rate=jw`;
+    document.getElementById('jw-donate-wrap').classList.remove('hidden');
+  } else {
+    document.getElementById('a2a19-panel').classList.remove('hidden');
+    updateA2A19Panel();
+    document.getElementById('a2a19-donate-btn').href = `payment.html?donate=1&verified=1&room=${room}&rate=a2a19`;
+    document.getElementById('a2a19-donate-wrap').classList.remove('hidden');
+  }
+  updatePaymentNote(true);
+  populatePaxSelect(room, type);
+  recalc();
+}
+
 function getWeekRange() {
   const today = new Date();
   const day   = today.getDay();
@@ -357,6 +399,13 @@ document.getElementById('checkin').addEventListener('change', () => {
 });
 document.getElementById('checkout').addEventListener('change', recalc);
 document.getElementById('guests').addEventListener('change', () => { toggleShareWaitlist(); toggleExclusiveNote(); recalc(); });
+document.getElementById('email').addEventListener('blur', (e) => {
+  if (preVerified) return;
+  const email = e.target.value.trim();
+  if (!email) return;
+  const rec = checkStoredVerification(email);
+  if (rec) { saveVerification(rec.type, email); applyVerified(rec.type); }
+});
 // ── Discount checkbox listeners ───────────────────────────────────────────────
 
 document.getElementById('jw-q').textContent =
@@ -429,6 +478,7 @@ document.getElementById('jw-ans').addEventListener('input', async (e) => {
   const result = await validateVoucher(code, '');
   if (result.valid && result.type === 'jw') {
     activeVoucherType = 'jw';
+    saveVerification('jw', document.getElementById('email').value.trim());
     statusEl.className = 'voucher-status valid';
     statusEl.textContent = '✓ Correct — JW volunteer rate applied';
     const donateWrap = document.getElementById('jw-donate-wrap');
@@ -478,38 +528,14 @@ document.getElementById('jw-ans').addEventListener('input', async (e) => {
     document.getElementById('checkout').min = e.target.value;
   });
 
-  const voucherToken = sessionStorage.getItem('des_voucher_approved');
-  if (voucherToken) {
+  const ssToken = sessionStorage.getItem('des_voucher_approved');
+  if (ssToken) {
     sessionStorage.removeItem('des_voucher_approved');
-    preVerified = true;
-    const token = JSON.parse(voucherToken);
-    const discGroup = document.querySelector('.disc-checks')?.closest('.form-group');
-    if (discGroup) discGroup.style.display = 'none';
-
-    if (token.type === 'jw') {
-      activeVoucherType = 'jw';
-      document.getElementById('jw-panel').classList.remove('hidden');
-      document.getElementById('jw-q').style.display   = 'none';
-      document.getElementById('jw-ans').style.display = 'none';
-      const statusEl = document.getElementById('jw-ans-status');
-      statusEl.className   = 'voucher-status valid';
-      statusEl.textContent = '✓ Verified — JW volunteer rate applied';
-      const donateBtn = document.getElementById('jw-donate-btn');
-      donateBtn.href = 'payment.html?donate=1&verified=1&room=' + document.getElementById('room').value + '&rate=jw';
-      document.getElementById('jw-donate-wrap').classList.remove('hidden');
-      updatePaymentNote(true);
-      populatePaxSelect(document.getElementById('room').value, 'jw');
-      recalc();
-    } else {
-      activeVoucherType = 'a2a19';
-      document.getElementById('a2a19-panel').classList.remove('hidden');
-      updateA2A19Panel();
-      const donateBtn = document.getElementById('a2a19-donate-btn');
-      donateBtn.href = 'payment.html?donate=1&verified=1&room=' + document.getElementById('room').value + '&rate=a2a19';
-      document.getElementById('a2a19-donate-wrap').classList.remove('hidden');
-      updatePaymentNote(true);
-      populatePaxSelect(document.getElementById('room').value, 'a2a19');
-      recalc();
-    }
+    const token = JSON.parse(ssToken);
+    saveVerification(token.type, '');
+    applyVerified(token.type);
+  } else {
+    const lsRec = checkStoredVerification('');
+    if (lsRec) applyVerified(lsRec.type);
   }
 })();
