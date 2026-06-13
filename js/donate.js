@@ -8,7 +8,7 @@ const METHODS = {
   gcash:  { label: 'GCash',  app: 'GCash',  type: 'qr',   qr: () => CONFIG.QR_GCASH  },
   maya:   { label: 'Maya',   app: 'Maya',   type: 'qr',   qr: () => CONFIG.QR_MAYA   },
   bank:   { label: 'Bank · InstaPay', app: 'your banking', type: 'qr', qr: () => CONFIG.QR_BANK },
-  paypal: { label: 'PayPal', app: 'PayPal', type: 'link', link: () => CONFIG.LINK_PAYPAL },
+  paypal: { label: 'PayPal', app: 'PayPal', type: 'qr',   qr: () => CONFIG.QR_PAYPAL   },
   wise:   { label: 'Wise',   app: 'Wise',   type: 'link', link: () => CONFIG.LINK_WISE   },
 };
 

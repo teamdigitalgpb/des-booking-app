@@ -45,6 +45,7 @@ const CONFIG = {
   QR_GCASH:    'assets/qr-gcash.png',
   QR_MAYA:     'assets/qr-maya.png',
   QR_BANK:     'assets/qr-gcash.png',
+  QR_PAYPAL:   'assets/qr-paypal.png',
 
   // External donation links (donor enters own amount on their platform)
   LINK_PAYPAL: 'https://www.paypal.com/donate?business=glengsky%40gmail.com&currency_code=PHP',
