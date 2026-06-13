@@ -138,6 +138,6 @@
 
   // ── Done — proceed to confirmation ────────────────────────────────────────
   document.getElementById('pay-done-btn').addEventListener('click', () => {
-    window.location.href = 'thankyou-booking.html';
+    window.location.href = 'thankyou-voucher.html';
   });
 })();
