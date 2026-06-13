@@ -63,7 +63,7 @@ const CONFIG = {
   STORIES_CSV_URL: 'PLACEHOLDER_publish_stories_tab_as_csv',
 
   // GHL webhook to receive story submissions for admin review.
-  WEBHOOK_STORY:   'PLACEHOLDER_paste_story_webhook_url',
+  WEBHOOK_STORY: 'https://script.google.com/macros/s/AKfycbxYNHs3HVlkXDdjfg49FCKnCIQ8j-WbWozMp6XecuqIHgPzgxoG3EHHNq8H-qP1piI3/exec',
 
   // ── Live Settings (Google Sheet "Settings" tab) ───────────────────────────
   // Published CSV of the Settings tab holding the JW Question + Answer. The site
