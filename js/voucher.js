@@ -42,6 +42,33 @@ function saveVoucherRequest(data) {
   return data.refCode;
 }
 
+// ── A2/A19 inline step state ─────────────────────────────────────────────────
+
+let _a2JWVerified    = false;
+let _a2BibleVerified = false;
+
+function initA2Steps() {
+  _a2JWVerified    = false;
+  _a2BibleVerified = false;
+  ['a2-bible-step', 'a2-options-step', 'a2-jw-error', 'a2-bible-error',
+   'a2-email-panel', 'a2-code-panel', 'a2-code-fallback'].forEach(id => {
+    document.getElementById(id).classList.add('hidden');
+  });
+  document.getElementById('a2-jw-answer').value   = '';
+  document.getElementById('a2-bible-answer').value = '';
+  const jwBtn = document.getElementById('a2-jw-btn');
+  jwBtn.textContent = 'Verify →';
+  jwBtn.disabled    = false;
+  jwBtn.style.background = '';
+  document.getElementById('a2-jw-answer').disabled    = false;
+  const bibBtn = document.getElementById('a2-bible-btn');
+  bibBtn.textContent = 'Continue →';
+  bibBtn.disabled    = false;
+  bibBtn.style.background = '';
+  document.getElementById('a2-bible-answer').disabled = false;
+  document.querySelectorAll('input[name="a2-method"]').forEach(r => r.checked = false);
+}
+
 // ── Step navigation ──────────────────────────────────────────────────────────
 
 function showAlert(msg, type = 'error') {
@@ -75,12 +102,14 @@ function goStep(n) {
   if (n === 3) {
     const rateType = document.querySelector('input[name="rate-type"]:checked');
     if (!rateType) return showAlert('Please select a discount type.');
-    // Show the correct verification panel
     const isJW = rateType.value === 'jw';
     document.getElementById('jw-verify').classList.toggle('hidden', !isJW);
     document.getElementById('id-verify').classList.toggle('hidden', isJW);
     if (isJW) {
       document.getElementById('jw-question').textContent = CONFIG.JW_QUESTION;
+    } else {
+      document.getElementById('a2-jw-question').textContent = CONFIG.JW_QUESTION;
+      initA2Steps();
     }
   }
 
@@ -104,51 +133,129 @@ async function submitVoucher() {
   const rateType = document.querySelector('input[name="rate-type"]:checked');
   if (!rateType) return showAlert('No rate type selected.');
 
-  const type = rateType.value; // 'jw' | 'a2' | 'a19'
+  const type = rateType.value;
   const isJW = type === 'jw';
+  let finalType     = type;
+  let idNumber      = null;
+  let voucherEmail  = null;
+  let voucherMethod = null;
 
   if (isJW) {
     const answer = document.getElementById('jw-answer').value.trim();
-    if (!answer) return showAlert('Please answer the Bible reading question.');
-    const correct = CONFIG.JW_ANSWER.trim().toLowerCase();
-    if (answer.toLowerCase() !== correct) {
+    if (!answer) return showAlert('Please answer the verification question.');
+    if (answer.toLowerCase() !== CONFIG.JW_ANSWER.trim().toLowerCase()) {
       return showAlert('That answer doesn\'t match. Please check and try again.');
     }
   } else {
-    const memberId = document.getElementById('member-id').value.trim();
-    if (!memberId) return showAlert('Please enter your ID number.');
+    if (!_a2JWVerified)    return showAlert('Please complete the JW verification step first.');
+    if (!_a2BibleVerified) return showAlert('Please complete the Bible book step first.');
+
+    const method = document.querySelector('input[name="a2-method"]:checked');
+    if (!method) return showAlert('Please choose an activation method.');
+    voucherMethod = method.value;
+
+    if (voucherMethod === 'email') {
+      voucherEmail        = document.getElementById('a2-email').value.trim();
+      const code          = document.getElementById('a2-voucher-code').value.trim().toUpperCase();
+      if (!voucherEmail)  return showAlert('Please enter your email address.');
+      if (!code)          return showAlert('Please enter your voucher code.');
+      if (code !== 'ISA6:8') return showAlert('That voucher code is incorrect. Please check and try again.');
+    } else {
+      const code    = document.getElementById('a2-id-code').value.trim();
+      const valid7  = /^\d{7}$/.test(code);
+      if (!code) return showAlert('Please enter your A2/A19 Code.');
+      if (!valid7) {
+        document.getElementById('a2-code-fallback').textContent =
+          'Try again later but keep the JW rate now to reserve and confirm booking, and contact us for the additional voucher code for A2/A19s.';
+        document.getElementById('a2-code-fallback').classList.remove('hidden');
+        finalType = 'jw';
+      } else {
+        idNumber = code;
+      }
+    }
   }
 
-  const name     = document.getElementById('v-name').value.trim();
-  const mobile   = document.getElementById('v-mobile').value.trim();
-  const cong     = document.getElementById('v-congregation').value.trim();
-  const muni     = document.getElementById('v-municipality').value.trim();
-  const prov     = document.getElementById('v-province').value.trim();
-  const idNumber = isJW ? null : document.getElementById('member-id').value.trim();
-  const answer   = isJW ? document.getElementById('jw-answer').value.trim() : null;
+  const name   = document.getElementById('v-name').value.trim();
+  const mobile = document.getElementById('v-mobile').value.trim();
+  const cong   = document.getElementById('v-congregation').value.trim();
+  const muni   = document.getElementById('v-municipality').value.trim();
+  const prov   = document.getElementById('v-province').value.trim();
+  const answer = isJW ? document.getElementById('jw-answer').value.trim() : null;
 
   const refCode = 'REF-' + Date.now().toString(36).toUpperCase();
 
   const payload = {
     name, mobile, congregation: cong, municipality: muni, province: prov,
-    rateType: type, idNumber, answer,
+    rateType: finalType, idNumber, answer,
+    email: voucherEmail,
+    voucherMethod,
     refCode,
-    tags: `DES,DES-voucher-pending,DES-${type.toUpperCase()}`,
+    tags: `DES,DES-voucher-pending,DES-${finalType.toUpperCase()}`,
   };
 
   const btn = document.getElementById('submit-voucher');
-  btn.disabled = true;
+  btn.disabled    = true;
   btn.textContent = 'Sending…';
 
   try {
     await postToWebhook(CONFIG.WEBHOOK_VOUCHER, payload);
     saveVoucherRequest({ ...payload, code: null });
-
-    sessionStorage.setItem('des_voucher_summary', JSON.stringify({ name, mobile, refCode, type }));
+    sessionStorage.setItem('des_voucher_summary', JSON.stringify({ name, mobile, refCode, type: finalType }));
     window.location.href = 'thankyou-voucher.html';
   } catch (err) {
     showAlert('Something went wrong. Please try again or contact us directly.');
-    btn.disabled = false;
+    btn.disabled    = false;
     btn.textContent = 'Submit Request';
   }
 }
+
+// ── A2/A19 inline step event listeners ───────────────────────────────────────
+
+document.getElementById('a2-jw-btn').addEventListener('click', function () {
+  const answer   = document.getElementById('a2-jw-answer').value.trim().toLowerCase();
+  const expected = (CONFIG.JW_ANSWER || '').trim().toLowerCase();
+  const errEl    = document.getElementById('a2-jw-error');
+  if (!answer) {
+    errEl.textContent = 'Please answer the verification question.';
+    return errEl.classList.remove('hidden');
+  }
+  if (answer !== expected) {
+    errEl.textContent = 'That answer doesn\'t match. Please check and try again.';
+    return errEl.classList.remove('hidden');
+  }
+  errEl.classList.add('hidden');
+  _a2JWVerified = true;
+  this.textContent     = '✓ Verified';
+  this.disabled        = true;
+  this.style.background = '#1a7a4a';
+  document.getElementById('a2-jw-answer').disabled = true;
+  document.getElementById('a2-bible-step').classList.remove('hidden');
+  document.getElementById('a2-bible-answer').focus();
+});
+
+document.getElementById('a2-bible-btn').addEventListener('click', function () {
+  const answer = document.getElementById('a2-bible-answer').value.trim().toLowerCase();
+  const errEl  = document.getElementById('a2-bible-error');
+  if (!answer) {
+    errEl.textContent = 'Please enter the Bible book name.';
+    return errEl.classList.remove('hidden');
+  }
+  if (!['isaiah', 'isaias'].includes(answer)) {
+    errEl.textContent = 'That\'s not the right book. Please try again.';
+    return errEl.classList.remove('hidden');
+  }
+  errEl.classList.add('hidden');
+  _a2BibleVerified = true;
+  this.textContent     = '✓ Confirmed';
+  this.disabled        = true;
+  this.style.background = '#1a7a4a';
+  document.getElementById('a2-bible-answer').disabled = true;
+  document.getElementById('a2-options-step').classList.remove('hidden');
+});
+
+document.querySelectorAll('input[name="a2-method"]').forEach(radio => {
+  radio.addEventListener('change', function () {
+    document.getElementById('a2-email-panel').classList.toggle('hidden', this.value !== 'email');
+    document.getElementById('a2-code-panel').classList.toggle('hidden', this.value !== 'code');
+  });
+});

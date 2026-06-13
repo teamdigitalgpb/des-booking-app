@@ -99,8 +99,8 @@
           </div>
         </div>
         <div style="background:var(--cream);border-radius:var(--radius);padding:1rem;font-size:.88rem;color:#6b5a4e;margin-bottom:1rem;">
-          <strong style="color:var(--brown);">JW:</strong> Verified by answering a weekly Bible reading question from wol.jw.org.<br />
-          <strong style="color:var(--brown);">A2 / A19:</strong> Enter your ID number — our host will verify and confirm within 24 hours.
+          <strong style="color:var(--brown);">JW:</strong> Verified by answering a question from weekly meetings.<br />
+          <strong style="color:var(--brown);">A2 / A19:</strong> Enter the Bible book where you read <em>"here I am send me"</em> — unlocks your voucher code.
         </div>
         <div class="btn-row">
           <button class="btn btn-secondary" onclick="goStep(1)">← Back</button>
@@ -124,13 +124,67 @@
           </div>
         </div>
 
-        <!-- A2/A19 verification -->
+        <!-- A2/A19 verification — inline multi-step -->
         <div id="id-verify" class="hidden">
-          <div class="form-group">
-            <label for="member-id">Your ID Number *</label>
-            <input type="text" id="member-id" placeholder="Enter your A2 or A19 ID number" />
-            <p style="font-size:.83rem;color:#6b5a4e;margin-top:.4rem;">Our host will manually verify your ID and contact you within 24 hours.</p>
+
+          <!-- Sub-step 1: JW prerequisite -->
+          <div id="a2-jw-step">
+            <p class="disc-intro" style="margin-bottom:.6rem;">First, confirm your JW volunteer status:</p>
+            <p id="a2-jw-question" style="background:var(--cream);border-radius:7px;padding:.75rem 1rem;font-size:.93rem;margin-bottom:.75rem;border:1.5px solid var(--sand);"></p>
+            <div class="form-group" style="margin-bottom:.75rem;">
+              <label for="a2-jw-answer">Your Answer *</label>
+              <input type="text" id="a2-jw-answer" placeholder="Type your answer here…" autocomplete="off" />
+            </div>
+            <button type="button" id="a2-jw-btn" class="btn btn-primary btn-full">Verify →</button>
+            <div id="a2-jw-error" class="alert alert-error hidden" style="margin-top:.6rem;"></div>
           </div>
+
+          <!-- Sub-step 2: Bible book (unlocks after JW) -->
+          <div id="a2-bible-step" class="hidden" style="padding-top:1rem;margin-top:1rem;border-top:1px solid var(--sand);">
+            <div class="form-group">
+              <label for="a2-bible-answer">Enter the Bible book where you can read <em>"here I am send me"</em> *</label>
+              <input type="text" id="a2-bible-answer" placeholder="Type the book name…" autocomplete="off" />
+            </div>
+            <button type="button" id="a2-bible-btn" class="btn btn-primary btn-full">Continue →</button>
+            <div id="a2-bible-error" class="alert alert-error hidden" style="margin-top:.6rem;"></div>
+          </div>
+
+          <!-- Sub-step 3: Two options (unlocks after Bible book) -->
+          <div id="a2-options-step" class="hidden" style="padding-top:1rem;margin-top:1rem;border-top:1px solid var(--sand);">
+            <p class="disc-intro" style="margin-bottom:.75rem;">Choose how to activate your discount:</p>
+            <div style="display:flex;flex-direction:column;gap:.5rem;margin-bottom:1rem;">
+              <label style="display:flex;align-items:flex-start;gap:.6rem;cursor:pointer;padding:.65rem .85rem;border:1.5px solid var(--sand);border-radius:var(--radius);background:var(--cream);">
+                <input type="radio" name="a2-method" id="a2m-email" value="email" style="margin-top:.2rem;flex-shrink:0;" />
+                <span>Get your voucher code in your email</span>
+              </label>
+              <label style="display:flex;align-items:flex-start;gap:.6rem;cursor:pointer;padding:.65rem .85rem;border:1.5px solid var(--sand);border-radius:var(--radius);background:var(--cream);">
+                <input type="radio" name="a2-method" id="a2m-code" value="code" style="margin-top:.2rem;flex-shrink:0;" />
+                <span>Key in your A2/A19 Code</span>
+              </label>
+            </div>
+
+            <!-- Email + voucher code panel -->
+            <div id="a2-email-panel" class="hidden">
+              <div class="form-group">
+                <label for="a2-email">Your Email Address *</label>
+                <input type="email" id="a2-email" placeholder="yourname@email.com" />
+              </div>
+              <div class="form-group">
+                <label for="a2-voucher-code">Voucher Code *</label>
+                <input type="text" id="a2-voucher-code" placeholder="Enter your voucher code" autocomplete="off" style="letter-spacing:.1em;" />
+              </div>
+            </div>
+
+            <!-- 7-digit code panel -->
+            <div id="a2-code-panel" class="hidden">
+              <div class="form-group">
+                <label for="a2-id-code">Your A2/A19 Code *</label>
+                <input type="text" id="a2-id-code" inputmode="numeric" maxlength="7" autocomplete="off" />
+              </div>
+              <div id="a2-code-fallback" class="hidden" style="background:#fff3cd;border:1.5px solid #e9a200;border-radius:var(--radius);padding:.75rem 1rem;font-size:.87rem;color:#7a5000;margin-top:.35rem;line-height:1.55;"></div>
+            </div>
+          </div>
+
         </div>
 
         <div class="btn-row">
