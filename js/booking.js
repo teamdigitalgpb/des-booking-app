@@ -304,7 +304,7 @@ document.getElementById('booking-form').addEventListener('submit', async (e) => 
     saveBooking({ room, checkin, checkout, name, id: Date.now() });
 
     sessionStorage.setItem('des_booking_summary', JSON.stringify({
-      name, mobile, room, checkin, checkout, guests, totalPrice, nights, rateType: activeVoucherType,
+      name, email, mobile, room, checkin, checkout, guests, totalPrice, nights, rateType: activeVoucherType,
     }));
 
     window.location.href = 'thankyou-booking.html';

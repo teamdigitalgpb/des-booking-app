@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cancel Booking — D' Econo-Space</title>
+  <link rel="stylesheet" href="assets/style.css" />
+</head>
+<body class="form-page">
+
+  <nav class="nav">
+    <div class="container">
+      <a class="nav-logo" href="index.html">← D' Econo-Space</a>
+    </div>
+  </nav>
+
+  <div class="form-wrap">
+    <div class="form-card">
+
+      <!-- State: Window passed -->
+      <div id="cancel-state-expired" class="hidden" style="text-align:center;">
+        <div style="font-size:2.2rem;margin-bottom:.75rem;">⏰</div>
+        <h1 style="font-size:1.45rem;margin-bottom:.5rem;color:var(--navy);">Cancellation Window Closed</h1>
+        <p style="color:var(--text-body);line-height:1.7;margin-bottom:1.25rem;">Self-service cancellation is only available up to <strong>12 hours before check-in</strong>. That window has now passed for your booking.</p>
+        <div style="background:var(--navy);border-radius:var(--radius);padding:1.25rem;margin-bottom:1.5rem;">
+          <p style="color:var(--gold);font-weight:700;margin-bottom:.5rem;">Contact Us to Request a Cancellation</p>
+          <p style="color:var(--light);font-size:.95rem;">📞 <a href="tel:+639176784871" style="color:var(--light);">0917.678.4871</a> &nbsp;|&nbsp; <a href="tel:+639261499002" style="color:var(--light);">0926.149.9002</a></p>
+          <p style="color:var(--light);font-size:.95rem;margin-top:.35rem;">✉️ <a href="mailto:d.econospace.cebu@gmail.com" style="color:var(--light);">d.econospace.cebu@gmail.com</a></p>
+        </div>
+        <a href="index.html" class="btn btn-secondary btn-full">Back to Home</a>
+      </div>
+
+      <!-- State: Confirm cancellation form -->
+      <div id="cancel-state-form" class="hidden">
+        <div style="text-align:center;margin-bottom:1.5rem;">
+          <div style="font-size:2rem;margin-bottom:.6rem;">🗓️</div>
+          <h1 style="font-size:1.45rem;margin-bottom:.4rem;color:var(--navy);">Cancel Your Booking</h1>
+          <p class="subtitle" style="margin-bottom:0;">Review your booking details before confirming the cancellation.</p>
+        </div>
+
+        <div class="summary-box" id="cancel-summary-box" style="margin-bottom:1.25rem;"></div>
+
+        <div style="background:#fff3cd;border:1px solid #ffc107;border-radius:var(--radius);padding:.9rem 1rem;margin-bottom:1.25rem;font-size:.88rem;color:#856404;">
+          ⚠️ <strong>This cannot be undone.</strong> Once cancelled, your reservation slot will be released and you will need to re-book if you change your mind.
+        </div>
+
+        <div class="form-group">
+          <label for="cancel-reason">Reason for cancellation <span style="font-weight:400;color:var(--text-muted);">(optional)</span></label>
+          <select id="cancel-reason">
+            <option value="">— Select a reason —</option>
+            <option value="Wrong dates selected">Wrong dates selected</option>
+            <option value="Change of plans">Change of plans</option>
+            <option value="Found other accommodation">Found other accommodation</option>
+            <option value="Personal emergency">Personal emergency</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+
+        <div id="cancel-alert" class="alert hidden" style="margin-bottom:1rem;"></div>
+
+        <button id="cancel-confirm-btn" type="button" class="btn btn-full" style="background:#c0392b;color:#fff;border:none;margin-bottom:.75rem;">
+          Yes, Cancel My Booking
+        </button>
+        <a href="javascript:history.back()" class="btn btn-secondary btn-full">Keep My Booking</a>
+      </div>
+
+      <!-- State: Cancelled successfully -->
+      <div id="cancel-state-success" class="hidden" style="text-align:center;">
+        <div style="font-size:2.5rem;margin-bottom:.75rem;">✅</div>
+        <h1 style="font-size:1.45rem;margin-bottom:.5rem;color:var(--navy);">Booking Cancelled</h1>
+        <p style="color:var(--text-body);line-height:1.7;margin-bottom:1.5rem;">Your reservation has been cancelled. <span id="cancel-email-note"></span></p>
+        <a href="booking.html" class="btn btn-primary btn-full" style="margin-bottom:.75rem;">Make a New Booking</a>
+        <a href="index.html" class="btn btn-secondary btn-full">Back to Home</a>
+      </div>
+
+    </div>
+  </div>
+
+  <footer>
+    <p>D' Econo-Space &copy; 2026 &nbsp;|&nbsp; Lapu-Lapu, Cebu &nbsp;|&nbsp; <a href="mailto:d.econospace.cebu@gmail.com">d.econospace.cebu@gmail.com</a></p>
+  </footer>
+
+  <script src="js/config.js"></script>
+  <script src="js/cancel.js"></script>
+</body>
+</html>

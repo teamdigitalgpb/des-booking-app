@@ -51,7 +51,20 @@
       <a href="https://maps.app.goo.gl/KgXawL22XTxx7zybA" target="_blank" rel="noopener" class="btn btn-primary" style="margin-bottom:.75rem;width:100%;">
         Open in Google Maps
       </a>
-      <a href="index.html" class="btn btn-secondary btn-full">Back to Home</a>
+      <a href="index.html" class="btn btn-secondary btn-full" style="margin-bottom:1.5rem;">Back to Home</a>
+
+      <!-- Cancel panel -->
+      <div id="cancel-panel" style="border-top:1px solid var(--border);padding-top:1.25rem;text-align:left;">
+        <p style="font-size:.82rem;color:var(--text-muted);margin-bottom:.6rem;">Made an error with your dates or details?</p>
+        <div id="cancel-eligible">
+          <a id="cancel-link" href="#" class="btn btn-secondary btn-full" style="border-color:#c0392b;color:#c0392b;font-size:.88rem;">Cancel This Booking</a>
+          <p style="font-size:.78rem;color:var(--text-muted);margin-top:.5rem;text-align:center;">Self-service cancellation is available up to 12 hours before your check-in.</p>
+        </div>
+        <div id="cancel-window-passed" class="hidden">
+          <p style="font-size:.85rem;color:#c0392b;">The self-service cancellation window has passed (12 hours before check-in). Please contact us directly to request a cancellation.</p>
+          <p style="font-size:.85rem;margin-top:.35rem;">📞 <a href="tel:+639176784871" style="color:var(--brown);">0917.678.4871</a> &nbsp;|&nbsp; <a href="mailto:d.econospace.cebu@gmail.com" style="color:var(--brown);">d.econospace.cebu@gmail.com</a></p>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -69,6 +82,7 @@
 
       box.innerHTML = `
         <div class="row"><span>Name</span><strong>${s.name}</strong></div>
+        <div class="row"><span>Email</span><strong>${s.email || '—'}</strong></div>
         <div class="row"><span>Mobile</span><strong>${s.mobile}</strong></div>
         <div class="row"><span>Room</span><strong>${roomLabels[s.room] || s.room}</strong></div>
         <div class="row"><span>Check-in</span><strong>${fmt(s.checkin)}</strong></div>
@@ -78,6 +92,17 @@
         <div class="row"><span>Rate</span><strong>${rateLabels[s.rateType] || 'Regular'}</strong></div>
         <div class="row"><span>Total</span><strong style="color:var(--brown);font-size:1.1rem;">₱${s.totalPrice.toLocaleString()}</strong></div>
       `;
+
+      // Build cancel link — 12h before 2 PM check-in
+      const checkinDeadline = new Date(s.checkin + 'T14:00:00').getTime() - 12 * 60 * 60 * 1000;
+      const canCancel = Date.now() < checkinDeadline;
+      document.getElementById('cancel-eligible').classList.toggle('hidden', !canCancel);
+      document.getElementById('cancel-window-passed').classList.toggle('hidden', canCancel);
+
+      if (canCancel) {
+        const p = new URLSearchParams({ name: s.name, email: s.email || '', room: s.room, checkin: s.checkin, checkout: s.checkout });
+        document.getElementById('cancel-link').href = 'cancel.html?' + p.toString();
+      }
 
       sessionStorage.removeItem('des_booking_summary');
     })();
