@@ -32,14 +32,16 @@ document.getElementById('donate-form').addEventListener('submit', (e) => {
 
   const name    = document.getElementById('don-name').value.trim();
   const email   = document.getElementById('don-email').value.trim();
+  const mobile  = document.getElementById('don-mobile').value.trim();
   const purpose = document.getElementById('don-purpose').value.trim();
   const amount  = document.getElementById('don-amount').value.trim();
 
-  if (!name)    { showAlert('Please enter your full name.');               return; }
-  if (!email)   { showAlert('Please enter your email address.');           return; }
-  if (!purpose) { showAlert('Please enter the purpose of your donation.'); return; }
+  if (!name)    { showAlert('Please enter your full name.');                        return; }
+  if (!email)   { showAlert('Please enter your email address.');                    return; }
+  if (!mobile)  { showAlert('Please enter your mobile or GCash number.');           return; }
+  if (!purpose) { showAlert('Please enter the purpose of your donation.');          return; }
 
-  _donor          = { name, email, purpose, amount };
+  _donor          = { name, email, mobile, purpose, amount };
   _selectedMethod = '';
 
   showState('donate-state-payment');
@@ -106,6 +108,7 @@ function fireDonationWebhook() {
     action:        'donation',
     name:          _donor.name,
     email:         _donor.email,
+    mobile:        _donor.mobile,
     purpose:       _donor.purpose,
     amount:        _donor.amount,
     paymentMethod: _selectedMethod,
