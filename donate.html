@@ -40,6 +40,13 @@
             <label for="don-purpose">Purpose *</label>
             <textarea id="don-purpose" name="don-purpose" rows="3" placeholder="e.g. For the upkeep of the stay in support for the volunteer on June 1–6, 2026" required></textarea>
           </div>
+          <div class="form-group">
+            <label for="don-amount">Amount you'll send <span style="font-weight:400;color:var(--text-muted);">(helps with accounting)</span></label>
+            <div style="position:relative;">
+              <span style="position:absolute;left:.85rem;top:50%;transform:translateY(-50%);color:var(--text-muted);font-weight:700;pointer-events:none;">₱</span>
+              <input type="number" id="don-amount" name="don-amount" min="1" placeholder="e.g. 500" style="padding-left:2rem;" />
+            </div>
+          </div>
           <button type="submit" class="btn btn-primary btn-full" id="don-submit" style="margin-top:.5rem;">
             Continue to Payment →
           </button>
@@ -117,7 +124,7 @@
             </div>
           </div>
           <p style="margin-top:1.25rem;font-size:.82rem;color:var(--text-muted);">Any amount you choose is deeply appreciated.</p>
-          <button type="button" id="donate-done-btn" class="btn btn-primary btn-full" style="margin-top:1.5rem;">Done — I've Sent My Payment →</button>
+          <button type="button" id="donate-done-btn" class="btn btn-primary btn-full" style="margin-top:1.5rem;">Done — I've Sent Some Love →</button>
         </div>
       </div>
 
