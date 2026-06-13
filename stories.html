@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Volunteer Stories — D' Econo-Space</title>
+  <meta name="description" content="Real stories from JW and A2/A19 volunteers who stayed at D' Econo-Space — how they arrived, what they found, and what they carried home." />
+  <link rel="stylesheet" href="assets/style.css" />
+</head>
+<body>
+
+  <nav class="nav">
+    <div class="container">
+      <a class="nav-logo" href="index.html">← D' Econo-Space</a>
+      <button class="nav-toggle" aria-label="Toggle menu" onclick="this.closest('.nav').classList.toggle('open')">
+        <span></span><span></span><span></span>
+      </button>
+      <ul class="nav-links">
+        <li><a href="index.html#our-story" onclick="this.closest('.nav').classList.remove('open')">Our Story</a></li>
+        <li><a href="index.html#rooms" onclick="this.closest('.nav').classList.remove('open')">Rooms</a></li>
+        <li><a href="index.html#amenities" onclick="this.closest('.nav').classList.remove('open')">Amenities</a></li>
+        <li><a href="index.html#location" onclick="this.closest('.nav').classList.remove('open')">Location</a></li>
+        <li><a href="stories.html" onclick="this.closest('.nav').classList.remove('open')" style="color:var(--gold);">Stories</a></li>
+        <li><a href="voucher.html" onclick="this.closest('.nav').classList.remove('open')">Get Voucher</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Page header -->
+  <section style="background:var(--navy);padding:4rem 0 3.5rem;text-align:center;">
+    <div class="container">
+      <p style="color:var(--gold);font-size:.85rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;margin-bottom:.75rem;">From the volunteers</p>
+      <h1 style="color:#fff;font-size:clamp(1.9rem,5vw,3rem);font-weight:700;margin-bottom:1rem;line-height:1.2;">Their words. Their journey.</h1>
+      <p style="color:rgba(255,255,255,.7);font-size:1rem;max-width:520px;margin:0 auto;line-height:1.75;">How they were invited, how they arrived, and what they found waiting for them here in Lapu-Lapu.</p>
+    </div>
+  </section>
+
+  <!-- Stories grid -->
+  <section style="background:var(--cream);padding:4rem 0;">
+    <div class="container">
+
+      <div id="stories-grid" class="stories-grid">
+        <!-- filled by stories.js -->
+        <div class="story-card story-skeleton"></div>
+        <div class="story-card story-skeleton"></div>
+        <div class="story-card story-skeleton"></div>
+      </div>
+
+      <div id="stories-empty" class="hidden" style="text-align:center;padding:3rem 1rem;">
+        <p style="font-size:2rem;margin-bottom:.75rem;">✍️</p>
+        <p style="color:var(--brown);font-size:1.05rem;font-weight:600;margin-bottom:.4rem;">No stories yet — be the first.</p>
+        <p style="color:var(--text-muted);font-size:.92rem;">Share your experience below and inspire the next volunteer who's wondering if they should come.</p>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Share your story -->
+  <section style="background:#fff;padding:4.5rem 0 5rem;">
+    <div class="container" style="max-width:620px;">
+      <p style="color:var(--gold);font-size:.82rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;margin-bottom:.6rem;">Share yours</p>
+      <h2 style="font-size:clamp(1.5rem,4vw,2.1rem);color:var(--navy);font-weight:700;margin-bottom:.6rem;line-height:1.25;">Were you a volunteer here?</h2>
+      <p style="color:var(--text-muted);font-size:.95rem;line-height:1.7;margin-bottom:2rem;">Tell us how you arrived, what it was like, or something you'd tell the next person coming. We'll review your story before publishing it.</p>
+
+      <div id="story-alert" class="alert hidden" style="margin-bottom:1rem;"></div>
+
+      <form id="story-form">
+        <div class="form-group">
+          <label for="s-name">Your Name *</label>
+          <input type="text" id="s-name" placeholder="Maria Santos" autocomplete="name" />
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="s-location">Where are you from? *</label>
+            <input type="text" id="s-location" placeholder="Bantayan, Cebu" />
+          </div>
+          <div class="form-group">
+            <label for="s-period">When did you stay?</label>
+            <input type="text" id="s-period" placeholder="e.g. June 2026" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="s-story">Your Story *</label>
+          <textarea id="s-story" rows="6" placeholder="How were you invited to come? How did you get here? What was the experience like?…"></textarea>
+        </div>
+        <div class="form-group">
+          <label for="s-source">How did you hear about D' Econo-Space? <span style="font-weight:400;color:var(--text-muted);">(optional)</span></label>
+          <input type="text" id="s-source" placeholder="e.g. congregation announcement, Facebook, a friend" />
+        </div>
+        <button type="submit" class="btn btn-primary btn-full" id="story-submit">Submit My Story →</button>
+        <p style="text-align:center;margin-top:.75rem;font-size:.8rem;color:var(--text-muted);">Stories are reviewed before publishing. Thank you for sharing.</p>
+      </form>
+
+      <div id="story-success" class="hidden" style="text-align:center;padding:2.5rem 1rem;">
+        <div style="font-size:2.5rem;margin-bottom:1rem;">💛</div>
+        <h3 style="color:var(--navy);font-size:1.3rem;margin-bottom:.5rem;">Thank you for sharing!</h3>
+        <p style="color:var(--text-muted);font-size:.93rem;line-height:1.7;">Your story has been received. Once reviewed, it will appear on this page to encourage the next volunteer on their way.</p>
+        <a href="index.html" class="btn btn-secondary" style="margin-top:1.5rem;display:inline-block;">Back to Home</a>
+      </div>
+
+    </div>
+  </section>
+
+  <footer>
+    <p>D' Econo-Space &copy; 2026 &nbsp;|&nbsp; Lapu-Lapu, Cebu</p>
+  </footer>
+
+  <script src="js/iab.js"></script>
+  <script src="js/config.js"></script>
+  <script src="js/ghl.js"></script>
+  <script src="js/stories.js"></script>
+</body>
+</html>

@@ -1121,3 +1121,58 @@ footer a { color: var(--gold-light); }
   font-size: .76rem; color: var(--text-muted);
   font-weight: 600; letter-spacing: .05em; text-transform: uppercase;
 }
+
+/* ── Volunteer Stories ── */
+.stories-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.75rem;
+}
+.story-card {
+  background: #fff;
+  border-radius: var(--radius);
+  padding: 1.75rem 1.5rem 1.5rem;
+  box-shadow: 0 2px 12px rgba(44,26,14,.08);
+  display: flex;
+  flex-direction: column;
+  gap: .75rem;
+  border-left: 3px solid var(--gold);
+}
+.story-quote {
+  font-size: 3.5rem;
+  line-height: .6;
+  color: var(--gold);
+  font-family: Georgia, serif;
+  font-weight: 700;
+  opacity: .5;
+  user-select: none;
+}
+.story-text {
+  font-size: .95rem;
+  line-height: 1.75;
+  color: var(--text);
+  font-style: italic;
+  flex: 1;
+}
+.story-meta {
+  display: flex;
+  flex-direction: column;
+  gap: .15rem;
+  padding-top: .75rem;
+  border-top: 1px solid var(--border);
+  font-size: .83rem;
+}
+.story-meta strong { color: var(--navy); font-weight: 700; }
+.story-meta span { color: var(--text-muted); }
+.story-skeleton {
+  min-height: 220px;
+  background: linear-gradient(90deg, var(--sand) 25%, var(--cream) 50%, var(--sand) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s infinite;
+  border-left-color: var(--sand);
+  box-shadow: none;
+}
+@keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+@media (max-width: 600px) {
+  .stories-grid { grid-template-columns: 1fr; }
+}

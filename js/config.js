@@ -50,6 +50,15 @@ const CONFIG = {
   LINK_PAYPAL: 'PLACEHOLDER_paste_paypal_link',   // e.g. https://paypal.me/yourname
   LINK_WISE:   'PLACEHOLDER_paste_wise_link',     // e.g. https://wise.com/pay/me/...
 
+  // ── Volunteer Stories (Google Sheet "Stories" tab) ───────────────────────
+  // Publish the Stories tab as CSV: File > Share > Publish to web > Stories tab > CSV.
+  // Columns (row 1 = header): Name, Location, Story, Period
+  // Add rows for each approved story. Remove a row to un-publish.
+  STORIES_CSV_URL: 'PLACEHOLDER_publish_stories_tab_as_csv',
+
+  // GHL webhook to receive story submissions for admin review.
+  WEBHOOK_STORY:   'PLACEHOLDER_paste_story_webhook_url',
+
   // ── Live Settings (Google Sheet "Settings" tab) ───────────────────────────
   // Published CSV of the Settings tab holding the JW Question + Answer. The site
   // fetches this on load and overrides the JW fallbacks below, so the answer can
