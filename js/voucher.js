@@ -278,7 +278,7 @@ document.getElementById('a2-send-code-btn').addEventListener('click', async func
     statusEl.textContent  = '✓ Code sent! Check your inbox, then enter it in the field below.';
     statusEl.style.cssText = 'background:#e8f5e9;border:1.5px solid #66bb6a;color:#1b5e20;';
   } catch {
-    statusEl.textContent  = 'Could not send automatically — contact us on ' + CONFIG.PHONE_1 + ' to get your code.';
+    statusEl.innerHTML    = 'Could not send automatically — <a href="https://www.facebook.com/d.econo.space.agus" target="_blank" style="color:#7a5000;font-weight:600;">message us on Facebook</a> to get your code.';
     statusEl.style.cssText = 'background:#fff3cd;border:1.5px solid #e9a200;color:#7a5000;';
   }
   statusEl.classList.remove('hidden');

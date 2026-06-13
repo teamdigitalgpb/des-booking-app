@@ -9,13 +9,15 @@ async function postToWebhook(url, payload) {
     return { ok: true, simulated: true };
   }
   const isAppsScript = url.includes('script.google.com');
-  const res = await fetch(url, {
+  const fetchOpts = {
     method:  'POST',
     headers: { 'Content-Type': isAppsScript ? 'text/plain' : 'application/json' },
     body:    JSON.stringify(payload),
-  });
-  if (!res.ok) throw new Error(`Webhook error: ${res.status}`);
-  return res.json().catch(() => ({}));
+  };
+  if (isAppsScript) fetchOpts.mode = 'no-cors';
+  const res = await fetch(url, fetchOpts);
+  if (!isAppsScript && !res.ok) throw new Error(`Webhook error: ${res.status}`);
+  return isAppsScript ? {} : res.json().catch(() => ({}));
 }
 
 // ── GHL API helpers (used by admin.js) ───────────────────────────────────────
