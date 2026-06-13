@@ -259,3 +259,37 @@ document.querySelectorAll('input[name="a2-method"]').forEach(radio => {
     document.getElementById('a2-code-panel').classList.toggle('hidden', this.value !== 'code');
   });
 });
+
+// ── Send Code to Email button ─────────────────────────────────────────────────
+
+document.getElementById('a2-send-code-btn').addEventListener('click', async function () {
+  const email    = document.getElementById('a2-email').value.trim();
+  const statusEl = document.getElementById('a2-send-status');
+  if (!email) {
+    statusEl.textContent  = 'Please enter your email address first.';
+    statusEl.style.cssText = 'background:#fdecea;border:1.5px solid #e57373;color:#7a0000;';
+    statusEl.classList.remove('hidden');
+    return;
+  }
+  this.disabled    = true;
+  this.textContent = 'Sending…';
+  try {
+    await postToWebhook(CONFIG.WEBHOOK_VOUCHER, { action: 'send_code', email });
+    statusEl.textContent  = '✓ Code sent! Check your inbox, then enter it in the field below.';
+    statusEl.style.cssText = 'background:#e8f5e9;border:1.5px solid #66bb6a;color:#1b5e20;';
+  } catch {
+    statusEl.textContent  = 'Could not send automatically — contact us on ' + CONFIG.PHONE_1 + ' to get your code.';
+    statusEl.style.cssText = 'background:#fff3cd;border:1.5px solid #e9a200;color:#7a5000;';
+  }
+  statusEl.classList.remove('hidden');
+  this.textContent = 'Resend →';
+  this.disabled    = false;
+});
+
+// ── Reset button state on back-navigate ──────────────────────────────────────
+
+window.addEventListener('pageshow', function () {
+  const btn = document.getElementById('submit-voucher');
+  btn.disabled    = false;
+  btn.textContent = 'Submit Request';
+});
