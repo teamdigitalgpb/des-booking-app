@@ -60,7 +60,7 @@ const CONFIG = {
   // Publish the Stories tab as CSV: File > Share > Publish to web > Stories tab > CSV.
   // Columns (row 1 = header): Name, Location, Story, Period
   // Add rows for each approved story. Remove a row to un-publish.
-  STORIES_CSV_URL: 'PLACEHOLDER_publish_stories_tab_as_csv',
+  STORIES_CSV_URL: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRn__x3k4QkwjhiexqZEdCYxt4FqKvb555qTRL4pdzjismSEyn32ZYlDCvboNkfsLhtTGwnhLNERWqw/pub?gid=1125544656&single=true&output=csv',
 
   // GHL webhook to receive story submissions for admin review.
   WEBHOOK_STORY: 'https://script.google.com/macros/s/AKfycbxYNHs3HVlkXDdjfg49FCKnCIQ8j-WbWozMp6XecuqIHgPzgxoG3EHHNq8H-qP1piI3/exec',
