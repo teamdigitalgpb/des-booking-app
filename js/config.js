@@ -46,7 +46,7 @@ const CONFIG = {
   WEBHOOK_ADMIN: 'https://script.google.com/macros/s/AKfycbxYNHs3HVlkXDdjfg49FCKnCIQ8j-WbWozMp6XecuqIHgPzgxoG3EHHNq8H-qP1piI3/exec',
   // Publish the "Blocked Dates" sheet tab as CSV and paste the URL here:
   // DES sheet → "Blocked Dates" tab → File > Share > Publish to web > CSV
-  BLOCKED_DATES_CSV_URL: 'PLACEHOLDER_publish_blocked_dates_tab_as_csv',
+  BLOCKED_DATES_CSV_URL: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRn__x3k4QkwjhiexqZEdCYxt4FqKvb555qTRL4pdzjismSEyn32ZYlDCvboNkfsLhtTGwnhLNERWqw/pub?gid=867214119&single=true&output=csv',
 
   // QR code images — export non-expiring QR from each app, save to assets/
   QR_GCASH:    'assets/qr-gcash.png',
