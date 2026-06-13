@@ -62,6 +62,12 @@
     }
     document.getElementById('pay-summary-verify').innerHTML = summaryHTML(true);
     show('pay-state-verify');
+  } else if (isDonate) {
+    const optEl = document.getElementById('pay-state-options');
+    optEl.querySelector('h1').textContent  = 'Support a Volunteer\'s Stay';
+    optEl.querySelector('.subtitle').textContent = 'Choose your payment method. Any amount is a blessing.';
+    document.getElementById('pay-summary-options').style.display = 'none';
+    show('pay-state-options');
   } else {
     document.getElementById('pay-summary-options').innerHTML = summaryHTML(true);
     show('pay-state-options');
@@ -138,6 +144,6 @@
 
   // ── Done — proceed to confirmation ────────────────────────────────────────
   document.getElementById('pay-done-btn').addEventListener('click', () => {
-    window.location.href = 'thankyou-voucher.html';
+    window.location.href = isDonate ? 'index.html' : 'thankyou-voucher.html';
   });
 })();
