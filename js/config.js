@@ -6,7 +6,7 @@ const CONFIG = {
   // ── GHL Webhooks ──────────────────────────────────────────────────────────
   // Create in GHL > Automation > Workflows > New > Trigger: Webhook
   WEBHOOK_BOOKING:      'https://hook.us2.make.com/hry6pwxs46bqke59vbt5erfswcc4yj6s',
-  WEBHOOK_VOUCHER:      'https://script.google.com/macros/s/AKfycbxYNHs3HVlkXDdjfg49FCKnClQ8j-WbWozMp6XecuqIHgPzgxoG3EHHNq8H-qP1piI3/exec',
+  WEBHOOK_VOUCHER:      'https://script.google.com/macros/s/AKfycbxYNHs3HVlkXDdjfg49FCKnCIQ8j-WbWozMp6XecuqIHgPzgxoG3EHHNq8H-qP1piI3/exec',
   WEBHOOK_CANCELLATION: 'https://hook.us2.make.com/or893ovi8ddsanfzti4xifqgazbrqoj1',
 
   // ── GHL IDs ───────────────────────────────────────────────────────────────
