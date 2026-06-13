@@ -38,8 +38,8 @@ const CONFIG = {
   ADMIN_PASSWORD:   'PLACEHOLDER_set_your_admin_password',
 
   // ── Donation ──────────────────────────────────────────────────────────────
-  // Webhook to capture donor info (name, email, purpose) into GHL.
-  WEBHOOK_DONATION: 'PLACEHOLDER_paste_donation_webhook_url',
+  // Same Apps Script as WEBHOOK_VOUCHER — routed by action:'donation'
+  WEBHOOK_DONATION: 'https://script.google.com/macros/s/AKfycbxYNHs3HVlkXDdjfg49FCKnCIQ8j-WbWozMp6XecuqIHgPzgxoG3EHHNq8H-qP1piI3/exec',
 
   // QR code images — export non-expiring QR from each app, save to assets/
   QR_GCASH:    'assets/qr-gcash.png',
