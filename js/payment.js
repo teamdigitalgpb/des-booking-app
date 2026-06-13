@@ -29,9 +29,12 @@
     });
   }
 
+  let donorData      = {};
+  let selectedMethod = '';
+
   function show(id) {
-    ['pay-state-verify', 'pay-state-options', 'pay-state-qr'].forEach(s => {
-      document.getElementById(s).classList.toggle('hidden', s !== id);
+    ['pay-state-donor', 'pay-state-verify', 'pay-state-options', 'pay-state-qr'].forEach(s => {
+      document.getElementById(s)?.classList.toggle('hidden', s !== id);
     });
   }
 
@@ -62,16 +65,25 @@
     }
     document.getElementById('pay-summary-verify').innerHTML = summaryHTML(true);
     show('pay-state-verify');
+  } else if (isDonate) {
+    show('pay-state-donor');
   } else {
-    if (isDonate) {
-      document.getElementById('pay-options-heading').textContent = 'Support a Volunteer\'s Stay';
-      document.getElementById('pay-options-subtitle').textContent = 'Choose your payment method. Any amount is a blessing.';
-      document.getElementById('pay-summary-options').style.display = 'none';
-    } else {
-      document.getElementById('pay-summary-options').innerHTML = summaryHTML(true);
-    }
+    document.getElementById('pay-summary-options').innerHTML = summaryHTML(true);
     show('pay-state-options');
   }
+
+  // ── Donor continue button ─────────────────────────────────────────────────
+  document.getElementById('donor-continue-btn')?.addEventListener('click', () => {
+    donorData = {
+      name:    (document.getElementById('donor-name')?.value    || '').trim(),
+      email:   (document.getElementById('donor-email')?.value   || '').trim(),
+      message: (document.getElementById('donor-message')?.value || '').trim(),
+    };
+    document.getElementById('pay-options-heading').textContent  = 'Choose How to Pay';
+    document.getElementById('pay-options-subtitle').textContent = 'Scan the QR and send any amount. Then send your screenshot via Messenger to confirm.';
+    document.getElementById('pay-summary-options').style.display = 'none';
+    show('pay-state-options');
+  });
 
   // ── Verify button ─────────────────────────────────────────────────────────
   document.getElementById('verify-btn').addEventListener('click', () => {
@@ -116,8 +128,9 @@
       const qrMap  = { gcash: CONFIG.QR_GCASH, maya: CONFIG.QR_MAYA, bank: CONFIG.QR_BANK };
       const labels = { gcash: 'GCash', maya: 'Maya', bank: 'Bank / InstaPay' };
 
-      document.getElementById('pay-qr-title').textContent = 'Pay via ' + (labels[method] || method);
-      document.getElementById('pay-qr-app').textContent   = labels[method] || method;
+      selectedMethod = labels[method] || method;
+      document.getElementById('pay-qr-title').textContent = 'Pay via ' + selectedMethod;
+      document.getElementById('pay-qr-app').textContent   = selectedMethod;
       document.getElementById('pay-qr-amount').textContent = isDonate ? 'Any amount' : '₱' + Number(data.totalPrice).toLocaleString();
 
       const imgEl  = document.getElementById('pay-qr-image');
@@ -144,6 +157,24 @@
 
   // ── Done — proceed to confirmation ────────────────────────────────────────
   document.getElementById('pay-done-btn').addEventListener('click', () => {
-    window.location.href = isDonate ? 'index.html' : 'thankyou-voucher.html';
+    if (isDonate) {
+      const webhookUrl = (typeof CONFIG !== 'undefined') && CONFIG.WEBHOOK_VOUCHER;
+      if (webhookUrl && !webhookUrl.startsWith('PLACEHOLDER')) {
+        fetch(webhookUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain' },
+          body: JSON.stringify({
+            action:        'donation',
+            name:          donorData.name    || '',
+            email:         donorData.email   || '',
+            message:       donorData.message || '',
+            paymentMethod: selectedMethod    || '',
+          }),
+        }).catch(() => {});
+      }
+      window.location.href = 'index.html';
+    } else {
+      window.location.href = 'thankyou-voucher.html';
+    }
   });
 })();
