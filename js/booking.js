@@ -133,6 +133,7 @@ function updatePriceDisplay(room, nights, pax, rateType) {
 // ── Discount eligibility ──────────────────────────────────────────────────────
 
 let activeVoucherType = 'regular';
+let preVerified       = false;
 
 function getWeekRange() {
   const today = new Date();
@@ -307,7 +308,17 @@ document.getElementById('booking-form').addEventListener('submit', async (e) => 
       name, email, mobile, room, checkin, checkout, guests, totalPrice, nights, rateType: activeVoucherType,
     }));
 
-    window.location.href = 'thankyou-booking.html';
+    if (activeVoucherType !== 'regular') {
+      const q = new URLSearchParams({
+        name, email, room, checkin, checkout,
+        nights: nights.toString(), guests: guests.toString(),
+        totalPrice: totalPrice.toString(), rateType: activeVoucherType,
+        verified: '1',
+      }).toString();
+      window.location.href = 'payment.html?' + q;
+    } else {
+      window.location.href = 'thankyou-booking.html';
+    }
   } catch (err) {
     showAlert('Something went wrong. Please try again or contact us directly.');
     btn.disabled = false;
@@ -468,6 +479,7 @@ document.getElementById('jw-ans').addEventListener('input', async (e) => {
   const voucherToken = sessionStorage.getItem('des_voucher_approved');
   if (voucherToken) {
     sessionStorage.removeItem('des_voucher_approved');
+    preVerified = true;
     const token = JSON.parse(voucherToken);
     if (token.type === 'jw') {
       const cb = document.getElementById('disc-jw');

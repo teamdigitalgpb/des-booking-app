@@ -51,7 +51,8 @@
   }
 
   // ── Init ──────────────────────────────────────────────────────────────────
-  const needsVerify = data.rateType === 'jw' || data.rateType === 'a2a19';
+  const verified    = params.get('verified') === '1';
+  const needsVerify = !verified && (data.rateType === 'jw' || data.rateType === 'a2a19');
 
   if (needsVerify) {
     document.getElementById('jw-question-label').textContent = CONFIG.JW_QUESTION;
@@ -133,4 +134,9 @@
 
   // ── Back from QR ──────────────────────────────────────────────────────────
   document.getElementById('pay-qr-back').addEventListener('click', () => show('pay-state-options'));
+
+  // ── Done — proceed to confirmation ────────────────────────────────────────
+  document.getElementById('pay-done-btn').addEventListener('click', () => {
+    window.location.href = 'thankyou-booking.html';
+  });
 })();
