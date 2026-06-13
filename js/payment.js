@@ -52,7 +52,8 @@
 
   // ── Init ──────────────────────────────────────────────────────────────────
   const verified    = params.get('verified') === '1';
-  const needsVerify = !verified && (data.rateType === 'jw' || data.rateType === 'a2a19');
+  const isDonate    = params.get('donate')   === '1';
+  const needsVerify = !verified && !isDonate && (data.rateType === 'jw' || data.rateType === 'a2a19');
 
   if (needsVerify) {
     document.getElementById('jw-question-label').textContent = CONFIG.JW_QUESTION;
@@ -111,7 +112,7 @@
 
       document.getElementById('pay-qr-title').textContent = 'Pay via ' + (labels[method] || method);
       document.getElementById('pay-qr-app').textContent   = labels[method] || method;
-      document.getElementById('pay-qr-amount').textContent = '₱' + Number(data.totalPrice).toLocaleString();
+      document.getElementById('pay-qr-amount').textContent = isDonate ? 'Any amount' : '₱' + Number(data.totalPrice).toLocaleString();
 
       const imgEl  = document.getElementById('pay-qr-image');
       const phEl   = document.getElementById('pay-qr-placeholder');

@@ -405,7 +405,7 @@ document.getElementById('disc-a2a19').addEventListener('change', (e) => {
     updateA2A19Panel();
     const donateWrap = document.getElementById('a2a19-donate-wrap');
     const donateBtn  = document.getElementById('a2a19-donate-btn');
-    donateBtn.href = 'donate.html?room=' + document.getElementById('room').value + '&rate=a2a19';
+    donateBtn.href = 'payment.html?donate=1&verified=1&room=' + document.getElementById('room').value + '&rate=a2a19';
     donateWrap.classList.remove('hidden');
     updatePaymentNote(true);
   } else {
@@ -431,7 +431,7 @@ document.getElementById('jw-ans').addEventListener('input', async (e) => {
     statusEl.textContent = '✓ Correct — JW volunteer rate applied';
     const donateWrap = document.getElementById('jw-donate-wrap');
     const donateBtn  = document.getElementById('jw-donate-btn');
-    donateBtn.href = 'donate.html?room=' + document.getElementById('room').value + '&rate=jw';
+    donateBtn.href = 'payment.html?donate=1&verified=1&room=' + document.getElementById('room').value + '&rate=jw';
     donateWrap.classList.remove('hidden');
     updatePaymentNote(true);
   } else {
@@ -493,7 +493,7 @@ document.getElementById('jw-ans').addEventListener('input', async (e) => {
         statusEl.className   = 'voucher-status valid';
         statusEl.textContent = '✓ Verified — JW volunteer rate applied';
         const donateBtn = document.getElementById('jw-donate-btn');
-        donateBtn.href = 'donate.html?room=' + document.getElementById('room').value + '&rate=jw';
+        donateBtn.href = 'payment.html?donate=1&verified=1&room=' + document.getElementById('room').value + '&rate=jw';
         document.getElementById('jw-donate-wrap').classList.remove('hidden');
         updatePaymentNote(true);
         populatePaxSelect(document.getElementById('room').value, 'jw');
