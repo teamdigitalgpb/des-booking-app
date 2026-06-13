@@ -35,7 +35,7 @@ const CONFIG = {
 
   // ── Admin ─────────────────────────────────────────────────────────────────
   // Basic deterrent — change before going live.
-  ADMIN_PASSWORD:   'PLACEHOLDER_set_your_admin_password',
+  ADMIN_PASSWORD:   '1992',
 
   // ── Donation ──────────────────────────────────────────────────────────────
   // Same Apps Script as WEBHOOK_VOUCHER — routed by action:'donation'
