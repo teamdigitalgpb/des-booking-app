@@ -464,4 +464,11 @@ document.getElementById('jw-ans').addEventListener('input', async (e) => {
   document.getElementById('checkin').addEventListener('change', (e) => {
     document.getElementById('checkout').min = e.target.value;
   });
+
+  const voucherToken = sessionStorage.getItem('des_voucher_approved');
+  if (voucherToken) {
+    sessionStorage.removeItem('des_voucher_approved');
+    const cb = document.getElementById('disc-a2a19');
+    if (cb) { cb.checked = true; cb.dispatchEvent(new Event('change')); }
+  }
 })();
