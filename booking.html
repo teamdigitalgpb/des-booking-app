@@ -67,6 +67,45 @@
           </div>
         </div>
 
+        <!-- Discount eligibility -->
+        <div class="form-group">
+          <label>Are you a volunteer? <span style="font-weight:400;color:var(--text-muted);">(optional)</span></label>
+          <div class="disc-checks">
+            <label class="disc-option" id="opt-jw">
+              <input type="checkbox" id="disc-jw">
+              <span>I am a Jehovah's Witness (JW)</span>
+            </label>
+            <label class="disc-option" id="opt-a2a19">
+              <input type="checkbox" id="disc-a2a19">
+              <span>I am an A2 / A19 Special Volunteer</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- JW verification panel -->
+        <div id="jw-panel" class="disc-panel hidden">
+          <p class="disc-intro">You may qualify for a JW discount — confirm by answering:</p>
+          <p id="jw-q" class="disc-question"></p>
+          <input type="text" id="jw-ans" placeholder="Enter song number" inputmode="numeric" autocomplete="off" />
+          <div id="jw-ans-status" class="voucher-status" style="margin-top:.5rem;"></div>
+          <div id="jw-donate-wrap" class="donate-wrap hidden">
+            <p class="donate-note">As a fellow volunteer, you're welcome to give what you're able — or simply pay on arrival. No pressure either way.</p>
+            <a id="jw-donate-btn" href="#" target="_blank" rel="noopener" class="btn btn-donate">Give a Donation Instead</a>
+          </div>
+        </div>
+
+        <!-- A2/A19 panel -->
+        <div id="a2a19-panel" class="disc-panel hidden">
+          <div id="a2a19-msg">
+            <p class="disc-intro">A2/A19 discount applied.</p>
+            <p class="disc-info">Complete your booking — we'll verify your details and send your confirmation voucher to your email.</p>
+          </div>
+          <div id="a2a19-donate-wrap" class="donate-wrap hidden">
+            <p class="donate-note">As a fellow volunteer, you're welcome to give what you're able — or simply pay on arrival. No pressure either way.</p>
+            <a id="a2a19-donate-btn" href="#" target="_blank" rel="noopener" class="btn btn-donate">Give a Donation Instead</a>
+          </div>
+        </div>
+
         <!-- Room -->
         <div class="form-group">
           <label for="room">Room *</label>
@@ -120,45 +159,6 @@
         <div id="exclusive-note" class="form-group hidden" style="background:var(--navy);border-radius:var(--radius);padding:.9rem 1rem;">
           <p style="margin:0;font-size:.88rem;color:var(--gold);font-weight:700;">You have the place to yourselves.</p>
           <p style="margin:.3rem 0 0;font-size:.84rem;color:var(--light);line-height:1.55;">With 5 or more guests, the Whole Space is exclusively yours — no other bookings will be placed alongside your stay.</p>
-        </div>
-
-        <!-- Discount eligibility -->
-        <div class="form-group">
-          <label>Are you a volunteer? <span style="font-weight:400;color:var(--text-muted);">(optional)</span></label>
-          <div class="disc-checks">
-            <label class="disc-option" id="opt-jw">
-              <input type="checkbox" id="disc-jw">
-              <span>I am a Jehovah's Witness (JW)</span>
-            </label>
-            <label class="disc-option" id="opt-a2a19">
-              <input type="checkbox" id="disc-a2a19">
-              <span>I am an A2 / A19 Special Volunteer</span>
-            </label>
-          </div>
-        </div>
-
-        <!-- JW verification panel -->
-        <div id="jw-panel" class="disc-panel hidden">
-          <p class="disc-intro">You may qualify for a JW discount — confirm by answering:</p>
-          <p id="jw-q" class="disc-question"></p>
-          <input type="text" id="jw-ans" placeholder="Enter song number" inputmode="numeric" autocomplete="off" />
-          <div id="jw-ans-status" class="voucher-status" style="margin-top:.5rem;"></div>
-          <div id="jw-donate-wrap" class="donate-wrap hidden">
-            <p class="donate-note">As a fellow volunteer, you're welcome to give what you're able — or simply pay on arrival. No pressure either way.</p>
-            <a id="jw-donate-btn" href="#" target="_blank" rel="noopener" class="btn btn-donate">Give a Donation Instead</a>
-          </div>
-        </div>
-
-        <!-- A2/A19 panel -->
-        <div id="a2a19-panel" class="disc-panel hidden">
-          <div id="a2a19-msg">
-            <p class="disc-intro">A2/A19 discount applied.</p>
-            <p class="disc-info">Complete your booking — we'll verify your details and send your confirmation voucher to your email.</p>
-          </div>
-          <div id="a2a19-donate-wrap" class="donate-wrap hidden">
-            <p class="donate-note">As a fellow volunteer, you're welcome to give what you're able — or simply pay on arrival. No pressure either way.</p>
-            <a id="a2a19-donate-btn" href="#" target="_blank" rel="noopener" class="btn btn-donate">Give a Donation Instead</a>
-          </div>
         </div>
 
         <!-- Price display -->
