@@ -8,7 +8,7 @@ const METHODS = {
   gcash:  { label: 'GCash',  app: 'GCash',  type: 'qr',   qr: () => CONFIG.QR_GCASH  },
   maya:   { label: 'Maya',   app: 'Maya',   type: 'qr',   qr: () => CONFIG.QR_MAYA   },
   bank:   { label: 'Bank · InstaPay', app: 'your banking', type: 'qr', qr: () => CONFIG.QR_BANK },
-  paypal: { label: 'PayPal', app: 'PayPal', type: 'qr',   qr: () => CONFIG.QR_PAYPAL   },
+  paypal: { label: 'PayPal', app: 'PayPal', type: 'link', link: () => CONFIG.LINK_PAYPAL },
   wise:   { label: 'Wise',   app: 'Wise',   type: 'link', link: () => CONFIG.LINK_WISE   },
 };
 
@@ -59,6 +59,7 @@ document.querySelectorAll('.pay-card').forEach(card => {
       const url = method.link();
       if (url && !url.startsWith('PLACEHOLDER')) {
         window.open(url, '_blank', 'noopener');
+        showState('donate-state-thankyou');
       } else {
         alert(`${method.label} link not yet configured. Please contact us directly.`);
       }
