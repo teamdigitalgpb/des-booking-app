@@ -1,4 +1,4 @@
-// Admin panel — blocked dates management
+// Admin panel — blocked dates management (read + write)
 
 let _blocks = [];
 
@@ -30,22 +30,24 @@ function showPanel() {
   loadBlocks();
 }
 
-// ── Load + render current blocks ──────────────────────────────────────────────
+// ── Load + render ─────────────────────────────────────────────────────────────
+
+document.getElementById('refresh-btn').addEventListener('click', loadBlocks);
 
 async function loadBlocks() {
   const url    = CONFIG.BLOCKED_DATES_CSV_URL;
   const listEl = document.getElementById('block-list');
 
   if (!url || url.startsWith('PLACEHOLDER')) {
-    listEl.innerHTML = '<p class="empty-state">BLOCKED_DATES_CSV_URL not set in config.js yet. Complete the Google Sheet setup first.</p>';
+    listEl.innerHTML = '<p class="empty-state">BLOCKED_DATES_CSV_URL not configured yet.</p>';
     return;
   }
 
   listEl.innerHTML = '<p class="empty-state">Loading…</p>';
   try {
-    const res = await fetch(url, { cache: 'no-store' });
-    const csv = await res.text();
-    const lines = csv.trim().split(/\r?\n/).slice(1);
+    const res    = await fetch(url, { cache: 'no-store' });
+    const csv    = await res.text();
+    const lines  = csv.trim().split(/\r?\n/).slice(1);
     _blocks = lines
       .map(line => {
         const cols = line.split(',').map(c => c.replace(/^"|"$/g, '').trim());
@@ -54,16 +56,14 @@ async function loadBlocks() {
       .filter(b => b.room && b.startDate);
     renderBlocks();
   } catch {
-    listEl.innerHTML = '<p class="empty-state" style="color:#b34040;">Could not load blocks. Check your CSV URL.</p>';
+    listEl.innerHTML = '<p class="empty-state" style="color:#b34040;">Could not load. Check your CSV URL.</p>';
   }
 }
-
-document.getElementById('refresh-btn').addEventListener('click', loadBlocks);
 
 function renderBlocks() {
   const listEl = document.getElementById('block-list');
   if (!_blocks.length) {
-    listEl.innerHTML = '<p class="empty-state">No dates blocked. The unit is open for all bookings.</p>';
+    listEl.innerHTML = '<p class="empty-state">No dates blocked — the unit is fully open.</p>';
     return;
   }
   const roomLabel = { d1: 'Room D1', d2: 'Room D2', both: 'Both Rooms' };
@@ -73,7 +73,7 @@ function renderBlocks() {
       : b.startDate;
     return `
       <div class="block-row">
-        <div class="block-info">
+        <div style="display:flex;flex-direction:column;gap:.3rem;">
           <span class="block-room">${roomLabel[b.room] || b.room}</span>
           <span class="block-dates">${range}</span>
           ${b.reason ? `<span class="block-reason">${b.reason}</span>` : ''}
@@ -88,32 +88,27 @@ function renderBlocks() {
 document.getElementById('add-block-form').addEventListener('submit', async (e) => {
   e.preventDefault();
   const btn       = document.getElementById('add-btn');
-  const statusEl  = document.getElementById('admin-status');
   const room      = document.getElementById('block-room').value;
   const startDate = document.getElementById('block-start').value;
   const endDate   = document.getElementById('block-end').value || startDate;
   const reason    = document.getElementById('block-reason').value.trim();
 
-  if (!room)      { setStatus('Please select a room.', 'error'); return; }
+  if (!room)      { setStatus('Please select a room.', 'error');      return; }
   if (!startDate) { setStatus('Please select a start date.', 'error'); return; }
 
-  btn.disabled    = true;
-  btn.textContent = 'Saving…';
+  btn.disabled = true; btn.textContent = 'Saving…';
   setStatus('', '');
 
   try {
-    await postToWebhook(CONFIG.WEBHOOK_ADMIN, {
-      action: 'addBlock', room, startDate, endDate, reason,
-    });
+    await postToWebhook(CONFIG.WEBHOOK_ADMIN, { action: 'addBlock', room, startDate, endDate, reason });
     e.target.reset();
-    setStatus('Block saved.', 'ok');
+    setStatus('Block saved. Refreshing…', 'ok');
     setTimeout(loadBlocks, 1500);
   } catch {
     setStatus('Failed to save. Please try again.', 'error');
   }
 
-  btn.disabled    = false;
-  btn.textContent = 'Add Block';
+  btn.disabled = false; btn.textContent = 'Add Block';
 });
 
 // ── Remove block ──────────────────────────────────────────────────────────────
@@ -124,24 +119,21 @@ async function removeBlock(index) {
   const range = (block.endDate && block.endDate !== block.startDate)
     ? `${block.startDate} to ${block.endDate}`
     : block.startDate;
-  if (!confirm(`Remove block: ${block.room.toUpperCase()} — ${range}?`)) return;
+  if (!confirm(`Remove block: ${(block.room || '').toUpperCase()} — ${range}?`)) return;
 
   setStatus('Removing…', '');
   try {
     await postToWebhook(CONFIG.WEBHOOK_ADMIN, {
-      action:    'removeBlock',
-      room:      block.room,
-      startDate: block.startDate,
-      endDate:   block.endDate || block.startDate,
+      action: 'removeBlock', room: block.room, startDate: block.startDate, endDate: block.endDate || block.startDate,
     });
-    setStatus('Block removed.', 'ok');
+    setStatus('Block removed. Refreshing…', 'ok');
     setTimeout(loadBlocks, 1500);
   } catch {
     setStatus('Failed to remove. Please try again.', 'error');
   }
 }
 
-// ── Helpers ───────────────────────────────────────────────────────────────────
+// ── Helper ────────────────────────────────────────────────────────────────────
 
 function setStatus(msg, type) {
   const el = document.getElementById('admin-status');
