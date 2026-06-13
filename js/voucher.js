@@ -275,7 +275,7 @@ document.getElementById('a2-send-code-btn').addEventListener('click', async func
   this.textContent = 'Sending…';
   try {
     await postToWebhook(CONFIG.WEBHOOK_VOUCHER, { action: 'send_code', email });
-    statusEl.textContent  = '✓ Code sent! Check your inbox, then enter it in the field below.';
+    statusEl.innerHTML    = '✓ Code sent! Check your inbox, then enter it in the field below.<br><span style="font-size:.88em;opacity:.8;">Didn\'t see it? Check your spam or junk folder.</span>';
     statusEl.style.cssText = 'background:#e8f5e9;border:1.5px solid #66bb6a;color:#1b5e20;';
   } catch {
     statusEl.innerHTML    = 'Could not send automatically? <a href="https://www.facebook.com/d.econo.space.agus" target="_blank" style="color:#7a5000;font-weight:600;">Message us on Facebook</a> to get your code.';
