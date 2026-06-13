@@ -200,13 +200,9 @@ async function submitVoucher() {
   try {
     await postToWebhook(CONFIG.WEBHOOK_VOUCHER, payload);
     saveVoucherRequest({ ...payload, code: null });
-    if (finalType !== 'jw') {
-      sessionStorage.setItem('des_voucher_approved', JSON.stringify({ type: 'a2a19' }));
-      window.location.href = 'booking.html';
-    } else {
-      sessionStorage.setItem('des_voucher_summary', JSON.stringify({ name, mobile, refCode, type: finalType }));
-      window.location.href = 'thankyou-voucher.html';
-    }
+    const discountType = finalType === 'jw' ? 'jw' : 'a2a19';
+    sessionStorage.setItem('des_voucher_approved', JSON.stringify({ type: discountType }));
+    window.location.href = 'booking.html';
   } catch (err) {
     showAlert('Something went wrong. Please try again or contact us directly.');
     btn.disabled    = false;

@@ -468,7 +468,27 @@ document.getElementById('jw-ans').addEventListener('input', async (e) => {
   const voucherToken = sessionStorage.getItem('des_voucher_approved');
   if (voucherToken) {
     sessionStorage.removeItem('des_voucher_approved');
-    const cb = document.getElementById('disc-a2a19');
-    if (cb) { cb.checked = true; cb.dispatchEvent(new Event('change')); }
+    const token = JSON.parse(voucherToken);
+    if (token.type === 'jw') {
+      const cb = document.getElementById('disc-jw');
+      if (cb) {
+        cb.checked = true;
+        cb.dispatchEvent(new Event('change'));
+        activeVoucherType = 'jw';
+        const statusEl = document.getElementById('jw-ans-status');
+        statusEl.className  = 'voucher-status valid';
+        statusEl.textContent = '✓ Verified — JW volunteer rate applied';
+        const donateBtn = document.getElementById('jw-donate-btn');
+        donateBtn.href = 'donate.html?room=' + document.getElementById('room').value + '&rate=jw';
+        document.getElementById('jw-donate-wrap').classList.remove('hidden');
+        updatePaymentNote(true);
+        const room = document.getElementById('room').value;
+        populatePaxSelect(room, 'jw');
+        recalc();
+      }
+    } else {
+      const cb = document.getElementById('disc-a2a19');
+      if (cb) { cb.checked = true; cb.dispatchEvent(new Event('change')); }
+    }
   }
 })();
