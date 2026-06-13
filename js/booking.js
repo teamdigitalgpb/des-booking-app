@@ -475,15 +475,16 @@ document.getElementById('jw-ans').addEventListener('input', async (e) => {
         cb.checked = true;
         cb.dispatchEvent(new Event('change'));
         activeVoucherType = 'jw';
+        document.getElementById('jw-q').style.display   = 'none';
+        document.getElementById('jw-ans').style.display = 'none';
         const statusEl = document.getElementById('jw-ans-status');
-        statusEl.className  = 'voucher-status valid';
+        statusEl.className   = 'voucher-status valid';
         statusEl.textContent = '✓ Verified — JW volunteer rate applied';
         const donateBtn = document.getElementById('jw-donate-btn');
         donateBtn.href = 'donate.html?room=' + document.getElementById('room').value + '&rate=jw';
         document.getElementById('jw-donate-wrap').classList.remove('hidden');
         updatePaymentNote(true);
-        const room = document.getElementById('room').value;
-        populatePaxSelect(room, 'jw');
+        populatePaxSelect(document.getElementById('room').value, 'jw');
         recalc();
       }
     } else {
