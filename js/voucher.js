@@ -202,7 +202,7 @@ async function submitVoucher() {
     saveVoucherRequest({ ...payload, code: null });
     const discountType = finalType === 'jw' ? 'jw' : 'a2a19';
     sessionStorage.setItem('des_voucher_approved', JSON.stringify({ type: discountType }));
-    window.location.href = 'booking.html';
+    window.location.href = 'index.html#rooms';
   } catch (err) {
     showAlert('Something went wrong. Please try again or contact us directly.');
     btn.disabled    = false;
