@@ -172,8 +172,8 @@ function updatePaymentNote(isVolunteer) {
   const note = document.getElementById('payment-note');
   if (!note) return;
   note.innerHTML = isVolunteer
-    ? 'Donate what you\'re able, or pay on arrival — whichever works for you.<br>Check-in: 2:00 PM &nbsp;|&nbsp; Check-out: 12:00 NN'
-    : 'Full payment is required before or upon arrival.<br>Check-in: 2:00 PM &nbsp;|&nbsp; Check-out: 12:00 NN';
+    ? 'Payment is via GCash, Maya, or Bank transfer — send your screenshot via Messenger to confirm.<br>Check-in: 2:00 PM &nbsp;|&nbsp; Check-out: 12:00 NN'
+    : 'Payment is via GCash, Maya, or Bank transfer — send your screenshot via Messenger to confirm.<br>Check-in: 2:00 PM &nbsp;|&nbsp; Check-out: 12:00 NN';
 }
 
 // ── Whole Space recommendation ───────────────────────────────────────────────
@@ -325,11 +325,17 @@ document.getElementById('booking-form').addEventListener('submit', async (e) => 
 // ── Wire up listeners ────────────────────────────────────────────────────────
 
 document.getElementById('room').addEventListener('change', (e) => {
-  populatePaxSelect(e.target.value, 'regular');
-  activeVoucherType = 'regular';
-  const statusEl = document.getElementById('voucher-status');
-  statusEl.className = 'voucher-status';
-  statusEl.textContent = '';
+  if (!preVerified) {
+    populatePaxSelect(e.target.value, 'regular');
+    activeVoucherType = 'regular';
+    const statusEl = document.getElementById('jw-ans-status');
+    if (statusEl) { statusEl.className = 'voucher-status'; statusEl.textContent = ''; }
+  } else {
+    populatePaxSelect(e.target.value, activeVoucherType);
+    const btnId = activeVoucherType === 'jw' ? 'jw-donate-btn' : 'a2a19-donate-btn';
+    const donateBtn = document.getElementById(btnId);
+    if (donateBtn) donateBtn.href = `payment.html?donate=1&verified=1&room=${e.target.value}&rate=${activeVoucherType}`;
+  }
   toggleWholeRec(e.target.value);
   toggleShareWaitlist();
   toggleExclusiveNote();
@@ -477,27 +483,33 @@ document.getElementById('jw-ans').addEventListener('input', async (e) => {
     sessionStorage.removeItem('des_voucher_approved');
     preVerified = true;
     const token = JSON.parse(voucherToken);
+    const discGroup = document.querySelector('.disc-checks')?.closest('.form-group');
+    if (discGroup) discGroup.style.display = 'none';
+
     if (token.type === 'jw') {
-      const cb = document.getElementById('disc-jw');
-      if (cb) {
-        cb.checked = true;
-        cb.dispatchEvent(new Event('change'));
-        activeVoucherType = 'jw';
-        document.getElementById('jw-q').style.display   = 'none';
-        document.getElementById('jw-ans').style.display = 'none';
-        const statusEl = document.getElementById('jw-ans-status');
-        statusEl.className   = 'voucher-status valid';
-        statusEl.textContent = '✓ Verified — JW volunteer rate applied';
-        const donateBtn = document.getElementById('jw-donate-btn');
-        donateBtn.href = 'payment.html?donate=1&verified=1&room=' + document.getElementById('room').value + '&rate=jw';
-        document.getElementById('jw-donate-wrap').classList.remove('hidden');
-        updatePaymentNote(true);
-        populatePaxSelect(document.getElementById('room').value, 'jw');
-        recalc();
-      }
+      activeVoucherType = 'jw';
+      document.getElementById('jw-panel').classList.remove('hidden');
+      document.getElementById('jw-q').style.display   = 'none';
+      document.getElementById('jw-ans').style.display = 'none';
+      const statusEl = document.getElementById('jw-ans-status');
+      statusEl.className   = 'voucher-status valid';
+      statusEl.textContent = '✓ Verified — JW volunteer rate applied';
+      const donateBtn = document.getElementById('jw-donate-btn');
+      donateBtn.href = 'payment.html?donate=1&verified=1&room=' + document.getElementById('room').value + '&rate=jw';
+      document.getElementById('jw-donate-wrap').classList.remove('hidden');
+      updatePaymentNote(true);
+      populatePaxSelect(document.getElementById('room').value, 'jw');
+      recalc();
     } else {
-      const cb = document.getElementById('disc-a2a19');
-      if (cb) { cb.checked = true; cb.dispatchEvent(new Event('change')); }
+      activeVoucherType = 'a2a19';
+      document.getElementById('a2a19-panel').classList.remove('hidden');
+      updateA2A19Panel();
+      const donateBtn = document.getElementById('a2a19-donate-btn');
+      donateBtn.href = 'payment.html?donate=1&verified=1&room=' + document.getElementById('room').value + '&rate=a2a19';
+      document.getElementById('a2a19-donate-wrap').classList.remove('hidden');
+      updatePaymentNote(true);
+      populatePaxSelect(document.getElementById('room').value, 'a2a19');
+      recalc();
     }
   }
 })();
