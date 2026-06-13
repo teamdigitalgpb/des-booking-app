@@ -36,12 +36,15 @@
   <nav class="nav">
     <div class="container">
       <a class="nav-logo" href="index.html">D' Econo-Space</a>
+      <button class="nav-toggle" aria-label="Toggle menu" onclick="this.closest('.nav').classList.toggle('open')">
+        <span></span><span></span><span></span>
+      </button>
       <ul class="nav-links">
-        <li><a href="#our-story">Our Story</a></li>
-        <li><a href="#rooms">Rooms</a></li>
-        <li><a href="#amenities">Amenities</a></li>
-        <li><a href="#location">Location</a></li>
-        <li><a href="voucher.html">Get Voucher</a></li>
+        <li><a href="#our-story" onclick="this.closest('.nav').classList.remove('open')">Our Story</a></li>
+        <li><a href="#rooms" onclick="this.closest('.nav').classList.remove('open')">Rooms</a></li>
+        <li><a href="#amenities" onclick="this.closest('.nav').classList.remove('open')">Amenities</a></li>
+        <li><a href="#location" onclick="this.closest('.nav').classList.remove('open')">Location</a></li>
+        <li><a href="voucher.html" onclick="this.closest('.nav').classList.remove('open')">Get Voucher</a></li>
       </ul>
     </div>
   </nav>
