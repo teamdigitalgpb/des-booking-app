@@ -87,12 +87,14 @@ function goStep(n) {
 
   // Validate before leaving step
   if (n === 2) {
-    const name  = document.getElementById('v-name').value.trim();
+    const fname = document.getElementById('v-fname').value.trim();
+    const lname = document.getElementById('v-lname').value.trim();
     const mobile= document.getElementById('v-mobile').value.trim();
     const cong  = document.getElementById('v-congregation').value.trim();
     const muni  = document.getElementById('v-municipality').value.trim();
     const prov  = document.getElementById('v-province').value.trim();
-    if (!name)  return showAlert('Please enter your full name.');
+    if (!fname) return showAlert('Please enter your first name.');
+    if (!lname) return showAlert('Please enter your last name.');
     if (!mobile)return showAlert('Please enter your mobile number.');
     if (!cong)  return showAlert('Please enter your congregation or organization name.');
     if (!muni)  return showAlert('Please enter your municipality.');
@@ -175,8 +177,10 @@ async function submitVoucher() {
     }
   }
 
-  const name   = document.getElementById('v-name').value.trim();
+  const fname  = document.getElementById('v-fname').value.trim();
+  const lname  = document.getElementById('v-lname').value.trim();
   const mobile = document.getElementById('v-mobile').value.trim();
+  const vEmail = document.getElementById('v-email').value.trim();
   const cong   = document.getElementById('v-congregation').value.trim();
   const muni   = document.getElementById('v-municipality').value.trim();
   const prov   = document.getElementById('v-province').value.trim();
@@ -185,9 +189,9 @@ async function submitVoucher() {
   const refCode = 'REF-' + Date.now().toString(36).toUpperCase();
 
   const payload = {
-    name, mobile, congregation: cong, municipality: muni, province: prov,
+    name: fname + ' ' + lname, mobile, congregation: cong, municipality: muni, province: prov,
     rateType: finalType, idNumber, answer,
-    email: voucherEmail,
+    email: voucherEmail || vEmail,
     voucherMethod,
     refCode,
     tags: `DES,DES-voucher-pending,DES-${finalType.toUpperCase()}`,
@@ -201,7 +205,13 @@ async function submitVoucher() {
     await postToWebhook(CONFIG.WEBHOOK_VOUCHER, payload);
     saveVoucherRequest({ ...payload, code: null });
     const discountType = finalType === 'jw' ? 'jw' : 'a2a19';
-    sessionStorage.setItem('des_voucher_approved', JSON.stringify({ type: discountType }));
+    sessionStorage.setItem('des_voucher_approved', JSON.stringify({
+      type: discountType,
+      firstName: fname,
+      lastName:  lname,
+      mobile,
+      email: voucherEmail || vEmail,
+    }));
     window.location.href = 'index.html#rooms';
   } catch (err) {
     showAlert('Something went wrong. Please try again or contact us directly.');

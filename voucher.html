@@ -52,13 +52,23 @@
       <!-- STEP 1: Personal info -->
       <div class="step-panel active" id="step-1">
         <p class="step-label">Step 1 of 3 — Your Information</p>
-        <div class="form-group">
-          <label for="v-name">Full Name *</label>
-          <input type="text" id="v-name" placeholder="Maria Santos" />
+        <div class="form-row">
+          <div class="form-group">
+            <label for="v-fname">First Name *</label>
+            <input type="text" id="v-fname" placeholder="Maria" autocomplete="given-name" />
+          </div>
+          <div class="form-group">
+            <label for="v-lname">Last Name *</label>
+            <input type="text" id="v-lname" placeholder="Santos" autocomplete="family-name" />
+          </div>
         </div>
         <div class="form-group">
           <label for="v-mobile">Mobile Number *</label>
           <input type="tel" id="v-mobile" placeholder="09171234567" />
+        </div>
+        <div class="form-group">
+          <label for="v-email">Email Address <span style="font-weight:400;color:var(--text-muted);">(optional)</span></label>
+          <input type="email" id="v-email" placeholder="maria@example.com" autocomplete="email" />
         </div>
         <div class="form-group">
           <label for="v-congregation">Congregation / Organization Name *</label>

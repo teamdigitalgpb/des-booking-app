@@ -34,7 +34,10 @@
 
   function show(id) {
     ['pay-state-donor', 'pay-state-verify', 'pay-state-options', 'pay-state-qr'].forEach(s => {
-      document.getElementById(s)?.classList.toggle('hidden', s !== id);
+      const el = document.getElementById(s);
+      if (!el) return;
+      if (s === id) el.classList.remove('hidden');
+      else          el.classList.add('hidden');
     });
   }
 

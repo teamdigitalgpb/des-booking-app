@@ -47,8 +47,8 @@ const CONFIG = {
   QR_BANK:     'assets/qr-gcash.png',
 
   // External donation links (donor enters own amount on their platform)
-  LINK_PAYPAL: 'PLACEHOLDER_paste_paypal_link',   // e.g. https://paypal.me/yourname
-  LINK_WISE:   'PLACEHOLDER_paste_wise_link',     // e.g. https://wise.com/pay/me/...
+  LINK_PAYPAL: 'https://www.paypal.com/donate?business=glengsky%40gmail.com&currency_code=PHP',
+  LINK_WISE:   'https://wise.com/pay/me/glezzendab',
 
   // ── Volunteer Stories (Google Sheet "Stories" tab) ───────────────────────
   // Publish the Stories tab as CSV: File > Share > Publish to web > Stories tab > CSV.

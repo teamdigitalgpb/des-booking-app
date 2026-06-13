@@ -510,5 +510,9 @@ document.getElementById('jw-ans').addEventListener('input', async (e) => {
   if (ssToken) {
     const token = JSON.parse(ssToken);
     applyVerified(token.type);
+    if (token.firstName) document.getElementById('firstName').value = token.firstName;
+    if (token.lastName)  document.getElementById('lastName').value  = token.lastName;
+    if (token.mobile)    document.getElementById('mobile').value    = token.mobile;
+    if (token.email)     document.getElementById('email').value     = token.email;
   }
 })();
