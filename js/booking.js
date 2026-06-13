@@ -135,22 +135,6 @@ function updatePriceDisplay(room, nights, pax, rateType) {
 let activeVoucherType = 'regular';
 let preVerified       = false;
 
-function saveVerification(type, email) {
-  localStorage.setItem('des_verified', JSON.stringify({
-    type, email: (email || '').toLowerCase(), verifiedAt: Date.now(),
-  }));
-}
-
-function checkStoredVerification(email) {
-  try {
-    const rec = JSON.parse(localStorage.getItem('des_verified') || 'null');
-    if (!rec || !rec.type) return null;
-    if (rec.type === 'jw' && Date.now() - (rec.verifiedAt || 0) > 7 * 24 * 60 * 60 * 1000) return null;
-    if (email && rec.email && rec.email !== email.toLowerCase()) return null;
-    return rec;
-  } catch (e) { return null; }
-}
-
 function applyVerified(type) {
   preVerified = true;
   activeVoucherType = type;
@@ -346,6 +330,7 @@ document.getElementById('booking-form').addEventListener('submit', async (e) => 
 
     saveBooking({ room, checkin, checkout, name, id: Date.now() });
 
+    sessionStorage.removeItem('des_voucher_approved');
     sessionStorage.setItem('des_booking_summary', JSON.stringify({
       name, email, mobile, room, checkin, checkout, guests, totalPrice, nights, rateType: activeVoucherType,
     }));
@@ -399,13 +384,6 @@ document.getElementById('checkin').addEventListener('change', () => {
 });
 document.getElementById('checkout').addEventListener('change', recalc);
 document.getElementById('guests').addEventListener('change', () => { toggleShareWaitlist(); toggleExclusiveNote(); recalc(); });
-document.getElementById('email').addEventListener('blur', (e) => {
-  if (preVerified) return;
-  const email = e.target.value.trim();
-  if (!email) return;
-  const rec = checkStoredVerification(email);
-  if (rec) { saveVerification(rec.type, email); applyVerified(rec.type); }
-});
 // ── Discount checkbox listeners ───────────────────────────────────────────────
 
 document.getElementById('jw-q').textContent =
@@ -478,7 +456,7 @@ document.getElementById('jw-ans').addEventListener('input', async (e) => {
   const result = await validateVoucher(code, '');
   if (result.valid && result.type === 'jw') {
     activeVoucherType = 'jw';
-    saveVerification('jw', document.getElementById('email').value.trim());
+    sessionStorage.setItem('des_voucher_approved', JSON.stringify({ type: 'jw' }));
     statusEl.className = 'voucher-status valid';
     statusEl.textContent = '✓ Correct — JW volunteer rate applied';
     const donateWrap = document.getElementById('jw-donate-wrap');
@@ -530,12 +508,7 @@ document.getElementById('jw-ans').addEventListener('input', async (e) => {
 
   const ssToken = sessionStorage.getItem('des_voucher_approved');
   if (ssToken) {
-    sessionStorage.removeItem('des_voucher_approved');
     const token = JSON.parse(ssToken);
-    saveVerification(token.type, '');
     applyVerified(token.type);
-  } else {
-    const lsRec = checkStoredVerification('');
-    if (lsRec) applyVerified(lsRec.type);
   }
 })();
