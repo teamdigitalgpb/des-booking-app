@@ -7,7 +7,7 @@ const CONFIG = {
   // Create in GHL > Automation > Workflows > New > Trigger: Webhook
   WEBHOOK_BOOKING:      'https://hook.us2.make.com/hry6pwxs46bqke59vbt5erfswcc4yj6s',
   WEBHOOK_VOUCHER:      'PLACEHOLDER_paste_voucher_webhook_url',
-  WEBHOOK_CANCELLATION: 'PLACEHOLDER_paste_cancellation_webhook_url',
+  WEBHOOK_CANCELLATION: 'https://hook.us2.make.com/or893ovi8ddsanfzti4xifqgazbrqoj1',
 
   // ── GHL IDs ───────────────────────────────────────────────────────────────
   LOCATION_ID:      '2P0dvOfUyN4ijmvG9KpL',
