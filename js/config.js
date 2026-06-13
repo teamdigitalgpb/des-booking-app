@@ -41,6 +41,13 @@ const CONFIG = {
   // Same Apps Script as WEBHOOK_VOUCHER — routed by action:'donation'
   WEBHOOK_DONATION: 'https://script.google.com/macros/s/AKfycbxYNHs3HVlkXDdjfg49FCKnCIQ8j-WbWozMp6XecuqIHgPzgxoG3EHHNq8H-qP1piI3/exec',
 
+  // ── Admin Date Blocking ───────────────────────────────────────────────────
+  // Same Apps Script — routed by action:'addBlock' / action:'removeBlock'
+  WEBHOOK_ADMIN: 'https://script.google.com/macros/s/AKfycbxYNHs3HVlkXDdjfg49FCKnCIQ8j-WbWozMp6XecuqIHgPzgxoG3EHHNq8H-qP1piI3/exec',
+  // Publish the "Blocked Dates" sheet tab as CSV and paste the URL here:
+  // DES sheet → "Blocked Dates" tab → File > Share > Publish to web > CSV
+  BLOCKED_DATES_CSV_URL: 'PLACEHOLDER_publish_blocked_dates_tab_as_csv',
+
   // QR code images — export non-expiring QR from each app, save to assets/
   QR_GCASH:    'assets/qr-gcash.png',
   QR_MAYA:     'assets/qr-maya.png',

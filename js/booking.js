@@ -65,6 +65,51 @@ function populatePaxSelect(room, rateType) {
   if (noteEl) noteEl.classList.toggle('hidden', room !== 'whole');
 }
 
+// ── Admin-blocked dates ───────────────────────────────────────────────────────
+
+let _blockedDates = { d1: new Set(), d2: new Set(), both: new Set() };
+
+function fetchBlockedDates() {
+  const url = CONFIG.BLOCKED_DATES_CSV_URL;
+  if (!url || url.startsWith('PLACEHOLDER')) return;
+  fetch(url, { cache: 'no-store' })
+    .then(r => r.text())
+    .then(csv => {
+      const lines = csv.trim().split(/\r?\n/).slice(1);
+      lines.forEach(line => {
+        const cols = line.split(',').map(c => c.replace(/^"|"$/g, '').trim());
+        const [room, startStr, endStr] = cols;
+        if (!room || !startStr) return;
+        const key = room.toLowerCase();
+        if (!_blockedDates[key]) _blockedDates[key] = new Set();
+        const start = new Date(startStr + 'T00:00:00');
+        const end   = endStr ? new Date(endStr + 'T00:00:00') : new Date(startStr + 'T00:00:00');
+        if (isNaN(start) || isNaN(end)) return;
+        for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
+          _blockedDates[key].add(d.toISOString().split('T')[0]);
+        }
+      });
+    })
+    .catch(() => {});
+}
+
+function isDateBlocked(room, date) {
+  if (_blockedDates.both?.has(date)) return true;
+  if (room === 'd1')    return !!_blockedDates.d1?.has(date);
+  if (room === 'd2')    return !!_blockedDates.d2?.has(date);
+  if (room === 'whole') return !!_blockedDates.d1?.has(date) || !!_blockedDates.d2?.has(date);
+  return false;
+}
+
+function isRangeBlocked(room, checkin, checkout) {
+  const start = new Date(checkin + 'T00:00:00');
+  const end   = checkout ? new Date(checkout + 'T00:00:00') : new Date(start.getTime() + 86400000);
+  for (let d = new Date(start); d < end; d.setDate(d.getDate() + 1)) {
+    if (isDateBlocked(room, d.toISOString().split('T')[0])) return true;
+  }
+  return false;
+}
+
 // ── Conflict checking (localStorage) ────────────────────────────────────────
 
 function getBookings() {
@@ -259,6 +304,13 @@ function recalc() {
     document.getElementById('conflict-warning').classList.toggle('hidden', !conflict);
   }
 
+  const blockedWarnEl = document.getElementById('blocked-dates-warning');
+  if (blockedWarnEl) {
+    const blocked = !!(room && checkin && isRangeBlocked(room, checkin, checkout || checkin));
+    blockedWarnEl.classList.toggle('hidden', !blocked);
+    document.getElementById('submit-btn').disabled = blocked;
+  }
+
   const d2WarnEl = document.getElementById('d2-availability-warning');
   if (d2WarnEl) {
     if (room === 'd2' && checkin && checkout && nights >= 1) {
@@ -297,6 +349,10 @@ document.getElementById('booking-form').addEventListener('submit', async (e) => 
 
   const nights = nightsBetween(checkin, checkout);
   if (nights < 1) return showAlert('Check-out must be after check-in.');
+
+  if (isRangeBlocked(room, checkin, checkout)) {
+    return showAlert('These dates are not available for booking. Please choose different dates or contact us.');
+  }
 
   if (room === 'd2' && !hasD1Booking(checkin, checkout)) {
     return showAlert('Room D2 is only available when Room D1 is occupied for the same dates. Please book Room D1 first, or contact us to arrange both rooms.');
@@ -497,6 +553,8 @@ document.getElementById('jw-ans').addEventListener('input', async (e) => {
       recalc();
     }
   }
+
+  fetchBlockedDates();
 
   const today = new Date().toISOString().split('T')[0];
   document.getElementById('checkin').min  = today;

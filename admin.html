@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin — D' Econo-Space</title>
+  <link rel="stylesheet" href="assets/style.css" />
+  <style>
+    .admin-section {
+      margin-bottom: 2rem;
+    }
+    .admin-section h2 {
+      font-size: 1.05rem;
+      color: var(--navy);
+      margin-bottom: 1rem;
+      padding-bottom: .5rem;
+      border-bottom: 1px solid var(--cream);
+    }
+    .block-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      padding: .75rem 0;
+      border-bottom: 1px solid var(--cream);
+    }
+    .block-row:last-child { border-bottom: none; }
+    .block-info { flex: 1; }
+    .block-room {
+      display: inline-block;
+      background: var(--navy);
+      color: var(--gold);
+      font-size: .75rem;
+      font-weight: 700;
+      padding: .15rem .55rem;
+      border-radius: 20px;
+      margin-bottom: .3rem;
+    }
+    .block-dates {
+      display: block;
+      font-size: .92rem;
+      color: var(--text-body);
+      font-weight: 600;
+    }
+    .block-reason {
+      display: block;
+      font-size: .82rem;
+      color: var(--text-muted);
+      margin-top: .15rem;
+    }
+    .btn-remove {
+      background: none;
+      border: 1px solid #e0d0c8;
+      color: #b34040;
+      font-size: .82rem;
+      font-weight: 600;
+      padding: .3rem .75rem;
+      border-radius: var(--radius);
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background .15s;
+    }
+    .btn-remove:hover { background: #fff0f0; }
+    .empty-state {
+      color: var(--text-muted);
+      font-size: .9rem;
+      padding: .75rem 0;
+    }
+    #admin-status {
+      font-size: .85rem;
+      margin-top: .5rem;
+      min-height: 1.2em;
+    }
+    .status-ok    { color: #2e7d32; }
+    .status-error { color: #b34040; }
+    #add-block-form .form-row { gap: .75rem; }
+  </style>
+</head>
+<body class="form-page">
+
+  <nav class="nav">
+    <div class="container">
+      <a class="nav-logo" href="index.html">← D' Econo-Space</a>
+    </div>
+  </nav>
+
+  <div class="form-wrap">
+    <div class="form-card" style="max-width:580px;">
+
+      <!-- ── Password gate ── -->
+      <div id="admin-gate">
+        <div style="text-align:center;margin-bottom:1.75rem;">
+          <div style="font-size:2rem;margin-bottom:.5rem;">🔒</div>
+          <h1 style="font-size:1.45rem;margin-bottom:.35rem;">Admin Access</h1>
+          <p class="subtitle" style="margin-bottom:0;">D' Econo-Space property management</p>
+        </div>
+
+        <div id="gate-error" class="alert alert-error hidden"></div>
+
+        <form id="gate-form" novalidate>
+          <div class="form-group">
+            <label for="gate-password">Admin Password</label>
+            <input type="password" id="gate-password" placeholder="Enter password" autocomplete="current-password" required />
+          </div>
+          <button type="submit" class="btn btn-primary btn-full">Sign In</button>
+        </form>
+      </div>
+
+      <!-- ── Admin panel (shown after login) ── -->
+      <div id="admin-panel" class="hidden">
+
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.75rem;">
+          <div>
+            <h1 style="font-size:1.35rem;margin-bottom:.2rem;">Booking Blocks</h1>
+            <p class="subtitle" style="margin-bottom:0;">Dates closed to new reservations</p>
+          </div>
+          <button type="button" id="sign-out-btn" style="background:none;border:none;color:var(--text-muted);font-size:.82rem;cursor:pointer;text-decoration:underline;">Sign out</button>
+        </div>
+
+        <!-- Current blocks list -->
+        <div class="admin-section">
+          <h2>Active Blocks</h2>
+          <div id="block-list"><p class="empty-state">Loading…</p></div>
+          <button type="button" id="refresh-btn" style="margin-top:.75rem;background:none;border:none;color:var(--navy);font-size:.82rem;cursor:pointer;text-decoration:underline;">↺ Refresh list</button>
+        </div>
+
+        <!-- Add new block -->
+        <div class="admin-section">
+          <h2>Add a Block</h2>
+          <form id="add-block-form" novalidate>
+            <div class="form-group">
+              <label for="block-room">Which room(s) to close *</label>
+              <select id="block-room" required>
+                <option value="">— Select —</option>
+                <option value="d1">Room D1 only</option>
+                <option value="d2">Room D2 only</option>
+                <option value="both">Both rooms (entire unit)</option>
+              </select>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="block-start">From *</label>
+                <input type="date" id="block-start" required />
+              </div>
+              <div class="form-group">
+                <label for="block-end">To <span style="font-weight:400;color:var(--text-muted);">(leave blank for single day)</span></label>
+                <input type="date" id="block-end" />
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="block-reason">Reason <span style="font-weight:400;color:var(--text-muted);">(private — guests never see this)</span></label>
+              <input type="text" id="block-reason" placeholder="e.g. General cleaning, Carpentry" />
+            </div>
+            <button type="submit" id="add-btn" class="btn btn-primary btn-full">Add Block</button>
+            <div id="admin-status"></div>
+          </form>
+        </div>
+
+      </div><!-- /admin-panel -->
+
+    </div>
+  </div>
+
+  <footer>
+    <p>D' Econo-Space &copy; 2026 &nbsp;|&nbsp; Admin panel</p>
+  </footer>
+
+  <script src="js/config.js"></script>
+  <script src="js/ghl.js"></script>
+  <script src="js/admin.js"></script>
+</body>
+</html>
