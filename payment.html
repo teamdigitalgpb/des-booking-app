@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Complete Payment — D' Econo-Space</title>
+  <link rel="stylesheet" href="assets/style.css" />
+</head>
+<body class="form-page">
+
+  <nav class="nav">
+    <div class="container">
+      <a class="nav-logo" href="index.html">← D' Econo-Space</a>
+    </div>
+  </nav>
+
+  <div class="form-wrap">
+    <div class="form-card">
+
+      <!-- ── State: Verify eligibility ── -->
+      <div id="pay-state-verify" class="hidden">
+        <div style="text-align:center;margin-bottom:1.5rem;">
+          <div style="font-size:2rem;margin-bottom:.5rem;">🔐</div>
+          <h1 style="font-size:1.4rem;margin-bottom:.35rem;color:var(--navy);">Verify Your Discount</h1>
+          <p class="subtitle" style="margin-bottom:0;">Answer the question below to confirm your eligibility before proceeding to payment.</p>
+        </div>
+
+        <div class="summary-box" id="pay-summary-verify" style="margin-bottom:1.25rem;"></div>
+
+        <div id="verify-alert" class="alert hidden" style="margin-bottom:1rem;"></div>
+
+        <div class="form-group" id="jw-question-wrap">
+          <label id="jw-question-label" for="jw-answer-input"></label>
+          <input type="text" id="jw-answer-input" placeholder="Enter your answer" autocomplete="off" />
+        </div>
+
+        <div class="form-group hidden" id="voucher-wrap">
+          <label for="voucher-input">A2/A19 Voucher Code *</label>
+          <input type="text" id="voucher-input" placeholder="Enter voucher code" autocomplete="off" style="letter-spacing:.1em;" />
+          <p style="font-size:.8rem;color:var(--text-muted);margin-top:.35rem;">The voucher code was provided during your volunteer assignment.</p>
+        </div>
+
+        <button id="verify-btn" type="button" class="btn btn-primary btn-full">Verify &amp; Proceed to Payment →</button>
+      </div>
+
+      <!-- ── State: Payment methods ── -->
+      <div id="pay-state-options" class="hidden">
+        <div style="text-align:center;margin-bottom:1.5rem;">
+          <div style="font-size:2rem;margin-bottom:.5rem;">💛</div>
+          <h1 style="font-size:1.4rem;margin-bottom:.35rem;color:var(--navy);">Complete Your Payment</h1>
+          <p class="subtitle" style="margin-bottom:0;">Choose a payment method below. Your slot is held — payment confirms your booking.</p>
+        </div>
+
+        <div class="summary-box" id="pay-summary-options" style="margin-bottom:1.25rem;"></div>
+
+        <div class="payment-grid">
+          <button type="button" class="pay-card" data-method="gcash">
+            <div class="pay-icon" style="background:#0070E0;">
+              <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <text x="50%" y="58%" dominant-baseline="middle" text-anchor="middle" font-size="22" font-weight="800" font-family="Montserrat,sans-serif" fill="white">G</text>
+              </svg>
+            </div>
+            <span>GCash</span>
+          </button>
+
+          <button type="button" class="pay-card" data-method="maya">
+            <div class="pay-icon" style="background:#00BFA5;">
+              <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <text x="50%" y="58%" dominant-baseline="middle" text-anchor="middle" font-size="20" font-weight="800" font-family="Montserrat,sans-serif" fill="white">M</text>
+              </svg>
+            </div>
+            <span>Maya</span>
+          </button>
+
+          <button type="button" class="pay-card" data-method="bank">
+            <div class="pay-icon" style="background:#5C4033;">
+              <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect x="8" y="20" width="4" height="10" fill="white"/>
+                <rect x="14" y="17" width="4" height="13" fill="white"/>
+                <rect x="20" y="20" width="4" height="10" fill="white"/>
+                <rect x="26" y="17" width="4" height="13" fill="white"/>
+                <polygon points="20,7 6,17 34,17" fill="white"/>
+                <rect x="6" y="30" width="28" height="3" fill="white"/>
+              </svg>
+            </div>
+            <span>Bank</span>
+            <span class="pay-sub">InstaPay</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- ── State: QR code ── -->
+      <div id="pay-state-qr" class="hidden">
+        <button type="button" id="pay-qr-back" class="qr-back-btn">← Back</button>
+        <div style="text-align:center;margin-top:.75rem;">
+          <h2 id="pay-qr-title" style="font-size:1.25rem;margin-bottom:.35rem;"></h2>
+          <p style="color:var(--text-muted);font-size:.88rem;margin-bottom:.5rem;line-height:1.6;">Scan with your <span id="pay-qr-app"></span> app and enter the amount below.</p>
+
+          <div style="background:var(--navy);border-radius:var(--radius);padding:.65rem 1.25rem;display:inline-block;margin-bottom:1.1rem;">
+            <p style="color:var(--gold);font-size:.78rem;font-weight:600;margin-bottom:.15rem;letter-spacing:.04em;">AMOUNT TO SEND</p>
+            <p id="pay-qr-amount" style="color:#fff;font-size:1.75rem;font-weight:700;margin:0;"></p>
+          </div>
+
+          <div class="qr-wrap">
+            <img id="pay-qr-image" src="" alt="QR Code" class="qr-img" />
+            <div id="pay-qr-placeholder" class="qr-placeholder hidden">
+              <p>QR image not yet uploaded.</p>
+              <code id="pay-qr-hint" style="font-size:.78rem;color:var(--text-muted);"></code>
+            </div>
+          </div>
+
+          <p style="margin-top:1.1rem;font-size:.84rem;color:var(--text-muted);line-height:1.6;">After payment, <strong style="color:var(--brown);">send a screenshot</strong> to us so we can confirm your booking.</p>
+          <p style="font-size:.88rem;margin-top:.35rem;">
+            📞 <a href="tel:+639176784871" style="color:var(--brown);">0917.678.4871</a> &nbsp;|&nbsp;
+            <a href="mailto:d.econospace.cebu@gmail.com" style="color:var(--brown);">d.econospace.cebu@gmail.com</a>
+          </p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <footer>
+    <p>D' Econo-Space &copy; 2026 &nbsp;|&nbsp; Lapu-Lapu, Cebu &nbsp;|&nbsp; <a href="mailto:d.econospace.cebu@gmail.com">d.econospace.cebu@gmail.com</a></p>
+  </footer>
+
+  <script src="js/config.js"></script>
+  <script src="js/settings.js"></script>
+  <script src="js/payment.js"></script>
+</body>
+</html>

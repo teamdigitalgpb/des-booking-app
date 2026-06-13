@@ -48,6 +48,8 @@
         <a href="mailto:d.econospace.cebu@gmail.com" style="color:var(--brown);">d.econospace.cebu@gmail.com</a>
       </div>
 
+      <a id="pay-now-btn" href="#" class="btn btn-gold btn-full" style="margin-bottom:.75rem;font-size:1.05rem;">Pay Now →</a>
+
       <a href="https://maps.app.goo.gl/KgXawL22XTxx7zybA" target="_blank" rel="noopener" class="btn btn-primary" style="margin-bottom:.75rem;width:100%;">
         Open in Google Maps
       </a>
@@ -92,6 +94,15 @@
         <div class="row"><span>Rate</span><strong>${rateLabels[s.rateType] || 'Regular'}</strong></div>
         <div class="row"><span>Total</span><strong style="color:var(--brown);font-size:1.1rem;">₱${s.totalPrice.toLocaleString()}</strong></div>
       `;
+
+      // Build Pay Now link
+      const payParams = new URLSearchParams({
+        name: s.name, email: s.email || '', room: s.room,
+        checkin: s.checkin, checkout: s.checkout,
+        nights: s.nights, guests: s.guests,
+        totalPrice: s.totalPrice, rateType: s.rateType || 'regular',
+      });
+      document.getElementById('pay-now-btn').href = 'payment.html?' + payParams.toString();
 
       // Build cancel link — 12h before 2 PM check-in
       const checkinDeadline = new Date(s.checkin + 'T14:00:00').getTime() - 12 * 60 * 60 * 1000;
