@@ -13,8 +13,13 @@ const METHODS = {
 };
 
 function showState(id) {
-  ['donate-state-form', 'donate-state-payment', 'donate-state-qr', 'donate-state-fallback']
-    .forEach(s => document.getElementById(s).classList.toggle('hidden', s !== id));
+  ['donate-state-form', 'donate-state-payment', 'donate-state-qr', 'donate-state-fallback', 'donate-state-thankyou']
+    .forEach(s => {
+      const el = document.getElementById(s);
+      if (!el) return;
+      if (s === id) el.classList.remove('hidden');
+      else          el.classList.add('hidden');
+    });
 }
 
 // ── Form submit ────────────────────────────────────────────────────────────
@@ -85,6 +90,12 @@ document.querySelectorAll('.pay-card').forEach(card => {
 
 document.getElementById('qr-back').addEventListener('click', () => {
   showState('donate-state-payment');
+});
+
+// ── Done — donation complete ──────────────────────────────────────────────────
+
+document.getElementById('donate-done-btn').addEventListener('click', () => {
+  showState('donate-state-thankyou');
 });
 
 // ── Helpers ─────────────────────────────────────────────────────────────────
