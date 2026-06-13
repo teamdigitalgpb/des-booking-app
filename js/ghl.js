@@ -8,9 +8,10 @@ async function postToWebhook(url, payload) {
     // In dev/testing mode, simulate success so forms still work
     return { ok: true, simulated: true };
   }
+  const isAppsScript = url.includes('script.google.com');
   const res = await fetch(url, {
     method:  'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 'Content-Type': isAppsScript ? 'text/plain' : 'application/json' },
     body:    JSON.stringify(payload),
   });
   if (!res.ok) throw new Error(`Webhook error: ${res.status}`);
