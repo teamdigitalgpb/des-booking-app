@@ -308,17 +308,13 @@ document.getElementById('booking-form').addEventListener('submit', async (e) => 
       name, email, mobile, room, checkin, checkout, guests, totalPrice, nights, rateType: activeVoucherType,
     }));
 
-    if (activeVoucherType !== 'regular') {
-      const q = new URLSearchParams({
-        name, email, room, checkin, checkout,
-        nights: nights.toString(), guests: guests.toString(),
-        totalPrice: totalPrice.toString(), rateType: activeVoucherType,
-        verified: '1',
-      }).toString();
-      window.location.href = 'payment.html?' + q;
-    } else {
-      window.location.href = 'thankyou-booking.html';
-    }
+    const q = new URLSearchParams({
+      name, email, room, checkin, checkout,
+      nights: nights.toString(), guests: guests.toString(),
+      totalPrice: totalPrice.toString(), rateType: activeVoucherType,
+      verified: activeVoucherType !== 'regular' ? '1' : '0',
+    }).toString();
+    window.location.href = 'payment.html?' + q;
   } catch (err) {
     showAlert('Something went wrong. Please try again or contact us directly.');
     btn.disabled = false;
