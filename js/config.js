@@ -44,7 +44,7 @@ const CONFIG = {
   // QR code images — export non-expiring QR from each app, save to assets/
   QR_GCASH:    'assets/qr-gcash.png',
   QR_MAYA:     'assets/qr-maya.png',
-  QR_BANK:     'assets/qr-bank.png',
+  QR_BANK:     'PLACEHOLDER_upload_bank_qr',
 
   // External donation links (donor enters own amount on their platform)
   LINK_PAYPAL: 'PLACEHOLDER_paste_paypal_link',   // e.g. https://paypal.me/yourname
