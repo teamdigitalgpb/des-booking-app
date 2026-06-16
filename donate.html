@@ -17,55 +17,12 @@
   <div class="form-wrap">
     <div class="form-card donate-card">
 
-      <!-- ── State 1: Form ── -->
-      <div id="donate-state-form">
+      <!-- ── State 1: Payment method grid (shown on load) ── -->
+      <div id="donate-state-payment">
         <div style="text-align:center;margin-bottom:1.75rem;">
           <div style="font-size:2.2rem;margin-bottom:.6rem;">🤲</div>
           <h1 style="font-size:1.55rem;margin-bottom:.4rem;">Give a Donation</h1>
-          <p class="subtitle" style="margin-bottom:0;">Your generosity helps keep this place running for those who serve. Please leave your details — we'll send you a thank-you.</p>
-        </div>
-
-        <div id="donate-alert" class="alert hidden"></div>
-
-        <form id="donate-form" novalidate>
-          <div class="form-group">
-            <label for="don-name">Full Name *</label>
-            <input type="text" id="don-name" name="don-name" placeholder="Maria Santos" required />
-          </div>
-          <div class="form-group">
-            <label for="don-email">Email Address * <span style="font-weight:400;color:var(--text-muted);">(we'll send your thank-you here)</span></label>
-            <input type="email" id="don-email" name="don-email" placeholder="maria@example.com" required />
-          </div>
-          <div class="form-group">
-            <label for="don-mobile">Mobile / GCash Number * <span style="font-weight:400;color:var(--text-muted);">(the number you'll send from)</span></label>
-            <input type="tel" id="don-mobile" name="don-mobile" placeholder="09171234567" required />
-          </div>
-          <div class="form-group">
-            <label for="don-purpose">Purpose *</label>
-            <textarea id="don-purpose" name="don-purpose" rows="3" placeholder="e.g. For the upkeep of the stay in support for the volunteer on June 1–6, 2026" required></textarea>
-          </div>
-          <div class="form-group">
-            <label for="don-amount">Amount you'll send <span style="font-weight:400;color:var(--text-muted);">(helps with accounting)</span></label>
-            <div style="position:relative;">
-              <span style="position:absolute;left:.85rem;top:50%;transform:translateY(-50%);color:var(--text-muted);font-weight:700;pointer-events:none;">₱</span>
-              <input type="number" id="don-amount" name="don-amount" min="1" placeholder="e.g. 500" style="padding-left:2rem;" />
-            </div>
-          </div>
-          <button type="submit" class="btn btn-primary btn-full" id="don-submit" style="margin-top:.5rem;">
-            Continue to Payment →
-          </button>
-          <p style="text-align:center;margin-top:.85rem;font-size:.82rem;color:var(--text-muted);">
-            You'll choose your payment method on the next step.
-          </p>
-        </form>
-      </div>
-
-      <!-- ── State 2: Payment method grid ── -->
-      <div id="donate-state-payment" class="hidden">
-        <div style="text-align:center;margin-bottom:1.75rem;">
-          <div style="font-size:2rem;margin-bottom:.5rem;">💛</div>
-          <h1 style="font-size:1.45rem;margin-bottom:.35rem;">How would you like to give?</h1>
-          <p class="subtitle" style="margin-bottom:0;">Choose a method. You set the amount — any amount is welcome.</p>
+          <p class="subtitle" style="margin-bottom:0;">Choose how you'd like to give — any amount is welcome.</p>
         </div>
         <div class="payment-grid">
 
@@ -114,25 +71,41 @@
         </div>
       </div>
 
-      <!-- ── State 3: QR code view ── -->
+      <!-- ── State 2: QR / Wise confirm (with inline name + mobile) ── -->
       <div id="donate-state-qr" class="hidden">
         <button type="button" id="qr-back" class="qr-back-btn">← Back</button>
         <div style="text-align:center;margin-top:.75rem;">
           <h2 id="qr-title" style="font-size:1.3rem;margin-bottom:.35rem;"></h2>
-          <p style="color:var(--text-muted);font-size:.88rem;margin-bottom:1.5rem;line-height:1.6;">Scan this QR code with your <span id="qr-app-name"></span> app.<br>You'll be able to enter the amount you'd like to give.</p>
-          <div class="qr-wrap">
+          <p id="qr-subtitle" style="color:var(--text-muted);font-size:.88rem;margin-bottom:1.25rem;line-height:1.6;"></p>
+
+          <div id="qr-image-wrap" class="qr-wrap">
             <img id="qr-image" src="" alt="QR Code" class="qr-img" />
             <div id="qr-placeholder" class="qr-placeholder hidden">
               <p>QR image not yet uploaded.</p>
               <code id="qr-path-hint" style="font-size:.78rem;color:var(--text-muted);"></code>
             </div>
           </div>
-          <p style="margin-top:1.25rem;font-size:.82rem;color:var(--text-muted);">Any amount you choose is deeply appreciated.</p>
-          <button type="button" id="donate-done-btn" class="btn btn-primary btn-full" style="margin-top:1.5rem;">Done — I've Sent Some Love →</button>
+
+          <p style="margin-top:1rem;font-size:.82rem;color:var(--text-muted);">Any amount you choose is deeply appreciated.</p>
         </div>
+
+        <!-- Inline donor info -->
+        <div style="margin-top:1.75rem;text-align:left;">
+          <div id="qr-alert" class="alert hidden"></div>
+          <div class="form-group">
+            <label for="don-name">Your Name *</label>
+            <input type="text" id="don-name" autocomplete="name" />
+          </div>
+          <div class="form-group">
+            <label for="don-mobile">Mobile / GCash Number *</label>
+            <input type="tel" id="don-mobile" autocomplete="tel" />
+          </div>
+        </div>
+
+        <button type="button" id="donate-done-btn" class="btn btn-primary btn-full" style="margin-top:1.25rem;">Done — I've Sent Some Love →</button>
       </div>
 
-      <!-- ── State 5: Thank you (donation complete) ── -->
+      <!-- ── State 3: Thank you ── -->
       <div id="donate-state-thankyou" class="hidden" style="text-align:center;padding:.5rem 0 1rem;">
         <div style="font-size:3rem;margin-bottom:1rem;">💛</div>
         <h1 style="font-size:1.5rem;color:var(--navy);margin-bottom:.85rem;line-height:1.3;">Thank you —<br>from the heart.</h1>
@@ -149,7 +122,7 @@
       <div id="donate-state-fallback" class="hidden" style="text-align:center;">
         <div style="font-size:2.5rem;margin-bottom:.75rem;">✉️</div>
         <h1 style="font-size:1.45rem;margin-bottom:.5rem;">We've received your details.</h1>
-        <p style="color:var(--text-body);margin-bottom:1.5rem;line-height:1.7;">Thank you, <strong id="don-thankyou-name"></strong>. We'll be in touch at <strong id="don-thankyou-email"></strong> to guide you on how to send your donation.</p>
+        <p style="color:var(--text-body);margin-bottom:1.5rem;line-height:1.7;">Thank you for your generosity. Please reach out to us directly to arrange your donation.</p>
         <div style="background:var(--navy);border-radius:var(--radius);padding:1.25rem;margin-bottom:1.5rem;">
           <p style="color:var(--gold);font-weight:700;margin-bottom:.5rem;">Contact Us</p>
           <p style="color:var(--light);font-size:.95rem;">📞 0917.678.4871 &nbsp;|&nbsp; 0926.149.9002</p>
