@@ -422,7 +422,7 @@
           <tbody>${rows}</tbody>
         </table>
         <p style="font-size:.76rem;color:rgba(242,229,204,.5);margin-top:.4rem;">Per room, per night.</p>
-        <a href="booking.html?room=${room}&donate=1" style="display:inline-block;margin-top:1rem;padding:.75rem 1.5rem;background:transparent;border:1.5px solid var(--accent);color:var(--accent);border-radius:var(--radius);font-size:.9rem;font-weight:500;text-decoration:none;text-align:center;transition:all .2s;">Give a donation instead →</a>`;
+        <a href="booking.html?room=${room}&donate=1" class="btn btn-outline" style="margin-top:1.5rem;display:inline-block;width:100%;text-align:center;">Give a donation instead →</a>`;
       document.getElementById('vol-jw-q').textContent = CONFIG.JW_QUESTION;
       document.getElementById('vol-jw-book-btn').href     = 'booking.html?room=' + room;
       document.getElementById('vol-a2a19-book-btn').href  = 'booking.html?room=' + room;
