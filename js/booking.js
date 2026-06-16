@@ -1,5 +1,7 @@
 // Booking form — pricing, conflict check, GHL webhook submit
 
+let _bookingSubmitted = false;
+
 const RATES = {
   d1: {
     regular: { 1: 650,  2: 650,  3: 850,  4: 950  },
@@ -127,6 +129,11 @@ function hasD1Booking(checkin, checkout) {
   });
 }
 
+function isD1Occupied(checkin, checkout) {
+  if (hasD1Booking(checkin, checkout)) return true;
+  return isRangeBlocked('d1', checkin, checkout);
+}
+
 function hasConflict(room, checkin, checkout) {
   const newIn  = new Date(checkin).getTime();
   const newOut = new Date(checkout).getTime();
@@ -197,6 +204,8 @@ function applyVerified(type) {
     document.getElementById('jw-donate-wrap').classList.remove('hidden');
   } else {
     document.getElementById('a2a19-panel').classList.remove('hidden');
+    document.getElementById('a2a19-gate').style.display = 'none';
+    document.getElementById('a2a19-msg').style.display = '';
     updateA2A19Panel();
     document.getElementById('a2a19-donate-btn').href = `payment.html?donate=1&verified=1&room=${room}&rate=a2a19`;
     document.getElementById('a2a19-donate-wrap').classList.remove('hidden');
@@ -314,7 +323,7 @@ function recalc() {
   const d2WarnEl = document.getElementById('d2-availability-warning');
   if (d2WarnEl) {
     if (room === 'd2' && checkin && checkout && nights >= 1) {
-      d2WarnEl.classList.toggle('hidden', hasD1Booking(checkin, checkout));
+      d2WarnEl.classList.toggle('hidden', isD1Occupied(checkin, checkout));
     } else {
       d2WarnEl.classList.add('hidden');
     }
@@ -350,11 +359,15 @@ document.getElementById('booking-form').addEventListener('submit', async (e) => 
   const nights = nightsBetween(checkin, checkout);
   if (nights < 1) return showAlert('Check-out must be after check-in.');
 
+  if (document.getElementById('disc-a2a19').checked && activeVoucherType !== 'a2a19') {
+    return showAlert('Please enter your valid 7-digit A2/A19 account number to apply the volunteer rate.');
+  }
+
   if (isRangeBlocked(room, checkin, checkout)) {
     return showAlert('These dates are not available for booking. Please choose different dates or contact us.');
   }
 
-  if (room === 'd2' && !hasD1Booking(checkin, checkout)) {
+  if (room === 'd2' && !isD1Occupied(checkin, checkout)) {
     return showAlert('Room D2 is only available when Room D1 is occupied for the same dates. Please book Room D1 first, or contact us to arrange both rooms.');
   }
 
@@ -383,6 +396,7 @@ document.getElementById('booking-form').addEventListener('submit', async (e) => 
 
   try {
     await postToWebhook(CONFIG.WEBHOOK_BOOKING, payload);
+    _bookingSubmitted = true;
 
     saveBooking({ room, checkin, checkout, name, id: Date.now() });
 
@@ -486,18 +500,49 @@ document.getElementById('disc-a2a19').addEventListener('change', (e) => {
     jwPanel.classList.add('hidden');
     a2Panel.classList.remove('hidden');
     optA2.classList.add('selected');
-    activeVoucherType = 'a2a19';
-    updateA2A19Panel();
-    const donateWrap = document.getElementById('a2a19-donate-wrap');
-    const donateBtn  = document.getElementById('a2a19-donate-btn');
-    donateBtn.href = 'payment.html?donate=1&verified=1&room=' + document.getElementById('room').value + '&rate=a2a19';
-    donateWrap.classList.remove('hidden');
-    updatePaymentNote(true);
+    // Reset gate — discount held until account number validated
+    document.getElementById('a2a19-acct').value = '';
+    const acctStatus = document.getElementById('a2a19-acct-status');
+    acctStatus.className = 'voucher-status';
+    acctStatus.textContent = '';
+    document.getElementById('a2a19-msg').style.display = 'none';
+    document.getElementById('a2a19-donate-wrap').classList.add('hidden');
+    activeVoucherType = 'regular';
+    updatePaymentNote(false);
   } else {
     a2Panel.classList.add('hidden');
     optA2.classList.remove('selected');
     activeVoucherType = 'regular';
     document.getElementById('a2a19-donate-wrap').classList.add('hidden');
+    updatePaymentNote(false);
+  }
+  const room = document.getElementById('room').value;
+  populatePaxSelect(room, activeVoucherType);
+  recalc();
+});
+
+document.getElementById('a2a19-acct').addEventListener('input', (e) => {
+  const val      = e.target.value.trim();
+  const statusEl = document.getElementById('a2a19-acct-status');
+  const msgEl    = document.getElementById('a2a19-msg');
+  const donateWrap = document.getElementById('a2a19-donate-wrap');
+  const donateBtn  = document.getElementById('a2a19-donate-btn');
+
+  if (/^\d{7}$/.test(val)) {
+    statusEl.className   = 'voucher-status valid';
+    statusEl.textContent = '✓ Account number confirmed — A2/A19 volunteer rate applied';
+    activeVoucherType = 'a2a19';
+    msgEl.style.display = '';
+    updateA2A19Panel();
+    donateBtn.href = 'payment.html?donate=1&verified=1&room=' + document.getElementById('room').value + '&rate=a2a19';
+    donateWrap.classList.remove('hidden');
+    updatePaymentNote(true);
+  } else {
+    statusEl.className   = val.length > 0 ? 'voucher-status invalid' : 'voucher-status';
+    statusEl.textContent = val.length > 0 ? 'Please enter a valid 7-digit account number.' : '';
+    activeVoucherType = 'regular';
+    msgEl.style.display = 'none';
+    donateWrap.classList.add('hidden');
     updatePaymentNote(false);
   }
   const room = document.getElementById('room').value;
@@ -574,3 +619,22 @@ document.getElementById('jw-ans').addEventListener('input', async (e) => {
     if (token.email)     document.getElementById('email').value     = token.email;
   }
 })();
+
+// ── Abandoned booking follow-up ──────────────────────────────────────────────────
+
+window.addEventListener('pagehide', () => {
+  if (_bookingSubmitted) return;
+  const email = document.getElementById('email')?.value.trim();
+  if (!email) return;
+  const payload = JSON.stringify({
+    action: 'bookingAbandoned',
+    firstName: document.getElementById('firstName')?.value.trim() || '',
+    lastName:  document.getElementById('lastName')?.value.trim()  || '',
+    mobile:    document.getElementById('mobile')?.value.trim()    || '',
+    email,
+    room:      document.getElementById('room')?.value             || '',
+    checkin:   document.getElementById('checkin')?.value          || '',
+    checkout:  document.getElementById('checkout')?.value         || '',
+  });
+  navigator.sendBeacon(CONFIG.WEBHOOK_ADMIN, new Blob([payload], { type: 'application/json' }));
+});

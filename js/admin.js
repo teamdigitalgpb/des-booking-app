@@ -55,6 +55,7 @@ async function loadBlocks() {
       })
       .filter(b => b.room && b.startDate);
     renderBlocks();
+    renderToggles();
   } catch {
     listEl.innerHTML = '<p class="empty-state" style="color:#b34040;">Could not load. Check your CSV URL.</p>';
   }
@@ -130,6 +131,79 @@ async function removeBlock(index) {
     setTimeout(loadBlocks, 1500);
   } catch {
     setStatus('Failed to remove. Please try again.', 'error');
+  }
+}
+
+// ── Room Status Toggle ────────────────────────────────────────────────────────
+
+function isRoomCurrentlyBlocked(room) {
+  const today = new Date().toISOString().split('T')[0];
+  return _blocks.some(b => {
+    if (b.room !== room && b.room !== 'both') return false;
+    const end = b.endDate || b.startDate;
+    return b.startDate <= today && today <= end;
+  });
+}
+
+function findActiveBlock(room) {
+  const today = new Date().toISOString().split('T')[0];
+  return _blocks.find(b => {
+    if (b.room !== room) return false;
+    const end = b.endDate || b.startDate;
+    return b.startDate <= today && today <= end;
+  });
+}
+
+function renderToggles() {
+  ['d1', 'd2'].forEach(room => {
+    const blocked = isRoomCurrentlyBlocked(room);
+    const statusEl = document.getElementById(`status-${room}`);
+    const btnEl    = document.getElementById(`btn-${room}`);
+    const formEl   = document.getElementById(`form-${room}`);
+    if (!statusEl) return;
+    if (blocked) {
+      const block = findActiveBlock(room);
+      statusEl.textContent = `Unavailable${block?.reason ? ' — ' + block.reason : ''}`;
+      statusEl.className   = 'toggle-status unavailable';
+      btnEl.textContent    = 'Mark Available';
+      btnEl.className      = 'btn-toggle unblock-room';
+    } else {
+      statusEl.textContent = 'Available';
+      statusEl.className   = 'toggle-status available';
+      btnEl.textContent    = 'Mark Unavailable';
+      btnEl.className      = 'btn-toggle block-room';
+    }
+    formEl.classList.add('hidden');
+  });
+}
+
+function toggleRoom(room) {
+  const blocked = isRoomCurrentlyBlocked(room);
+  if (blocked) {
+    const idx = _blocks.findIndex(b => {
+      const today = new Date().toISOString().split('T')[0];
+      const end = b.endDate || b.startDate;
+      return b.room === room && b.startDate <= today && today <= end;
+    });
+    if (idx >= 0) removeBlock(idx);
+  } else {
+    document.getElementById(`form-${room}`).classList.toggle('hidden');
+  }
+}
+
+async function confirmBlock(room) {
+  const today   = new Date().toISOString().split('T')[0];
+  const reason  = document.getElementById(`reason-${room}`).value;
+  const endDate = document.getElementById(`end-${room}`).value || '2099-12-31';
+  setStatus('Saving…', '');
+  try {
+    await postToWebhook(CONFIG.WEBHOOK_ADMIN, {
+      action: 'addBlock', room, startDate: today, endDate, reason,
+    });
+    setStatus('Room marked unavailable. Refreshing…', 'ok');
+    setTimeout(loadBlocks, 1500);
+  } catch {
+    setStatus('Failed. Please try again.', 'error');
   }
 }
 

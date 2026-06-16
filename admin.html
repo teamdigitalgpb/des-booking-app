@@ -65,6 +65,18 @@
       padding: .75rem 0;
       text-align: center;
     }
+    .toggle-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem; }
+    .toggle-card { border: 1px solid var(--border); border-radius: var(--radius); padding: 1rem; background: var(--white); }
+    .toggle-card .room-label { font-weight: 700; font-size: .9rem; color: var(--navy); margin-bottom: .5rem; }
+    .toggle-status { font-size: .82rem; font-weight: 700; padding: .2rem .6rem; border-radius: 20px; display: inline-block; margin-bottom: .75rem; }
+    .toggle-status.available { background: #d4edda; color: #155724; }
+    .toggle-status.unavailable { background: #f8d7da; color: #721c24; }
+    .toggle-card .btn-toggle { font-size: .82rem; padding: .35rem .9rem; border-radius: var(--radius); border: 1px solid; cursor: pointer; font-weight: 600; }
+    .btn-toggle.block-room { background: #fff0f0; border-color: #e0c0c0; color: #b34040; }
+    .btn-toggle.unblock-room { background: #f0fff4; border-color: #b0d8b8; color: #2e7d32; }
+    .toggle-form { margin-top: .75rem; display: flex; flex-direction: column; gap: .5rem; }
+    .toggle-form input, .toggle-form select { font-size: .85rem; padding: .35rem .6rem; border: 1px solid var(--border); border-radius: 6px; }
+    .toggle-form .btn-confirm { font-size: .82rem; padding: .35rem .9rem; background: var(--navy); color: var(--white); border: none; border-radius: var(--radius); cursor: pointer; font-weight: 600; }
     #admin-status {
       font-size: .85rem;
       margin-top: .6rem;
@@ -111,6 +123,45 @@
             <p class="subtitle" style="margin-bottom:0;">Dates closed to new bookings</p>
           </div>
           <button type="button" id="sign-out-btn" style="background:none;border:none;color:var(--text-muted);font-size:.82rem;cursor:pointer;text-decoration:underline;">Sign out</button>
+        </div>
+
+        <!-- Room Status Toggle -->
+        <div class="admin-section">
+          <h2>Room Status</h2>
+          <div class="toggle-grid">
+            <div class="toggle-card" id="toggle-d1">
+              <div class="room-label">Room D1</div>
+              <span class="toggle-status" id="status-d1">—</span>
+              <br>
+              <button type="button" class="btn-toggle" id="btn-d1" onclick="toggleRoom('d1')">…</button>
+              <div class="toggle-form hidden" id="form-d1">
+                <select id="reason-d1">
+                  <option value="Cleaning">Cleaning</option>
+                  <option value="Repair">Repair</option>
+                  <option value="Personal use">Personal use</option>
+                  <option value="Other">Other</option>
+                </select>
+                <input type="date" id="end-d1" placeholder="End date (optional)" />
+                <button type="button" class="btn-confirm" onclick="confirmBlock('d1')">Confirm →</button>
+              </div>
+            </div>
+            <div class="toggle-card" id="toggle-d2">
+              <div class="room-label">Room D2</div>
+              <span class="toggle-status" id="status-d2">—</span>
+              <br>
+              <button type="button" class="btn-toggle" id="btn-d2" onclick="toggleRoom('d2')">…</button>
+              <div class="toggle-form hidden" id="form-d2">
+                <select id="reason-d2">
+                  <option value="Cleaning">Cleaning</option>
+                  <option value="Repair">Repair</option>
+                  <option value="Personal use">Personal use</option>
+                  <option value="Other">Other</option>
+                </select>
+                <input type="date" id="end-d2" placeholder="End date (optional)" />
+                <button type="button" class="btn-confirm" onclick="confirmBlock('d2')">Confirm →</button>
+              </div>
+            </div>
+          </div>
         </div>
 
         <!-- Current blocks -->

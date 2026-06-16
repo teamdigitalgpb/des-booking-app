@@ -96,10 +96,12 @@
 
         <!-- A2/A19 panel -->
         <div id="a2a19-panel" class="disc-panel hidden">
-          <div id="a2a19-msg">
-            <p class="disc-intro">A2/A19 discount applied.</p>
-            <p class="disc-info">Complete your booking — we'll verify your details and send your confirmation voucher to your email.</p>
+          <div id="a2a19-gate">
+            <p class="disc-intro">Enter your 7-digit A2/A19 account number:</p>
+            <input type="text" id="a2a19-acct" placeholder="e.g. 1234567" inputmode="numeric" autocomplete="off" maxlength="7" />
+            <div id="a2a19-acct-status" class="voucher-status" style="margin-top:.5rem;"></div>
           </div>
+          <div id="a2a19-msg" style="display:none;">
           <div id="a2a19-donate-wrap" class="donate-wrap hidden">
             <p class="donate-note">As a fellow volunteer, give what you're able. Payment is via GCash, Maya, or Bank transfer — no cash on arrival.</p>
             <a id="a2a19-donate-btn" href="#" target="_blank" rel="noopener" class="btn btn-donate">Give a Donation Instead</a>
@@ -199,6 +201,13 @@
         <p id="payment-note" style="text-align:center;margin-top:.75rem;font-size:.83rem;color:#6b5a4e;">
           Full payment is required before or upon arrival.<br>Check-in: 2:00 PM &nbsp;|&nbsp; Check-out: 12:00 NN
         </p>
+
+        <div class="reminders-block">
+          <p class="reminders-label">Gentle Reminders</p>
+          <ul>
+            <li>🚭 <strong>Smoke-free property.</strong> Smoking is not allowed inside the space or in the immediate surroundings.</li>
+          </ul>
+        </div>
 
       </form>
     </div>

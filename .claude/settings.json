@@ -1,0 +1,18 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git add *)",
+      "Bash(git reset *)",
+      "Bash(git commit -q -m ' *)",
+      "Bash(git push *)",
+      "Bash(curl -sI https://d-econo-space-agus.vercel.app/)",
+      "Bash(curl -s https://d-econo-space-agus.vercel.app/)",
+      "Bash(curl -s -o /dev/null -w \"admin.html -> HTTP %{http_code}\\\\n\" https://d-econo-space-agus.vercel.app/admin.html)",
+      "Bash(curl -s -I 'https://script.google.com/macros/s/AKfycbxYNHs3HVlkXDdjfg49FCKnCIQ8j-WbWozMp6XecuqIHgPzgxoG3EHHNq8H-qP1piI3/exec')",
+      "Bash(curl -s -v -X POST https://script.google.com/macros/s/AKfycbxYNHs3HVlkXDdjfg49FCKnCIQ8j-WbWozMp6XecuqIHgPzgxoG3EHHNq8H-qP1piI3/exec -H 'Content-Type: text/plain' -d '{\"action\":\"send_code\",\"email\":\"glengsky@yahoo.com\"}')",
+      "Bash(curl -s -o /dev/null -w '%{http_code} -> %{redirect_url}' -X POST https://script.google.com/macros/s/AKfycbxYNHs3HVlkXDdjfg49FCKnCIQ8j-WbWozMp6XecuqIHgPzgxoG3EHHNq8H-qP1piI3/exec -H 'Content-Type: text/plain' -d '{\"action\":\"send_code\",\"email\":\"glengsky@yahoo.com\"}')",
+      "Bash(curl -s 'https://script.googleusercontent.com/macros/echo?user_content_key=AUkAhnTH4fTV7kZBY6ZC9jwTVQ-JEvC3wu4XRkmmFKLG_VeZOYh6Vnxo-v8X1Jqwn4fnLFHoLrSFbAMEM5VR5UWYQ3ZhkRnuc-i3mfAl9SKyubjn9UtyExw6DXrD2s85gIlSh9961pxL7ifWCzvWWFOpxaIAiSOZBRwxppy8yymsitKUrUK7fUqlTtUuMWYLCLQmfjHTd4fBKhG6YGLwNq95SgTZKEmFBvQRzz1sFM0ttC8EJ2kdpags-d6kiTSowf4A2EMXty0W4qcKETljHMQJAEfIMXntdQ&lib=MX8MEKtPjuHFZ1nse4eYiSIUYlFQAuFZV')",
+      "Bash(git commit -m ' *)"
+    ]
+  }
+}
