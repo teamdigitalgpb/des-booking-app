@@ -361,7 +361,7 @@ document.getElementById('booking-form').addEventListener('submit', async (e) => 
   if (nights < 1) return showAlert('Check-out must be after check-in.');
 
   if (document.getElementById('disc-a2a19').checked && activeVoucherType !== 'a2a19') {
-    return showAlert('Please enter your valid 7-digit A2/A19 account number to apply the volunteer rate.');
+    return showAlert('Please enter your valid A2/A19 account number to apply the volunteer rate.');
   }
 
   if (isRangeBlocked(room, checkin, checkout)) {
@@ -542,7 +542,7 @@ document.getElementById('a2a19-acct').addEventListener('input', (e) => {
     updatePaymentNote(true);
   } else {
     statusEl.className   = val.length > 0 ? 'voucher-status invalid' : 'voucher-status';
-    statusEl.textContent = val.length > 0 ? 'Please enter a valid 7-digit account number.' : '';
+    statusEl.textContent = val.length > 0 ? 'Please enter a valid A2/A19 account number.' : '';
     activeVoucherType = 'regular';
     msgEl.style.display = 'none';
     donateWrap.classList.add('hidden');
