@@ -14,13 +14,26 @@ let _selectedMethod = '';
 let _isWise         = false;
 
 function showState(id) {
-  ['donate-state-payment', 'donate-state-qr',
+  ['donate-state-choice', 'donate-state-payment', 'donate-state-qr',
    'donate-state-fallback', 'donate-state-thankyou'].forEach(s => {
     const el = document.getElementById(s);
     if (!el) return;
     s === id ? el.classList.remove('hidden') : el.classList.add('hidden');
   });
 }
+
+// ── Choice screen: Reserve a room vs. Give a gift ─────────────────────────────
+
+const reserveLink = document.getElementById('choice-reserve');
+if (reserveLink && donRoom) {
+  reserveLink.href = `booking.html?donation=1&room=${donRoom}`;
+}
+
+const giftBtn = document.getElementById('choice-gift');
+if (giftBtn) giftBtn.addEventListener('click', () => showState('donate-state-payment'));
+
+const giftBack = document.getElementById('gift-back');
+if (giftBack) giftBack.addEventListener('click', () => showState('donate-state-choice'));
 
 // ── Payment method click ──────────────────────────────────────────────────────
 

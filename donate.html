@@ -17,12 +17,36 @@
   <div class="form-wrap">
     <div class="form-card donate-card">
 
-      <!-- ── State 1: Payment method grid (shown on load) ── -->
-      <div id="donate-state-payment">
+      <!-- ── State 0: Choose how to give (shown on load) ── -->
+      <div id="donate-state-choice">
+        <div style="text-align:center;margin-bottom:1.75rem;">
+          <div style="font-size:2.2rem;margin-bottom:.6rem;">💛</div>
+          <h1 style="font-size:1.55rem;margin-bottom:.4rem;">How would you like to give?</h1>
+          <p class="subtitle" style="margin-bottom:0;">Two ways to support D' Econo-Space — choose what fits you.</p>
+        </div>
+        <div class="choice-grid">
+          <a id="choice-reserve" class="choice-card" href="booking.html?donation=1">
+            <div class="choice-icon">🏠</div>
+            <span class="choice-title">Donate &amp; Reserve a Room</span>
+            <span class="choice-desc">Book a stay for yourself. Your gift holds your dates and keeps the space running.</span>
+            <span class="choice-cta">Reserve a room →</span>
+          </a>
+          <button type="button" id="choice-gift" class="choice-card">
+            <div class="choice-icon">🤲</div>
+            <span class="choice-title">Give a Gift</span>
+            <span class="choice-desc">A donation with no reservation — simply help a future volunteer find rest.</span>
+            <span class="choice-cta">Give a gift →</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- ── State 1: Payment method grid (Give a Gift) ── -->
+      <div id="donate-state-payment" class="hidden">
+        <button type="button" id="gift-back" class="qr-back-btn">← Back</button>
         <div style="text-align:center;margin-bottom:1.75rem;">
           <div style="font-size:2.2rem;margin-bottom:.6rem;">🤲</div>
-          <h1 style="font-size:1.55rem;margin-bottom:.4rem;">Give a Donation</h1>
-          <p class="subtitle" style="margin-bottom:0;">Choose how you'd like to give — any amount is welcome.</p>
+          <h1 style="font-size:1.55rem;margin-bottom:.4rem;">Give a Gift</h1>
+          <p class="subtitle" style="margin-bottom:0;">Choose how you'd like to send your donation — any amount is welcome.</p>
         </div>
         <div class="payment-grid">
 

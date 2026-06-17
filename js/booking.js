@@ -1,6 +1,7 @@
 // Booking form — pricing, conflict check, GHL webhook submit
 
 let _bookingSubmitted = false;
+let _donationReservation = false;
 
 const RATES = {
   d1: {
@@ -381,12 +382,14 @@ document.getElementById('booking-form').addEventListener('submit', async (e) => 
   const totalPrice = calcTotal(room, nights, guests, activeVoucherType);
   const tags = ['DES', 'DES-booked', `DES-${room}`];
   if (shareWaitlist) tags.push('DES-share-waitlist');
+  if (_donationReservation) tags.push('DES-donation-reservation');
 
   const payload = {
     firstName, lastName, name, mobile, email, room, checkin, checkout,
     guests, discountType: activeVoucherType !== 'regular' ? activeVoucherType : '', referral, specialRequests: requests,
     totalPrice, nights, rateType: activeVoucherType,
     shareWaitlist: shareWaitlist ? 'yes' : '',
+    bookingType: _donationReservation ? 'donation-reservation' : '',
     tags: tags.join(','),
   };
 
@@ -583,6 +586,12 @@ document.getElementById('jw-ans').addEventListener('input', async (e) => {
   const params  = new URLSearchParams(window.location.search);
   const room    = params.get('room');
   const guests  = params.get('guests');
+
+  _donationReservation = params.get('donation') === '1';
+  if (_donationReservation) {
+    const banner = document.getElementById('donation-rec');
+    if (banner) banner.classList.remove('hidden');
+  }
   if (room) {
     const sel = document.getElementById('room');
     if ([...sel.options].some(o => o.value === room)) {
