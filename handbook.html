@@ -1,204 +1,719 @@
-<!DOCTYPE html><html><head><meta charset='utf-8'><style>
-@page { margin: 1.4cm 1.7cm; }
-body { font-family: -apple-system,'Helvetica Neue',Arial,sans-serif; color:#2C1A0E; line-height:1.55; font-size:11pt; }
-h1 { font-family:Georgia,serif; color:#3A2010; font-size:23pt; border-bottom:3px solid #C4782A; padding-bottom:6px; margin:0 0 14px; }
-h2 { font-family:Georgia,serif; color:#6B4226; font-size:15pt; margin:22px 0 8px; border-left:4px solid #C4782A; padding-left:10px; }
-h3 { color:#6B4226; font-size:12pt; margin:14px 0 6px; }
-a { color:#B85A18; word-break:break-all; } strong { color:#3A2010; }
-table { border-collapse:collapse; width:100%; margin:10px 0; font-size:10pt; }
-th { background:#F2E5CC; color:#3A2010; text-align:left; padding:6px 9px; border:1px solid #DCCBA8; }
-td { padding:6px 9px; border:1px solid #DCCBA8; vertical-align:top; }
-blockquote { background:#FAF6EF; border-left:4px solid #C4782A; margin:10px 0; padding:8px 14px; color:#5A3E2B; }
-code { background:#F2E5CC; padding:1px 5px; border-radius:3px; font-family:Menlo,monospace; font-size:9.5pt; color:#7B3A10; }
-hr { border:none; border-top:1px solid #DCCBA8; margin:18px 0; }
-ul,ol { padding-left:22px; } li { margin:3px 0; }
-</style></head><body><h1>D' Econo-Space — Assistant Handbook</h1>
-<p><em>Your simple guide to handling bookings. You only need </em><em>two things</em><em>: the Bookings Sheet and the DES email. No technical tools, no complicated logins.</em></p>
-<hr />
-<h2>👋 Welcome &amp; Your Role</h2>
-<p>Welcome to the D' Econo-Space team! This handbook is your full training — read it once, keep it open while you work, and you'll be handling bookings confidently in no time.</p>
-<p><strong>Your role, in one sentence:</strong> turn every new booking into a <em>confirmed, paid, happy guest</em> — all from <strong>one Google Sheet</strong> and <strong>one email inbox</strong>.</p>
-<p>You don't need any technical skills or special software. If you can use Google Sheets and Gmail, you can do this job. Take it one booking at a time, follow the steps below, and when something feels unclear — it's always okay to pause and ask.</p>
-<hr />
-<h2>1. What you'll use</h2>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>D' Econo-Space — Complete Handbook</title>
+<style>
+  @page { margin: 1.4cm 1.8cm; }
+  *, *::before, *::after { box-sizing: border-box; }
+  body {
+    font-family: -apple-system, 'Helvetica Neue', Arial, sans-serif;
+    color: #2C1A0E;
+    line-height: 1.6;
+    font-size: 10.5pt;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem;
+    background: #fff;
+  }
+  /* Cover */
+  .cover { text-align: center; padding: 3rem 0 2.5rem; border-bottom: 3px solid #C4782A; margin-bottom: 2.5rem; }
+  .cover h1 { font-family: Georgia, serif; font-size: 28pt; color: #3A2010; margin: 0 0 .4rem; }
+  .cover .sub { font-size: 13pt; color: #7B5533; margin: 0 0 1rem; font-style: italic; }
+  .cover .meta { font-size: 9pt; color: #9A7550; }
+  /* Sections */
+  .part-header {
+    background: #3A2010;
+    color: #F2E5CC;
+    padding: .55rem 1rem;
+    border-radius: 4px;
+    font-size: 9pt;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    font-weight: 700;
+    margin: 2.5rem 0 1rem;
+  }
+  h2 {
+    font-family: Georgia, serif;
+    color: #6B4226;
+    font-size: 14pt;
+    margin: 2rem 0 .5rem;
+    border-left: 4px solid #C4782A;
+    padding-left: 10px;
+  }
+  h3 { color: #3A2010; font-size: 11pt; margin: 1.2rem 0 .4rem; }
+  h4 { color: #6B4226; font-size: 10pt; margin: 1rem 0 .25rem; font-style: italic; }
+  p { margin: .45rem 0; }
+  a { color: #B85A18; }
+  strong { color: #3A2010; }
+  /* Tables */
+  table { border-collapse: collapse; width: 100%; margin: .8rem 0 1.2rem; font-size: 9.5pt; }
+  th { background: #F2E5CC; color: #3A2010; text-align: left; padding: 6px 9px; border: 1px solid #DCCBA8; font-weight: 700; }
+  td { padding: 6px 9px; border: 1px solid #DCCBA8; vertical-align: top; }
+  tr:nth-child(even) td { background: #FDFAF5; }
+  /* Callouts */
+  .note { background: #FAF6EF; border-left: 4px solid #C4782A; padding: 8px 14px; margin: .8rem 0; color: #5A3E2B; border-radius: 0 4px 4px 0; }
+  .warn { background: #FFF5F0; border-left: 4px solid #D44000; padding: 8px 14px; margin: .8rem 0; color: #7A2000; border-radius: 0 4px 4px 0; }
+  .tip  { background: #F0F8F0; border-left: 4px solid #4A8A3A; padding: 8px 14px; margin: .8rem 0; color: #2A5A1A; border-radius: 0 4px 4px 0; }
+  code { background: #F2E5CC; padding: 1px 5px; border-radius: 3px; font-family: Menlo, monospace; font-size: 9pt; color: #7B3A10; }
+  pre  { background: #F7F0E5; border: 1px solid #DCCBA8; border-radius: 4px; padding: 10px 14px; overflow-x: auto; font-size: 8.5pt; color: #3A2010; line-height: 1.5; }
+  hr   { border: none; border-top: 1px solid #E5D4B8; margin: 1.5rem 0; }
+  ul, ol { padding-left: 1.4rem; }
+  li { margin: .3rem 0; }
+  /* Flow steps */
+  .step { display: flex; gap: .75rem; margin: .6rem 0; }
+  .step-num {
+    flex-shrink: 0;
+    width: 24px; height: 24px;
+    background: #C4782A;
+    color: #fff;
+    border-radius: 50%;
+    font-size: 9pt;
+    font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+    margin-top: 2px;
+  }
+  /* Status badges */
+  .badge {
+    display: inline-block;
+    padding: 1px 7px;
+    border-radius: 10px;
+    font-size: 8.5pt;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+  .badge-new      { background: #E8F4FF; color: #0066CC; border: 1px solid #B8D8FF; }
+  .badge-confirm  { background: #FFF8E0; color: #996600; border: 1px solid #FFE080; }
+  .badge-paid     { background: #E8FFE8; color: #1A7A1A; border: 1px solid #90D890; }
+  .badge-checkin  { background: #F0EEFF; color: #5533AA; border: 1px solid #C8B8FF; }
+  .badge-checkout { background: #F5F5F5; color: #555; border: 1px solid #CCC; }
+  .badge-cancelled{ background: #FFE8E8; color: #AA1111; border: 1px solid #FFB8B8; }
+  /* TOC */
+  .toc { background: #FAF6EF; border: 1px solid #DCCBA8; border-radius: 4px; padding: 1rem 1.4rem; margin: 1.5rem 0; font-size: 9.5pt; }
+  .toc h3 { margin: 0 0 .6rem; color: #6B4226; font-size: 10pt; }
+  .toc ul { margin: 0; padding-left: 1.2rem; }
+  .toc li { margin: .2rem 0; }
+  .toc a { text-decoration: none; color: #B85A18; }
+  .toc a:hover { text-decoration: underline; }
+  .toc .toc-part { font-weight: 700; color: #3A2010; list-style: none; margin: .5rem 0 .2rem; }
+  /* Print */
+  @media print {
+    .part-header { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    th { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    tr:nth-child(even) td { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .step-num { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .badge { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    a { color: #B85A18; text-decoration: none; }
+    body { font-size: 9.5pt; }
+  }
+</style>
+</head>
+<body>
+
+<!-- COVER -->
+<div class="cover">
+  <h1>D' Econo-Space</h1>
+  <p class="sub">Complete Operations Handbook</p>
+  <p class="meta">
+    Live site: <strong>d-econo-space-agus.vercel.app</strong> &nbsp;·&nbsp;
+    Property: Basak Agus Rd, Gisi, Lapu-Lapu, Cebu &nbsp;·&nbsp;
+    Email: d.econospace.cebu@gmail.com
+  </p>
+</div>
+
+<!-- TOC -->
+<div class="toc">
+  <h3>Contents</h3>
+  <ul>
+    <li class="toc-part">Part A — Guest Experience</li>
+    <li><a href="#a1">A1. Booking a Room</a></li>
+    <li><a href="#a2">A2. Volunteer Rates (JW &amp; A2/A19)</a></li>
+    <li><a href="#a3">A3. Completing Payment</a></li>
+    <li><a href="#a4">A4. Cancellation</a></li>
+    <li><a href="#a5">A5. Donating</a></li>
+    <li><a href="#a6">A6. Sharing a Story</a></li>
+    <li class="toc-part">Part B — Staff / Assistant Operations</li>
+    <li><a href="#b1">B1. Tools You Use</a></li>
+    <li><a href="#b2">B2. Booking Workflow (New → Checked-out)</a></li>
+    <li><a href="#b3">B3. Email Templates</a></li>
+    <li><a href="#b4">B4. Handling Messenger</a></li>
+    <li><a href="#b5">B5. Weekly JW Question Update</a></li>
+    <li class="toc-part">Part C — Admin Panel</li>
+    <li><a href="#c1">C1. Accessing the Admin Panel</a></li>
+    <li><a href="#c2">C2. Blocking Dates</a></li>
+    <li><a href="#c3">C3. Room Availability Toggle</a></li>
+    <li class="toc-part">Part D — Technical Reference</li>
+    <li><a href="#d1">D1. All Pages &amp; URLs</a></li>
+    <li><a href="#d2">D2. Room Rates (Full Table)</a></li>
+    <li><a href="#d3">D3. Webhooks &amp; Payloads</a></li>
+    <li><a href="#d4">D4. Config Keys</a></li>
+    <li><a href="#d5">D5. Google Sheet Structure</a></li>
+    <li><a href="#d6">D6. Local Storage &amp; Session Storage</a></li>
+    <li><a href="#d7">D7. Validation Rules</a></li>
+  </ul>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div class="part-header">Part A — Guest Experience</div>
+
+<!-- A1 -->
+<h2 id="a1">A1. Booking a Room</h2>
+<p>Guests visit <strong>d-econo-space-agus.vercel.app</strong> and click <strong>Book a Room</strong> or any <em>Book</em> button on the homepage. They fill out a single form at <code>booking.html</code>.</p>
+
+<h3>Fields on the Booking Form</h3>
 <table>
-<thead>
-<tr>
-<th>Tool</th>
-<th>Where to go</th>
-<th>What it's for</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><strong>Bookings Sheet</strong></td>
-<td><code>[PASTE YOUR DES - BOOKINGS SHEET LINK HERE]</code></td>
-<td>Your command center — every booking appears here by itself</td>
-</tr>
-<tr>
-<td><strong>DES Email (Gmail)</strong></td>
-<td><a href="https://mail.google.com">mail.google.com</a> — sign in as <strong>d.econospace.cebu@gmail.com</strong></td>
-<td>Where you send guests their confirmations and thank-yous</td>
-</tr>
-<tr>
-<td><strong>Facebook Page inbox</strong></td>
-<td>The <strong>D' Econo-Space near CBEC</strong> Page → Messages</td>
-<td>Where guests message you and send <strong>payment screenshots</strong></td>
-</tr>
-<tr>
-<td><strong>Booking website</strong> <em>(reference only)</em></td>
-<td><a href="https://des-booking-app.vercel.app">des-booking-app.vercel.app</a></td>
-<td>Where guests book. <strong>You never edit this</strong> — just good to know it exists.</td>
-</tr>
-</tbody>
+  <tr><th>Field</th><th>Required?</th><th>Notes</th></tr>
+  <tr><td>First Name</td><td>Yes</td><td></td></tr>
+  <tr><td>Last Name</td><td>Yes</td><td></td></tr>
+  <tr><td>Mobile Number</td><td>Yes</td><td>Format: 09171234567</td></tr>
+  <tr><td>Email Address</td><td>No</td><td>Used for cancellation link</td></tr>
+  <tr><td>Are you a volunteer?</td><td>No</td><td>Checkboxes: JW · A2/A19 — unlocks lower rates when verified</td></tr>
+  <tr><td>Room</td><td>Yes</td><td>D1 · D2 · D' Whole Space</td></tr>
+  <tr><td>Check-in Date</td><td>Yes</td><td>Min = today</td></tr>
+  <tr><td>Check-out Date</td><td>Yes</td><td>Min = check-in + 1 day</td></tr>
+  <tr><td>Number of Guests</td><td>Yes</td><td>Populated after room is selected; limits enforced per room</td></tr>
+  <tr><td>Solo Share Waitlist</td><td>No</td><td>Shown only for D1/D2 with 1–3 guests. If two solo guests match dates, both can share and split the cost.</td></tr>
+  <tr><td>Who told you about us?</td><td>No</td><td>Full name of referrer</td></tr>
+  <tr><td>Special Requests</td><td>No</td><td>Early check-in, extra blanket, etc.</td></tr>
 </table>
-<blockquote>
-<p>You do <strong>not</strong> use GoHighLevel or any other system. Just the Sheet and the Email.</p>
-</blockquote>
-<hr />
-<h2>2. The big picture (how a booking flows)</h2>
-<p>A guest books on the website → the booking <strong>appears automatically</strong> in your Bookings Sheet as a new row, with <strong>Status = New</strong>.</p>
-<p>Your whole job is to move each booking along by updating the <strong>Status</strong> column:</p>
-<blockquote>
-<p><strong>New → Confirmed → Paid → Checked-in → Checked-out</strong>
-<em>(or </em><em>Declined</em><em>, if you can't accommodate them)</em></p>
-</blockquote>
-<p>That's it. Everything else is just doing each step well.</p>
-<hr />
-<h2>3. Your step-by-step for every booking</h2>
-<h3>① A NEW booking appears (Status = New)</h3>
-<ol>
-<li>Open the <strong>Bookings Sheet</strong>. New rows have <strong>Status = New</strong>.</li>
-<li><strong>Check the dates are free.</strong> Look down the sheet for the <strong>same Room</strong> with <strong>overlapping check-in/check-out dates</strong>.
-   - <strong>No clash</strong> → you can confirm.
-   - <strong>Clash</strong> with another <em>Confirmed/Paid</em> booking → you'll decline (see ④).</li>
-<li><strong>To confirm:</strong>
-   - Click the <strong>Status</strong> cell → choose <strong>Confirmed</strong> from the dropdown.
-   - Send the guest the <strong>Confirmation email</strong> (template in §4) from the DES email.</li>
-</ol>
-<h3>② The guest pays</h3>
-<p>Guests pay by <strong>GCash / Maya / Bank QR</strong> and send a <strong>screenshot through Facebook Messenger</strong>.</p>
-<ol>
-<li>Open the screenshot — does the <strong>amount</strong> and <strong>name</strong> match the booking?</li>
-<li>In the booking's row, fill in:
-   - <strong>Amount Paid</strong> · <strong>Payment Method</strong> (GCash / Maya / Bank-InstaPay) · <strong>Payment Ref No.</strong> (the reference number on their screenshot)</li>
-<li>Click the <strong>Status</strong> cell → choose <strong>Paid</strong>.</li>
-<li>Send the <strong>Payment Received</strong> thank-you email (template in §4).</li>
-</ol>
-<h3>③ Check-in &amp; Check-out</h3>
+
+<h3>What happens after Submit</h3>
+<div class="step"><div class="step-num">1</div><div>Form validates all required fields and checks date conflicts against existing bookings and admin-blocked dates.</div></div>
+<div class="step"><div class="step-num">2</div><div>Booking is posted to Make.com webhook → GHL contact created/updated → row inserted in the DES Bookings sheet.</div></div>
+<div class="step"><div class="step-num">3</div><div>Guest is redirected to <code>payment.html</code> to complete payment.</div></div>
+
+<h3>Room Capacity Rules</h3>
 <ul>
-<li><strong>On arrival day</strong> → set <strong>Status</strong> to <strong>Checked-in</strong>.</li>
-<li><strong>After they leave</strong> → set <strong>Status</strong> to <strong>Checked-out</strong>.</li>
+  <li><strong>Room D1:</strong> up to 4 guests (AC)</li>
+  <li><strong>Room D2:</strong> up to 4 guests (Fan) — <em>can only be booked when D1 is occupied or blocked for the same dates</em></li>
+  <li><strong>D' Whole Space:</strong> up to 8 guests — exclusive for 5+ guests (no other bookings alongside)</li>
+  <li>If booking 5+ guests for D1 + D2, the site recommends switching to D' Whole Space</li>
 </ul>
-<h3>④ If you can't accommodate them</h3>
-<ul>
-<li>Set <strong>Status</strong> to <strong>Declined</strong>.</li>
-<li>Send the <strong>Decline email</strong> (template in §4).</li>
-</ul>
+
+<div class="warn"><strong>D2 Rule:</strong> If a guest tries to book Room D2 and Room D1 has no existing booking for those dates, the form will show a warning and block submission. They must book D1 first or contact the team.</div>
+
 <hr />
-<h2>4. Email templates</h2>
-<p><em>Open the DES Gmail → Compose → paste a template → fill in the </em><em>[brackets]</em><em> → send to the guest's email (it's in column G of the sheet).</em></p>
+
+<!-- A2 -->
+<h2 id="a2">A2. Volunteer Rates (JW &amp; A2/A19)</h2>
+<p>Volunteer rates are unlocked directly on the booking form. Two types are supported.</p>
+
+<h3>JW (Jehovah's Witness) Rate</h3>
+<div class="step"><div class="step-num">1</div><div>Guest checks <em>"I am a Jehovah's Witness (JW)"</em> on the booking form.</div></div>
+<div class="step"><div class="step-num">2</div><div>A verification panel appears with this week's question: <em>"What is the [first/last] midweek song for the week of [dates]?"</em></div></div>
+<div class="step"><div class="step-num">3</div><div>Guest enters the song number. If correct, the JW rate is applied and the price updates instantly.</div></div>
+
+<div class="note">The question and answer are updated every Monday from the <strong>Settings tab</strong> of the DES Bookings Sheet. See <a href="#b5">B5</a> for the weekly update procedure.</div>
+
+<h3>A2/A19 Rate</h3>
+<div class="step"><div class="step-num">1</div><div>Guest checks <em>"I am an A2 / A19 Volunteer"</em>.</div></div>
+<div class="step"><div class="step-num">2</div><div>A panel appears asking for their A2/A19 account number (exactly 7 digits, numeric only).</div></div>
+<div class="step"><div class="step-num">3</div><div>If the format is valid, the A2/A19 rate is applied automatically.</div></div>
+
+<div class="note">The system only verifies the <em>format</em> (7 digits) — not the actual account. The honor system applies. Admin can follow up via the booking record if needed.</div>
+
+<h3>Volunteer Rates Modal (on the homepage)</h3>
+<p>Each room card on the homepage has a <em>"JW or A2/A19? There's a special rate for you →"</em> badge. Clicking it opens a modal showing the full rate table for that room. Guests can verify right there and then be sent to the booking form with their rate pre-applied.</p>
+<p>The modal also has a <strong>"Give a donation instead →"</strong> link for volunteers who want to donate rather than book.</p>
+
+<h3>Voucher Path (alternative)</h3>
+<p>Guests who want their rate confirmed before booking can go to <code>voucher.html</code> via <em>"Volunteer? Get Your Code"</em>. This 3-step flow collects their info, verifies their eligibility, and generates a reference code they bring to the booking form.</p>
+<ul>
+  <li><strong>Step 1:</strong> Personal info — name, mobile, congregation, municipality, province</li>
+  <li><strong>Step 2:</strong> Choose rate type — JW or A2/A19</li>
+  <li><strong>Step 3 (JW):</strong> Answer the weekly midweek song question</li>
+  <li><strong>Step 3 (A2/A19):</strong> Answer JW question → identify the Bible book → enter account number or verify by email (code is <code>ISA6:8</code>)</li>
+</ul>
+<p>On success, they receive a reference code (<code>REF-[timestamp]</code>) and the submission is posted to the admin webhook with tags <code>DES-voucher-pending</code> and <code>DES-JW</code> or <code>DES-A2A19</code>.</p>
+
+<hr />
+
+<!-- A3 -->
+<h2 id="a3">A3. Completing Payment</h2>
+<p>After booking, the guest lands on <code>payment.html</code>. The flow depends on whether they are a regular guest or a volunteer needing discount verification.</p>
+
+<h3>For regular guests</h3>
+<div class="step"><div class="step-num">1</div><div>Payment methods are shown immediately: <strong>GCash · Maya · Bank / InstaPay</strong>.</div></div>
+<div class="step"><div class="step-num">2</div><div>Guest taps a method → QR code appears showing the exact amount to send.</div></div>
+<div class="step"><div class="step-num">3</div><div>Guest scans QR in their app and sends the payment.</div></div>
+<div class="step"><div class="step-num">4</div><div>Guest sends their payment screenshot via <strong>Facebook Messenger</strong> to the D' Econo-Space page.</div></div>
+<div class="step"><div class="step-num">5</div><div>Staff confirms receipt, logs the payment in the sheet, and sends the keyholder PIN via Messenger.</div></div>
+
+<h3>For JW/A2/A19 guests (not yet verified)</h3>
+<p>If they didn't verify on the booking form, a verification step appears first (same JW question or A2/A19 account number) before the payment methods are shown.</p>
+
+<h3>Check-in &amp; Check-out times</h3>
+<ul>
+  <li><strong>Check-in:</strong> 2:00 PM</li>
+  <li><strong>Check-out:</strong> 12:00 NN (noon)</li>
+</ul>
+
+<hr />
+
+<!-- A4 -->
+<h2 id="a4">A4. Cancellation</h2>
+<p>Self-service cancellation is available through a link on the booking confirmation page (<code>thankyou-booking.html</code>).</p>
+
+<h3>Cancellation window</h3>
+<div class="note"><strong>Deadline: 12 hours before 2:00 PM check-in</strong> — i.e., by 2:00 AM of the check-in date. After that, the self-serve option is no longer shown. Guests must contact the team directly for late cancellations.</div>
+
+<h3>How to cancel (guest side)</h3>
+<div class="step"><div class="step-num">1</div><div>Guest opens their confirmation page or the cancel link in their confirmation email.</div></div>
+<div class="step"><div class="step-num">2</div><div>The cancel page (<code>cancel.html</code>) shows their booking summary and a reason dropdown.</div></div>
+<div class="step"><div class="step-num">3</div><div>They select a reason and confirm. Options: Wrong dates · Change of plans · Found other accommodation · Personal emergency · Other.</div></div>
+<div class="step"><div class="step-num">4</div><div>The cancellation is posted to the Make.com webhook with <code>action: 'cancel'</code> and the tag <code>DES-cancelled</code>. The booking row in the sheet is updated.</div></div>
+<div class="step"><div class="step-num">5</div><div>A success page confirms cancellation and offers a link to re-book.</div></div>
+
+<div class="warn">There is currently no automated refund. Staff must handle refunds manually based on the cancellation reason and timing.</div>
+
+<hr />
+
+<!-- A5 -->
+<h2 id="a5">A5. Donating</h2>
+<p>Any guest or visitor can donate at <code>donate.html</code>, reached from multiple homepage links: <em>"Support someone's stay."</em>, <em>"Donate Now"</em> button, footer link, and the <em>"Give a donation instead →"</em> button in the volunteer rates modal.</p>
+
+<h3>Two donation paths</h3>
+
+<h4>Option A — Reserve a Room and Donate</h4>
+<p><em>"Whether you're giving what you're able or more than the listed rate — book your room and let your heart lead."</em></p>
+<p>Clicking this sends the guest to <code>booking.html?donation=1</code> — the normal booking form, tagged as a donation-reservation so the admin sees it in the sheet.</p>
+
+<h4>Option B — Give a Gift (no reservation)</h4>
+<p>For good samaritans who want to sponsor a volunteer's stay without booking for themselves.</p>
+<div class="step"><div class="step-num">1</div><div>Guest chooses a payment method: <strong>GCash · Maya · Bank / InstaPay · Wise</strong>.</div></div>
+<div class="step"><div class="step-num">2</div><div>A QR code appears (or Wise link for international). Guest scans and sends any amount they choose.</div></div>
+<div class="step"><div class="step-num">3</div><div>Guest enters their <strong>Name</strong> and <strong>Mobile number</strong> (the only info required — no email, no purpose, no amount asked).</div></div>
+<div class="step"><div class="step-num">4</div><div>They click Done → webhook fires → Thank You screen appears.</div></div>
+
+<div class="note">Wise opens in a new tab. The guest enters their name/mobile first, then is taken to the Wise payment link. After paying, they return and see the Thank You screen.</div>
+
+<hr />
+
+<!-- A6 -->
+<h2 id="a6">A6. Sharing a Story</h2>
+<p>Past guests and volunteers can submit their experience at <code>stories.html</code>.</p>
+<table>
+  <tr><th>Field</th><th>Required?</th><th>Notes</th></tr>
+  <tr><td>Your Name</td><td>Yes</td><td></td></tr>
+  <tr><td>Where are you from?</td><td>Yes</td><td>City / province</td></tr>
+  <tr><td>When did you stay?</td><td>No</td><td>e.g. "June 2026"</td></tr>
+  <tr><td>Your Story</td><td>Yes</td><td>Minimum 30 characters</td></tr>
+  <tr><td>How did you hear about us?</td><td>No</td><td></td></tr>
+</table>
+<p>On submit, the story is tagged <code>DES-story-pending</code> and sent to the admin webhook. Once reviewed and approved (by adding it to the Stories tab of the Google Sheet), it appears in the story gallery automatically.</p>
+
+<hr />
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div class="part-header">Part B — Staff / Assistant Operations</div>
+
+<!-- B1 -->
+<h2 id="b1">B1. Tools You Use</h2>
+<table>
+  <tr><th>Tool</th><th>Access</th><th>Purpose</th></tr>
+  <tr><td><strong>DES Bookings Sheet</strong></td><td>Link shared by the owner</td><td>Every booking appears here. Your command center — update Status, log payments, see all data.</td></tr>
+  <tr><td><strong>DES Gmail</strong></td><td><a href="https://mail.google.com">mail.google.com</a> — sign in as <strong>d.econospace.cebu@gmail.com</strong></td><td>Send confirmation, payment received, and decline emails to guests.</td></tr>
+  <tr><td><strong>Facebook Messenger</strong></td><td>D' Econo-Space near CBEC Page → Messages</td><td>Guests send payment screenshots here. You reply with the keyholder PIN after verifying payment.</td></tr>
+  <tr><td><strong>Booking website</strong> (reference)</td><td><a href="https://d-econo-space-agus.vercel.app">d-econo-space-agus.vercel.app</a></td><td>Where guests book. You do not edit this — good to know it exists so you can guide guests.</td></tr>
+  <tr><td><strong>Admin Panel</strong></td><td><code>d-econo-space-agus.vercel.app/admin.html</code></td><td>Block unavailable dates, toggle room availability. See <a href="#c1">Part C</a>.</td></tr>
+</table>
+<div class="note">You do <strong>not</strong> need GoHighLevel or any other system for day-to-day operations. The Sheet and Gmail are enough.</div>
+
+<hr />
+
+<!-- B2 -->
+<h2 id="b2">B2. Booking Workflow</h2>
+<p>Every booking moves through these statuses in the sheet:</p>
+<p>
+  <span class="badge badge-new">New</span> →
+  <span class="badge badge-confirm">Confirmed</span> →
+  <span class="badge badge-paid">Paid</span> →
+  <span class="badge badge-checkin">Checked-in</span> →
+  <span class="badge badge-checkout">Checked-out</span>
+  &nbsp;&nbsp;<em>or</em>&nbsp;&nbsp;
+  <span class="badge badge-cancelled">Cancelled</span> /
+  <span class="badge badge-cancelled">Declined</span>
+</p>
+
+<h3>① New booking arrives — Status = New</h3>
+<div class="step"><div class="step-num">1</div><div><strong>Check for date conflicts.</strong> Scan the sheet for the same Room with overlapping dates in any Confirmed or Paid row. If none → proceed to confirm.</div></div>
+<div class="step"><div class="step-num">2</div><div><strong>Confirm:</strong> Click the Status cell → select <span class="badge badge-confirm">Confirmed</span>. Send the <strong>Confirmation Email</strong> (template in <a href="#b3">B3</a>).</div></div>
+<div class="step"><div class="step-num">3</div><div><strong>If there is a conflict:</strong> Set status to <span class="badge badge-cancelled">Declined</span>. Send the Decline email. (See ④ below.)</div></div>
+
+<h3>② Guest pays</h3>
+<div class="step"><div class="step-num">1</div><div>Guest sends a payment screenshot via <strong>Facebook Messenger</strong>.</div></div>
+<div class="step"><div class="step-num">2</div><div>Check: does the <strong>amount</strong> match the booking total? Does the <strong>sender name</strong> match?</div></div>
+<div class="step"><div class="step-num">3</div><div>In the booking row, fill in: <strong>Amount Paid · Payment Method · Payment Reference No.</strong></div></div>
+<div class="step"><div class="step-num">4</div><div>Set Status → <span class="badge badge-paid">Paid</span>. Send the <strong>Payment Received</strong> email.</div></div>
+<div class="step"><div class="step-num">5</div><div>Send the guest the <strong>keyholder PIN</strong> via Messenger so they can check in independently.</div></div>
+
+<h3>③ Check-in day</h3>
+<div class="step"><div class="step-num">1</div><div>On the check-in date, update Status → <span class="badge badge-checkin">Checked-in</span>.</div></div>
+<div class="step"><div class="step-num">2</div><div>If the guest messages about access, confirm their PIN or assist as needed.</div></div>
+
+<h3>④ Check-out day</h3>
+<div class="step"><div class="step-num">1</div><div>After 12:00 NN on the check-out date, update Status → <span class="badge badge-checkout">Checked-out</span>.</div></div>
+
+<h3>⑤ Cancellations</h3>
+<ul>
+  <li><strong>Guest-initiated (self-serve):</strong> The system automatically posts a cancellation to Make.com and the sheet updates. Verify the row and mark it <span class="badge badge-cancelled">Cancelled</span> if not already done.</li>
+  <li><strong>Admin-initiated:</strong> Update Status → <span class="badge badge-cancelled">Cancelled</span> and send the guest a message via Messenger or email explaining the reason.</li>
+  <li><strong>Declined (date conflict):</strong> Status → <span class="badge badge-cancelled">Declined</span>. Send the Decline email.</li>
+</ul>
+
+<hr />
+
+<!-- B3 -->
+<h2 id="b3">B3. Email Templates</h2>
+<p><em>Open DES Gmail → Compose → paste the template → fill in [brackets] → send to the guest's email (Column G of the sheet).</em></p>
+
 <h3>✉️ Confirmation Email</h3>
-<blockquote>
+<div class="note">
 <p><strong>Subject:</strong> Your Reservation is Confirmed — D' Econo-Space</p>
 <p>Hi <strong>[First Name]</strong>,</p>
 <p>Good news — your reservation at D' Econo-Space is confirmed!</p>
-<p><strong>Booking Details</strong>
-- Room: <strong>[Room]</strong>
-- Check-in: <strong>[Date]</strong> at 2:00 PM
-- Check-out: <strong>[Date]</strong> at 12:00 NN
-- Guests: <strong>[Number]</strong>
-- Total: ₱<strong>[Amount]</strong></p>
-<p><strong>Payment:</strong> Full payment is required before or upon arrival. You may pay via GCash, Maya, or bank transfer — just send us a screenshot of your payment here or on Messenger.</p>
+<p><strong>Booking Details</strong><br>
+Room: <strong>[Room]</strong><br>
+Check-in: <strong>[Date]</strong> at 2:00 PM<br>
+Check-out: <strong>[Date]</strong> at 12:00 NN<br>
+Guests: <strong>[Number]</strong><br>
+Total: ₱<strong>[Amount]</strong></p>
+<p><strong>Payment:</strong> Full payment is required before or upon arrival. You may pay via GCash, Maya, or Bank/InstaPay — just send us a screenshot of your payment on Messenger.</p>
 <p><strong>Address:</strong> Basak Agus Rd, Gisi, Lapu-Lapu, 6015 Cebu (near CBEC / Junrey's Store)</p>
 <p>Questions? Message us anytime, or call 0917.678.4871 / 0926.149.9002.</p>
-<p>See you soon!
-— D' Econo-Space Team</p>
-</blockquote>
+<p>See you soon!<br>— D' Econo-Space Team</p>
+</div>
+
 <h3>✉️ Payment Received Email</h3>
-<blockquote>
-<p><strong>Subject:</strong> Payment Received — Thank You! — D' Econo-Space</p>
+<div class="note">
+<p><strong>Subject:</strong> Payment Received — You're All Set! — D' Econo-Space</p>
 <p>Hi <strong>[First Name]</strong>,</p>
-<p>We've received your payment of ₱<strong>[Amount]</strong> — thank you! Your stay is all set.</p>
-<ul>
-<li>Room: <strong>[Room]</strong> · Check-in <strong>[Date]</strong> 2:00 PM · Check-out <strong>[Date]</strong> 12:00 NN</li>
-</ul>
-<p>We look forward to welcoming you. Safe travels!
-— D' Econo-Space Team</p>
-</blockquote>
-<h3>✉️ Decline Email</h3>
-<blockquote>
+<p>We've received your payment of ₱<strong>[Amount]</strong> — thank you! Your stay is confirmed and all set.</p>
+<p>Room: <strong>[Room]</strong> · Check-in <strong>[Date]</strong> 2:00 PM · Check-out <strong>[Date]</strong> 12:00 NN</p>
+<p>We look forward to welcoming you. Safe travels!<br>— D' Econo-Space Team</p>
+</div>
+
+<h3>✉️ Decline Email (date conflict)</h3>
+<div class="note">
 <p><strong>Subject:</strong> Regarding Your Booking Request — D' Econo-Space</p>
 <p>Hi <strong>[First Name]</strong>,</p>
-<p>Thank you for your interest in D' Econo-Space. Unfortunately, we're unable to accommodate your request for <strong>[dates]</strong>, as the room is already reserved for those dates.</p>
-<p>We'd love to host you another time — feel free to check other dates with us.
-— D' Econo-Space Team</p>
-</blockquote>
+<p>Thank you for your interest in D' Econo-Space. Unfortunately, we're unable to accommodate your request for <strong>[dates]</strong> — the room is already reserved for those dates.</p>
+<p>We'd love to host you another time. Feel free to check other available dates on our site or message us directly.</p>
+<p>— D' Econo-Space Team</p>
+</div>
+
+<h3>✉️ Cancellation Acknowledgement</h3>
+<div class="note">
+<p><strong>Subject:</strong> Booking Cancelled — D' Econo-Space</p>
+<p>Hi <strong>[First Name]</strong>,</p>
+<p>We've received your cancellation request for your stay at D' Econo-Space ([dates], [Room]). Your booking has been cancelled.</p>
+<p>We hope to welcome you another time. If you'd like to rebook, visit d-econo-space-agus.vercel.app anytime.</p>
+<p>— D' Econo-Space Team</p>
+</div>
+
 <hr />
-<h2>5. Answering guests on Messenger</h2>
-<p>Guests reach you through the <strong>D' Econo-Space near CBEC</strong> Facebook Page inbox. Common messages:</p>
-<ul>
-<li><em>"Is [date] available?"</em> → check the Sheet for that room + dates, then reply.</li>
-<li><em>"I already paid"</em> → ask for the screenshot, then follow step ② above.</li>
-<li><em>"Can I change my room / dates?"</em> → check availability in the Sheet, update the row, reply.</li>
-</ul>
-<p>Keep replies warm and simple. When unsure, it's always okay to say <em>"Let me check and get back to you."</em></p>
-<hr />
-<h2>6. Weekly task — update the JW question</h2>
-<p>Every <strong>Monday</strong>, the JW rate question needs this week's song. You do it in <strong>one place — the <code>Settings</code> tab of your Bookings Sheet</strong> (no code, no website):</p>
-<ol>
-<li>Find this week's <strong>first midweek song number</strong> (from wol.jw.org → <em>This Week at a Glance</em> → midweek meeting — or as the owner tells you).</li>
-<li>Open <strong>DES - Bookings</strong> → click the <strong><code>Settings</code></strong> tab.</li>
-<li>Update the two cells:
-   - <strong>JW Question</strong> → fill in this week's dates, e.g. <em>"What is the first midweek song for the week of June 9–15?"</em>
-   - <strong>JW Answer</strong> → the song number, e.g. <em>18</em></li>
-<li>Done — it auto-saves. The booking site picks it up within a few minutes.</li>
-</ol>
-<blockquote>
-<p>⚠️ If you skip this, real JWs who enter this week's correct song get wrongly rejected. Do it <strong>every Monday</strong>.</p>
-</blockquote>
-<hr />
-<h2>7. Golden rules</h2>
-<ul>
-<li>✅ You only ever touch the <strong>Sheet</strong> and the <strong>DES Email</strong> (and Messenger).</li>
-<li>❌ Never edit the booking <strong>website</strong>.</li>
-<li>❌ You don't need GoHighLevel or any other tool — ignore them.</li>
-<li>🆘 <strong>When unsure</strong> — a double-booking, a payment that doesn't match, a special request you can't decide — <strong>don't guess. Ask [OWNER NAME] at [OWNER CONTACT].</strong></li>
-</ul>
-<hr />
-<h2>8. Quick reference</h2>
+
+<!-- B4 -->
+<h2 id="b4">B4. Handling Messenger</h2>
+<p>Guests reach you through the <strong>D' Econo-Space near CBEC</strong> Facebook Page inbox. Common messages and how to respond:</p>
 <table>
-<thead>
-<tr>
-<th>Room</th>
-<th>Sleeps</th>
-<th>A/C</th>
-<th>Starting Rate</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Room D1</td>
-<td>up to 4</td>
-<td>AC-cooled</td>
-<td>₱750/night</td>
-</tr>
-<tr>
-<td>Room D2</td>
-<td>up to 4</td>
-<td>AC-cooled Fan</td>
-<td>₱550/night</td>
-</tr>
-<tr>
-<td>D' Whole Space</td>
-<td>up to 8</td>
-<td>AC-cooled</td>
-<td>₱1,700/night</td>
-</tr>
-</tbody>
+  <tr><th>What the guest says</th><th>What you do</th></tr>
+  <tr><td>"Is [date] available for [room]?"</td><td>Check the sheet for that room + dates. Reply with yes/no and direct them to book on the website if available.</td></tr>
+  <tr><td>"I already paid" (with screenshot)</td><td>Verify amount and sender name. Log in the sheet. Set Status → Paid. Send the keyholder PIN.</td></tr>
+  <tr><td>"I want to cancel"</td><td>Ask them to use the cancellation link on their confirmation page, or update the sheet manually and send the Cancellation Acknowledgement email.</td></tr>
+  <tr><td>"Can I change my dates?"</td><td>Check the new dates for availability. If free, update the booking row (dates, total price) and re-confirm via email.</td></tr>
+  <tr><td>"Can I add more guests?"</td><td>Check the new guest count is within room capacity. Recalculate the total and update the sheet. Re-send Confirmation email with new total.</td></tr>
+  <tr><td>Special request (early check-in, etc.)</td><td>Note it in the sheet's Special Requests column. Coordinate with the keyholder. Reply to the guest when confirmed.</td></tr>
 </table>
-<p><strong>Check-in:</strong> 2:00 PM  ·  <strong>Check-out:</strong> 12:00 NN
-<strong>Address:</strong> Basak Agus Rd, Gisi, Lapu-Lapu, 6015 Cebu (near CBEC / Junrey's Store)
-<strong>Property contacts:</strong> 0917.678.4871 · 0926.149.9002 · d.econospace.cebu@gmail.com</p>
+<div class="tip"><strong>When unsure</strong> — a double-booking, a payment mismatch, a special situation — don't guess. Say <em>"Let me check and get back to you shortly."</em> Then ask the owner.</div>
+
 <hr />
-<p><em>Note: For now you send the emails yourself using the templates above. Some of these may become automatic later — you'll be told if anything changes.</em></p></body></html>
+
+<!-- B5 -->
+<h2 id="b5">B5. Weekly JW Question Update</h2>
+<p>Every <strong>Monday</strong>, update the JW verification question so genuine volunteers aren't rejected. This takes under 2 minutes.</p>
+
+<div class="step"><div class="step-num">1</div><div>Find this week's <strong>midweek song number</strong> — check wol.jw.org → <em>This Week at a Glance</em> → Midweek Meeting program, or get it from the owner.</div></div>
+<div class="step"><div class="step-num">2</div><div>Open the <strong>DES - Bookings Google Sheet</strong> → click the <strong>Settings</strong> tab.</div></div>
+<div class="step"><div class="step-num">3</div><div>Update the two cells:
+  <ul>
+    <li><strong>JW_QUESTION</strong> → e.g. <em>What is the first midweek song for the week of June 16–22?</em></li>
+    <li><strong>JW_ANSWER</strong> → e.g. <em>18</em></li>
+  </ul>
+</div></div>
+<div class="step"><div class="step-num">4</div><div>Save (auto-saves in Sheets). The booking site picks it up within a few minutes — no deploy needed.</div></div>
+
+<div class="warn">⚠️ If you skip a Monday update, real JW volunteers who enter the correct current song will be wrongly rejected. Set a recurring Monday reminder.</div>
+
+<hr />
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div class="part-header">Part C — Admin Panel</div>
+
+<!-- C1 -->
+<h2 id="c1">C1. Accessing the Admin Panel</h2>
+<p>The admin panel is a password-protected page for managing room availability and date blocks.</p>
+<ul>
+  <li><strong>URL:</strong> <code>d-econo-space-agus.vercel.app/admin.html</code></li>
+  <li><strong>Password:</strong> <code>1992</code></li>
+</ul>
+<p>Once authenticated, the session is held in <code>sessionStorage</code> — closing the browser tab logs you out automatically.</p>
+
+<hr />
+
+<!-- C2 -->
+<h2 id="c2">C2. Blocking Dates</h2>
+<p>Use date blocks to prevent guests from booking during maintenance, private events, or periods when the space is unavailable.</p>
+
+<h3>Adding a block</h3>
+<div class="step"><div class="step-num">1</div><div>Open the admin panel → <strong>Add Date Block</strong> form.</div></div>
+<div class="step"><div class="step-num">2</div><div>Select <strong>Room</strong>: D1 · D2 · Both rooms.</div></div>
+<div class="step"><div class="step-num">3</div><div>Enter <strong>Start Date</strong>. Enter <strong>End Date</strong> (leave blank for a single-day block).</div></div>
+<div class="step"><div class="step-num">4</div><div>Enter an optional <strong>Reason</strong> (e.g. "Maintenance", "Owner private use").</div></div>
+<div class="step"><div class="step-num">5</div><div>Click <strong>Add Block</strong>. The admin webhook (<code>action: addBlock</code>) posts to the Apps Script, which writes to the <strong>Blocked Dates tab</strong> of the Google Sheet.</div></div>
+<div class="step"><div class="step-num">6</div><div>The booking site reads that tab (published as CSV) on every page load — blocks are active within minutes.</div></div>
+
+<h3>Removing a block</h3>
+<p>The admin panel lists all active blocks. Click <strong>Remove</strong> next to a block. The webhook fires <code>action: removeBlock</code> and the row is deleted from the Blocked Dates tab.</p>
+
+<h3>Block scope rules</h3>
+<table>
+  <tr><th>Room selected</th><th>Effect on booking form</th></tr>
+  <tr><td>D1</td><td>D1 only is blocked for those dates</td></tr>
+  <tr><td>D2</td><td>D2 only is blocked</td></tr>
+  <tr><td>Both</td><td>Both D1 and D2 are blocked; D' Whole Space also becomes unavailable</td></tr>
+</table>
+
+<hr />
+
+<!-- C3 -->
+<h2 id="c3">C3. Room Availability Toggle</h2>
+<p>The admin panel shows a live status card for each room. If a room is free, a <strong>Mark Unavailable</strong> button appears. If a room is currently blocked, a <strong>Mark Available</strong> button appears to remove today's block.</p>
+<p>This is a quick toggle for urgent same-day changes — the full date-range blocking form in C2 is used for planned closures.</p>
+
+<hr />
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div class="part-header">Part D — Technical Reference</div>
+
+<!-- D1 -->
+<h2 id="d1">D1. All Pages &amp; URLs</h2>
+<table>
+  <tr><th>Page</th><th>URL (relative)</th><th>Purpose</th></tr>
+  <tr><td>Homepage</td><td><code>/index.html</code></td><td>Landing page — story, rooms, rates, amenities, location, all CTAs</td></tr>
+  <tr><td>Booking Form</td><td><code>/booking.html</code></td><td>Main reservation form with volunteer verification</td></tr>
+  <tr><td>Payment</td><td><code>/payment.html</code></td><td>QR payment flow after booking (booking + donation paths)</td></tr>
+  <tr><td>Donation</td><td><code>/donate.html</code></td><td>Two-path donation chooser → payment methods → thank you</td></tr>
+  <tr><td>Voucher Request</td><td><code>/voucher.html</code></td><td>3-step volunteer rate verification + reference code generator</td></tr>
+  <tr><td>Thank You — Booking</td><td><code>/thankyou-booking.html</code></td><td>Post-booking confirmation with cancel link</td></tr>
+  <tr><td>Thank You — Payment</td><td><code>/thankyou-voucher.html</code></td><td>Post-payment confirmation with next-steps</td></tr>
+  <tr><td>Cancel Booking</td><td><code>/cancel.html</code></td><td>Self-serve cancellation (within 12h window)</td></tr>
+  <tr><td>Stories</td><td><code>/stories.html</code></td><td>Volunteer story gallery + story submission form</td></tr>
+  <tr><td>Admin Panel</td><td><code>/admin.html</code></td><td>Password-gated: block dates, toggle room availability</td></tr>
+  <tr><td>Handbook</td><td><code>/handbook.html</code></td><td>This document</td></tr>
+</table>
+
+<hr />
+
+<!-- D2 -->
+<h2 id="d2">D2. Room Rates (Full Table)</h2>
+<p>Rates are <strong>per room, per night</strong>. Price calculation: <code>rate[guests] × nights</code>.</p>
+
+<h3>Room D1 — AC (up to 4 guests)</h3>
+<table>
+  <tr><th>Guests</th><th>Regular</th><th>JW</th><th>A2/A19</th></tr>
+  <tr><td>1</td><td>₱650</td><td>₱500</td><td>₱400</td></tr>
+  <tr><td>2</td><td>₱650</td><td>₱600</td><td>₱550</td></tr>
+  <tr><td>3</td><td>₱850</td><td>₱750</td><td>₱700</td></tr>
+  <tr><td>4</td><td>₱950</td><td>₱900</td><td>₱850</td></tr>
+</table>
+
+<h3>Room D2 — Fan (up to 4 guests)</h3>
+<table>
+  <tr><th>Guests</th><th>Regular</th><th>JW</th><th>A2/A19</th></tr>
+  <tr><td>1</td><td>₱550</td><td>₱400</td><td>₱350</td></tr>
+  <tr><td>2</td><td>₱600</td><td>₱550</td><td>₱500</td></tr>
+  <tr><td>3</td><td>₱750</td><td>₱650</td><td>₱600</td></tr>
+  <tr><td>4</td><td>₱800</td><td>₱750</td><td>₱700</td></tr>
+</table>
+
+<h3>D' Whole Space — Exclusive (up to 8 guests)</h3>
+<table>
+  <tr><th>Guests</th><th>Regular</th><th>JW</th><th>A2/A19</th></tr>
+  <tr><td>1–5</td><td>₱1,700</td><td>₱1,500</td><td>₱1,400</td></tr>
+  <tr><td>6–7</td><td>₱1,800</td><td>₱1,650</td><td>₱1,550</td></tr>
+  <tr><td>8</td><td>₱1,900</td><td>₱1,800</td><td>₱1,700</td></tr>
+  <tr><td>9+</td><td colspan="3">Contact support team</td></tr>
+</table>
+
+<div class="note">Rates are defined in two places in the codebase and must stay in sync: <code>js/booking.js</code> (RATES — used for price calculation) and <code>index.html</code> (VOL_RATES — used for the volunteer modal display).</div>
+
+<hr />
+
+<!-- D3 -->
+<h2 id="d3">D3. Webhooks &amp; Payloads</h2>
+
+<h3>1. WEBHOOK_BOOKING (Make.com)</h3>
+<p><strong>Triggered by:</strong> Booking form submit (<code>booking.html</code>).<br>
+<strong>Destination:</strong> Make.com → creates/updates GHL contact → inserts row in DES Bookings sheet.</p>
+<pre>{
+  firstName, lastName, name,
+  mobile, email,
+  room,           // d1 | d2 | whole
+  checkin,        // YYYY-MM-DD
+  checkout,       // YYYY-MM-DD
+  guests,
+  discountType,   // regular | jw | a2a19
+  referral,
+  specialRequests,
+  totalPrice,
+  nights,
+  rateType,       // regular | jw | a2a19
+  shareWaitlist,  // 'yes' or ''
+  bookingType,    // 'donation-reservation' or ''
+  tags            // e.g. 'DES,DES-booked,DES-d1,DES-share-waitlist'
+}</pre>
+
+<h3>2. WEBHOOK_CANCELLATION (Make.com)</h3>
+<p><strong>Triggered by:</strong> Guest submits cancellation form (<code>cancel.html</code>).<br>
+<strong>Destination:</strong> Make.com → updates GHL contact → applies DES-cancelled tag.</p>
+<pre>{
+  action:   'cancel',
+  name, email,
+  room, checkin, checkout,
+  reason,   // Wrong dates | Change of plans | Found other accommodation | Personal emergency | Other
+  tags:     'DES,DES-cancelled'
+}</pre>
+
+<h3>3. WEBHOOK_DONATION (Apps Script)</h3>
+<p><strong>Triggered by:</strong> Donation form submit (<code>donate.html</code> / <code>js/donate.js</code>).<br>
+<strong>Routing:</strong> <code>action: 'donation'</code>.</p>
+<pre>{
+  action:        'donation',
+  name,
+  mobile,
+  paymentMethod, // GCash | Maya | Bank / InstaPay | Wise
+  room,          // if coming from volunteer rates modal (d1 | d2 | whole | '')
+  tags:          'DES,DES-donation'
+}</pre>
+
+<h3>4. WEBHOOK_VOUCHER (Apps Script)</h3>
+<p><strong>Triggered by:</strong> Voucher request form submit (<code>voucher.html</code>).</p>
+<pre>{
+  name, mobile, congregation, municipality, province,
+  rateType,      // jw | a2a19
+  idNumber,      // 7-digit account (if A2/A19 code path)
+  answer,        // JW question answer
+  email,
+  voucherMethod, // email | code
+  refCode,       // 'REF-' + timestamp
+  tags           // 'DES,DES-voucher-pending,DES-JW' or 'DES-A2A19'
+}</pre>
+
+<h3>5. WEBHOOK_ADMIN (Apps Script)</h3>
+<p><strong>Triggered by:</strong> Admin panel actions (<code>admin.html</code>) + abandoned booking beacon.</p>
+<pre>// Add a date block
+{ action: 'addBlock',    room, startDate, endDate, reason }
+
+// Remove a date block
+{ action: 'removeBlock', room, startDate, endDate }
+
+// Abandoned booking (fires on page unload if form not submitted)
+{ action: 'bookingAbandoned', name, mobile, room, checkin, checkout, totalPrice }</pre>
+
+<h3>6. WEBHOOK_STORY (Apps Script)</h3>
+<p><strong>Triggered by:</strong> Story submission form (<code>stories.html</code>).</p>
+<pre>{
+  action:   'story',
+  name, location, period, story, source,
+  tags:     'DES,DES-story-pending'
+}</pre>
+
+<div class="note">Webhooks 3–6 all post to the same Apps Script URL and are routed by the <code>action</code> field. Only WEBHOOK_BOOKING and WEBHOOK_CANCELLATION go to Make.com.</div>
+
+<hr />
+
+<!-- D4 -->
+<h2 id="d4">D4. Config Keys</h2>
+<p>All configuration lives in <code>js/config.js</code>. Never hardcode values elsewhere.</p>
+<table>
+  <tr><th>Key</th><th>Purpose</th><th>Source</th></tr>
+  <tr><td><code>WEBHOOK_BOOKING</code></td><td>Make.com — booking submissions</td><td>Make.com webhook URL</td></tr>
+  <tr><td><code>WEBHOOK_VOUCHER</code></td><td>Apps Script — voucher + donation + story + admin</td><td>Apps Script deployment URL</td></tr>
+  <tr><td><code>WEBHOOK_CANCELLATION</code></td><td>Make.com — cancellations</td><td>Make.com webhook URL</td></tr>
+  <tr><td><code>WEBHOOK_DONATION</code></td><td>Apps Script — pure donation submissions</td><td>Same URL as WEBHOOK_VOUCHER</td></tr>
+  <tr><td><code>WEBHOOK_ADMIN</code></td><td>Apps Script — date blocks + abandoned bookings</td><td>Same URL as WEBHOOK_VOUCHER</td></tr>
+  <tr><td><code>WEBHOOK_STORY</code></td><td>Apps Script — story submissions</td><td>Same URL as WEBHOOK_VOUCHER</td></tr>
+  <tr><td><code>LOCATION_ID</code></td><td>GHL sub-account ID</td><td>GHL Settings</td></tr>
+  <tr><td><code>PIPELINE_ID</code></td><td>GHL pipeline for DES bookings</td><td>GHL pipeline settings</td></tr>
+  <tr><td><code>STAGE.*</code></td><td>GHL stage IDs (Inquiry, VoucherRequest, Booked, CheckedIn, CheckedOut)</td><td>GHL pipeline stages</td></tr>
+  <tr><td><code>PROPERTY_EMAIL</code></td><td>d.econospace.cebu@gmail.com</td><td>Fixed</td></tr>
+  <tr><td><code>MAPS_URL</code></td><td>Google Maps link to the property</td><td>Fixed</td></tr>
+  <tr><td><code>PHONE_1 / PHONE_2</code></td><td>0917.678.4871 / 0926.149.9002</td><td>Fixed</td></tr>
+  <tr><td><code>PAX_OVERRIDES</code></td><td>Override max guests per room per date (e.g. reduce D2 to 2 on a specific date)</td><td>Set manually in config.js</td></tr>
+  <tr><td><code>ADMIN_PASSWORD</code></td><td>Password for admin.html — currently <code>1992</code></td><td>Set in config.js</td></tr>
+  <tr><td><code>BLOCKED_DATES_CSV_URL</code></td><td>Published CSV URL of the "Blocked Dates" tab in the Google Sheet</td><td>Sheets → Publish to web</td></tr>
+  <tr><td><code>SETTINGS_CSV_URL</code></td><td>Published CSV URL of the "Settings" tab (JW question/answer)</td><td>Sheets → Publish to web</td></tr>
+  <tr><td><code>STORIES_CSV_URL</code></td><td>Published CSV URL of the "Stories" tab</td><td>Sheets → Publish to web</td></tr>
+  <tr><td><code>QR_GCASH</code></td><td>Path to GCash QR image</td><td><code>assets/qr-gcash.png</code></td></tr>
+  <tr><td><code>QR_MAYA</code></td><td>Path to Maya QR image</td><td><code>assets/qr-maya.png</code></td></tr>
+  <tr><td><code>QR_BANK</code></td><td>Path to Bank/InstaPay QR image</td><td><code>assets/qr-gcash.png</code> (reuses GCash — update when bank QR is uploaded)</td></tr>
+  <tr><td><code>LINK_WISE</code></td><td>Wise payment link</td><td><code>https://wise.com/pay/me/glezzendab</code></td></tr>
+  <tr><td><code>JW_QUESTION</code></td><td>Fallback JW question (used if SETTINGS_CSV_URL is unreachable)</td><td>Updated weekly via Settings tab</td></tr>
+  <tr><td><code>JW_ANSWER</code></td><td>Fallback JW answer</td><td>Updated weekly via Settings tab</td></tr>
+</table>
+
+<hr />
+
+<!-- D5 -->
+<h2 id="d5">D5. Google Sheet Structure</h2>
+<table>
+  <tr><th>Tab</th><th>Who writes to it</th><th>Who reads it</th><th>Contents</th></tr>
+  <tr><td><strong>DES - Bookings</strong></td><td>Make.com (on every booking submit)</td><td>Staff (via browser)</td><td>One row per booking: name, mobile, email, room, dates, guests, rate, total, status, payment details, tags</td></tr>
+  <tr><td><strong>Blocked Dates</strong></td><td>Apps Script (addBlock/removeBlock from admin panel)</td><td>booking.html (fetches CSV on load)</td><td>Columns: room, startDate, endDate, reason</td></tr>
+  <tr><td><strong>Settings</strong></td><td>Staff (manually every Monday)</td><td>settings.js (fetches CSV on every page load)</td><td>Key-value pairs: JW_QUESTION, JW_ANSWER</td></tr>
+  <tr><td><strong>Stories</strong></td><td>Apps Script (on story submit) + owner (to approve/publish)</td><td>stories.html (fetches CSV for gallery)</td><td>Columns: Name, Location, Period, Story</td></tr>
+</table>
+
+<div class="note"><strong>Published as CSV:</strong> The Blocked Dates, Settings, and Stories tabs must be published via <em>File → Share → Publish to web → CSV</em>. The booking site fetches these directly — they are not fetched via API. If a published CSV URL changes, update <code>config.js</code>.</div>
+
+<hr />
+
+<!-- D6 -->
+<h2 id="d6">D6. Local Storage &amp; Session Storage</h2>
+<table>
+  <tr><th>Key</th><th>Storage</th><th>Purpose</th></tr>
+  <tr><td><code>des_bookings</code></td><td>localStorage</td><td>Cache of submitted bookings — used by booking.html to detect date conflicts on the client side</td></tr>
+  <tr><td><code>des_admin_auth</code></td><td>sessionStorage</td><td>Admin panel session flag — set to <code>'1'</code> on correct password; cleared on tab close</td></tr>
+  <tr><td><code>des_voucher_approved</code></td><td>sessionStorage</td><td>Pre-fills the booking form after successful voucher verification (name, mobile, rate type)</td></tr>
+  <tr><td><code>des_booking_summary</code></td><td>sessionStorage</td><td>Carries booking details from booking.html → payment.html → thank-you pages</td></tr>
+</table>
+
+<hr />
+
+<!-- D7 -->
+<h2 id="d7">D7. Validation Rules</h2>
+<table>
+  <tr><th>Field / Rule</th><th>Constraint</th></tr>
+  <tr><td>A2/A19 Account Number</td><td>Exactly 7 digits — regex <code>/^\d{7}$/</code></td></tr>
+  <tr><td>A2/A19 Voucher Code (email path)</td><td>Must be <code>ISA6:8</code> (hardcoded — Isaiah 6:8)</td></tr>
+  <tr><td>Room D1 max guests</td><td>4 (can be reduced per date via PAX_OVERRIDES in config)</td></tr>
+  <tr><td>Room D2 max guests</td><td>4</td></tr>
+  <tr><td>Whole Space max guests</td><td>8 (9+ shown as "Contact support team")</td></tr>
+  <tr><td>Room D2 dependency</td><td>D2 can only be booked when D1 is occupied or blocked for same dates</td></tr>
+  <tr><td>Whole Space exclusive rule</td><td>5+ guests = fully exclusive; no other bookings alongside</td></tr>
+  <tr><td>Share Waitlist eligibility</td><td>D1 or D2 only · 1–3 guests only</td></tr>
+  <tr><td>Cancellation deadline</td><td>12 hours before 2:00 PM check-in (i.e. 2:00 AM on check-in date)</td></tr>
+  <tr><td>Story minimum length</td><td>30 characters</td></tr>
+  <tr><td>JW question</td><td>Pulled live from Settings CSV; falls back to CONFIG.JW_QUESTION if unreachable</td></tr>
+  <tr><td>Admin password</td><td><code>1992</code> (set in CONFIG.ADMIN_PASSWORD)</td></tr>
+</table>
+
+<hr />
+<p style="text-align:center;font-size:8.5pt;color:#9A7550;margin-top:2rem;">
+  D' Econo-Space Operations Handbook &nbsp;·&nbsp; d-econo-space-agus.vercel.app &nbsp;·&nbsp; Last updated June 2026
+</p>
+
+</body>
+</html>
