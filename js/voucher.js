@@ -93,9 +93,11 @@ function goStep(n) {
     const cong  = document.getElementById('v-congregation').value.trim();
     const muni  = document.getElementById('v-municipality').value.trim();
     const prov  = document.getElementById('v-province').value.trim();
+    const vEmail = document.getElementById('v-email').value.trim();
     if (!fname) return showAlert('Please enter your first name.');
     if (!lname) return showAlert('Please enter your last name.');
     if (!mobile)return showAlert('Please enter your mobile number.');
+    if (!vEmail)return showAlert('Please enter your email address.');
     if (!cong)  return showAlert('Please enter your congregation or organization name.');
     if (!muni)  return showAlert('Please enter your municipality.');
     if (!prov)  return showAlert('Please enter your province.');

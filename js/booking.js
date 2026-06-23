@@ -352,6 +352,7 @@ document.getElementById('booking-form').addEventListener('submit', async (e) => 
   if (!firstName) return showAlert('Please enter your first name.');
   if (!lastName)  return showAlert('Please enter your last name.');
   if (!mobile)  return showAlert('Please enter your mobile number.');
+  if (!email)   return showAlert('Please enter your email address.');
   if (!room)    return showAlert('Please select a room.');
   if (!checkin) return showAlert('Please select a check-in date.');
   if (!checkout)return showAlert('Please select a check-out date.');
