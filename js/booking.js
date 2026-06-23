@@ -216,16 +216,6 @@ function applyVerified(type) {
   recalc();
 }
 
-function getWeekRange() {
-  const today = new Date();
-  const day   = today.getDay();
-  const mon   = new Date(today);
-  mon.setDate(today.getDate() - (day === 0 ? 6 : day - 1));
-  const sun   = new Date(mon);
-  sun.setDate(mon.getDate() + 6);
-  const fmt = d => d.toLocaleDateString('en-PH', { month: 'long', day: 'numeric' });
-  return `${fmt(mon)}–${fmt(sun)}`;
-}
 
 function updateA2A19Panel() {
   const room    = document.getElementById('room').value;
@@ -460,9 +450,6 @@ document.getElementById('checkout').addEventListener('change', recalc);
 document.getElementById('guests').addEventListener('change', () => { toggleShareWaitlist(); toggleExclusiveNote(); recalc(); });
 // ── Discount checkbox listeners ───────────────────────────────────────────────
 
-document.getElementById('jw-q').textContent =
-  `What is the last song number for the ${getWeekRange()} midweek meeting?`;
-
 document.getElementById('disc-jw').addEventListener('change', (e) => {
   const jwPanel    = document.getElementById('jw-panel');
   const a2Panel    = document.getElementById('a2a19-panel');
@@ -480,6 +467,7 @@ document.getElementById('disc-jw').addEventListener('change', (e) => {
     statusEl.className = 'voucher-status';
     statusEl.textContent = '';
     document.getElementById('jw-ans').value = '';
+    document.getElementById('jw-q').textContent = CONFIG.JW_QUESTION;
   } else {
     jwPanel.classList.add('hidden');
     optJW.classList.remove('selected');
