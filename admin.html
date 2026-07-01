@@ -119,10 +119,17 @@
 
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.75rem;">
           <div>
-            <h1 style="font-size:1.35rem;margin-bottom:.2rem;">Blocked Dates</h1>
-            <p class="subtitle" style="margin-bottom:0;">Dates closed to new bookings</p>
+            <h1 style="font-size:1.35rem;margin-bottom:.2rem;">Admin Panel</h1>
+            <p class="subtitle" style="margin-bottom:0;">D' Econo-Space property management</p>
           </div>
           <button type="button" id="sign-out-btn" style="background:none;border:none;color:var(--text-muted);font-size:.82rem;cursor:pointer;text-decoration:underline;">Sign out</button>
+        </div>
+
+        <!-- Booking Calendar -->
+        <div class="admin-section">
+          <h2>Booking Calendar</h2>
+          <div id="cal-admin" style="border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;"></div>
+          <p style="font-size:.78rem;color:var(--text-muted);margin-top:.6rem;">Hover over a date to see room details. Three dots per cell: D1 · D2 · Whole Space.</p>
         </div>
 
         <!-- Room Status Toggle -->
@@ -214,6 +221,13 @@
 
   <script src="js/config.js"></script>
   <script src="js/ghl.js"></script>
+  <script src="js/cal.js"></script>
   <script src="js/admin.js"></script>
+  <script>
+    // Init calendar after admin unlocks (admin.js fires a custom event)
+    document.addEventListener('des:admin-unlocked', function () {
+      initCalendar('cal-admin', true);
+    });
+  </script>
 </body>
 </html>

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Room Availability — D' Econo-Space</title>
+  <meta name="description" content="Check room availability at D' Econo-Space — Lapu-Lapu, Cebu. See open dates for Room D1, Room D2, and D' Whole Space." />
+  <link rel="stylesheet" href="assets/style.css" />
+</head>
+<body class="form-page">
+
+  <nav class="nav">
+    <div class="container">
+      <a class="nav-logo" href="index.html">← D' Econo-Space</a>
+    </div>
+  </nav>
+
+  <div class="form-wrap" style="padding-top:1.75rem;padding-bottom:2.5rem;">
+    <div class="form-card" style="max-width:500px;padding:0;overflow:hidden;border-radius:var(--radius);border:1px solid var(--border);box-shadow:var(--shadow);">
+
+      <!-- Header -->
+      <div style="padding:1.35rem 1.5rem 1rem;border-bottom:1px solid var(--border);">
+        <h1 style="font-size:1.35rem;margin-bottom:.25rem;">Room Availability</h1>
+        <p class="subtitle" style="margin:0;font-size:.88rem;">D' Econo-Space · Lapu-Lapu, Cebu</p>
+      </div>
+
+      <!-- Calendar mount point -->
+      <div id="cal-public"></div>
+
+      <!-- CTA -->
+      <div style="padding:1.25rem 1.5rem 1.5rem;border-top:1px solid var(--border);">
+        <a href="booking.html" class="btn btn-primary btn-full" style="margin-bottom:1rem;">Book a Room →</a>
+        <p style="text-align:center;font-size:.8rem;color:var(--text-muted);line-height:1.6;">
+          Availability reflects admin-blocked dates and confirmed bookings.<br>
+          Still not sure? Contact us directly.
+        </p>
+        <p style="text-align:center;margin-top:.65rem;font-size:.85rem;">
+          <a href="tel:+639176784871" style="color:var(--navy);font-weight:600;">0917.678.4871</a>
+          &nbsp;·&nbsp;
+          <a href="tel:+639261499002" style="color:var(--navy);font-weight:600;">0926.149.9002</a>
+        </p>
+      </div>
+
+    </div>
+  </div>
+
+  <footer>
+    <p>D' Econo-Space &copy; 2026 &nbsp;|&nbsp; Lapu-Lapu, Cebu</p>
+  </footer>
+
+  <script src="js/config.js"></script>
+  <script src="js/cal.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      initCalendar('cal-public', false);
+    });
+  </script>
+</body>
+</html>

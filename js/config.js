@@ -48,6 +48,15 @@ const CONFIG = {
   // DES sheet → "Blocked Dates" tab → File > Share > Publish to web > CSV
   BLOCKED_DATES_CSV_URL: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRn__x3k4QkwjhiexqZEdCYxt4FqKvb555qTRL4pdzjismSEyn32ZYlDCvboNkfsLhtTGwnhLNERWqw/pub?gid=867214119&single=true&output=csv',
 
+  // Booking Calendar CSV — shows confirmed guest bookings on the calendar.
+  // Step 1: Add a "Booking Calendar" tab to the DES Google Sheet.
+  //         Columns (row 1 header): Room, CheckIn, CheckOut, GuestName, Status
+  //         Values for Room: d1 / d2 / whole  |  Status: pending / confirmed / paid
+  // Step 2: In Make.com booking scenario, add a step to append a row to that tab on each booking.
+  // Step 3: Publish that tab as CSV: File > Share > Publish to web > Booking Calendar tab > CSV.
+  // Step 4: Paste the published URL below (replace PLACEHOLDER).
+  BOOKINGS_CALENDAR_CSV_URL: 'PLACEHOLDER_booking_calendar_csv',
+
   // QR code images — export non-expiring QR from each app, save to assets/
   QR_GCASH:    'assets/qr-gcash.png',
   QR_MAYA:     'assets/qr-maya.png',

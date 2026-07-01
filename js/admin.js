@@ -28,6 +28,7 @@ function showPanel() {
   document.getElementById('admin-gate').classList.add('hidden');
   document.getElementById('admin-panel').classList.remove('hidden');
   loadBlocks();
+  document.dispatchEvent(new CustomEvent('des:admin-unlocked'));
 }
 
 // ── Load + render ─────────────────────────────────────────────────────────────
