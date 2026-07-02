@@ -137,7 +137,7 @@
     <li><a href="#b1">B1. Tools You Use</a></li>
     <li><a href="#b2">B2. Booking Workflow (New → Checked-out)</a></li>
     <li><a href="#b3">B3. Email Templates</a></li>
-    <li><a href="#b4">B4. Handling Messenger</a></li>
+    <li><a href="#b4">B4. Handling the Facebook Group Chat</a></li>
     <li><a href="#b5">B5. Weekly JW Question Update</a></li>
     <li class="toc-part">Part C — Admin Panel</li>
     <li><a href="#c1">C1. Accessing the Admin Panel</a></li>
@@ -237,8 +237,8 @@
 <div class="step"><div class="step-num">1</div><div>Payment methods are shown immediately: <strong>GCash · Maya · Bank / InstaPay</strong>.</div></div>
 <div class="step"><div class="step-num">2</div><div>Guest taps a method → QR code appears showing the exact amount to send.</div></div>
 <div class="step"><div class="step-num">3</div><div>Guest scans QR in their app and sends the payment.</div></div>
-<div class="step"><div class="step-num">4</div><div>Guest sends their payment screenshot via <strong>Facebook Messenger</strong> to the D' Econo-Space page.</div></div>
-<div class="step"><div class="step-num">5</div><div>Staff confirms receipt, logs the payment in the sheet, and sends the keyholder PIN via Messenger.</div></div>
+<div class="step"><div class="step-num">4</div><div>Guest is directed to the <strong>D' Econo-Space Facebook Group Chat (GC)</strong> — the dedicated payment channel — where they send their proof of payment screenshot.</div></div>
+<div class="step"><div class="step-num">5</div><div>Staff confirms receipt in the GC, logs the payment in the sheet, and sends the guest the keyholder PIN via the Group Chat.</div></div>
 
 <h3>For JW/A2/A19 guests (not yet verified)</h3>
 <p>If they didn't verify on the booking form, a verification step appears first (same JW question or A2/A19 account number) before the payment methods are shown.</p>
@@ -314,7 +314,7 @@
   <tr><th>Tool</th><th>Access</th><th>Purpose</th></tr>
   <tr><td><strong>DES Bookings Sheet</strong></td><td>Link shared by the owner</td><td>Every booking appears here. Your command center — update Status, log payments, see all data.</td></tr>
   <tr><td><strong>DES Gmail</strong></td><td><a href="https://mail.google.com">mail.google.com</a> — sign in as <strong>d.econospace.cebu@gmail.com</strong></td><td>Send confirmation, payment received, and decline emails to guests.</td></tr>
-  <tr><td><strong>Facebook Messenger</strong></td><td>D' Econo-Space near CBEC Page → Messages</td><td>Guests send payment screenshots here. You reply with the keyholder PIN after verifying payment.</td></tr>
+  <tr><td><strong>Facebook Group Chat (Payment GC)</strong></td><td>Private group chat — staff adds confirmed guests after sending the Confirmation Email</td><td>Confirmed guests send their proof of payment screenshot here. You verify and reply with the keyholder PIN in the same chat.</td></tr>
   <tr><td><strong>Booking website</strong> (reference)</td><td><a href="https://d-econo-space-agus.vercel.app">d-econo-space-agus.vercel.app</a></td><td>Where guests book. You do not edit this — good to know it exists so you can guide guests.</td></tr>
   <tr><td><strong>Admin Panel</strong></td><td><code>d-econo-space-agus.vercel.app/admin.html</code></td><td>Block unavailable dates, toggle room availability. See <a href="#c1">Part C</a>.</td></tr>
 </table>
@@ -339,14 +339,15 @@
 <h3>① New booking arrives — Status = New</h3>
 <div class="step"><div class="step-num">1</div><div><strong>Check for date conflicts.</strong> Scan the sheet for the same Room with overlapping dates in any Confirmed or Paid row. If none → proceed to confirm.</div></div>
 <div class="step"><div class="step-num">2</div><div><strong>Confirm:</strong> Click the Status cell → select <span class="badge badge-confirm">Confirmed</span>. Send the <strong>Confirmation Email</strong> (template in <a href="#b3">B3</a>).</div></div>
-<div class="step"><div class="step-num">3</div><div><strong>If there is a conflict:</strong> Set status to <span class="badge badge-cancelled">Declined</span>. Send the Decline email. (See ④ below.)</div></div>
+<div class="step"><div class="step-num">3</div><div><strong>Add the guest to the Payment GC:</strong> Open the D' Econo-Space Facebook Group Chat → add the guest by their Facebook name (from the Messenger conversation or their booking details). This is how they will send their proof of payment.</div></div>
+<div class="step"><div class="step-num">4</div><div><strong>If there is a conflict:</strong> Set status to <span class="badge badge-cancelled">Declined</span>. Send the Decline email. (See ⑤ below.) Do not add them to the GC.</div></div>
 
 <h3>② Guest pays</h3>
-<div class="step"><div class="step-num">1</div><div>Guest sends a payment screenshot via <strong>Facebook Messenger</strong>.</div></div>
+<div class="step"><div class="step-num">1</div><div>Guest sends their payment screenshot in the <strong>D' Econo-Space Facebook Group Chat</strong>.</div></div>
 <div class="step"><div class="step-num">2</div><div>Check: does the <strong>amount</strong> match the booking total? Does the <strong>sender name</strong> match?</div></div>
 <div class="step"><div class="step-num">3</div><div>In the booking row, fill in: <strong>Amount Paid · Payment Method · Payment Reference No.</strong></div></div>
 <div class="step"><div class="step-num">4</div><div>Set Status → <span class="badge badge-paid">Paid</span>. Send the <strong>Payment Received</strong> email.</div></div>
-<div class="step"><div class="step-num">5</div><div>Send the guest the <strong>keyholder PIN</strong> via Messenger so they can check in independently.</div></div>
+<div class="step"><div class="step-num">5</div><div>Reply to the guest in the <strong>Group Chat</strong> with the <strong>keyholder PIN</strong> so they can check in independently.</div></div>
 
 <h3>③ Check-in day</h3>
 <div class="step"><div class="step-num">1</div><div>On the check-in date, update Status → <span class="badge badge-checkin">Checked-in</span>.</div></div>
@@ -358,7 +359,7 @@
 <h3>⑤ Cancellations</h3>
 <ul>
   <li><strong>Guest-initiated (self-serve):</strong> The system automatically posts a cancellation to Make.com and the sheet updates. Verify the row and mark it <span class="badge badge-cancelled">Cancelled</span> if not already done.</li>
-  <li><strong>Admin-initiated:</strong> Update Status → <span class="badge badge-cancelled">Cancelled</span> and send the guest a message via Messenger or email explaining the reason.</li>
+  <li><strong>Admin-initiated:</strong> Update Status → <span class="badge badge-cancelled">Cancelled</span>. Message the guest via the Group Chat or email explaining the reason.</li>
   <li><strong>Declined (date conflict):</strong> Status → <span class="badge badge-cancelled">Declined</span>. Send the Decline email.</li>
 </ul>
 
@@ -379,7 +380,7 @@ Check-in: <strong>[Date]</strong> at 2:00 PM<br>
 Check-out: <strong>[Date]</strong> at 12:00 NN<br>
 Guests: <strong>[Number]</strong><br>
 Total: ₱<strong>[Amount]</strong></p>
-<p><strong>Payment:</strong> Full payment is required before or upon arrival. You may pay via GCash, Maya, or Bank/InstaPay — just send us a screenshot of your payment on Messenger.</p>
+<p><strong>Payment:</strong> Full payment is required within 24 hours to secure your room. You may pay via GCash, Maya, or Bank/InstaPay. Once confirmed, you'll be added to our Facebook Group Chat where you can send your proof of payment: <strong>[PASTE GC LINK HERE]</strong></p>
 <p><strong>Address:</strong> Basak Agus Rd, Gisi, Lapu-Lapu, 6015 Cebu · Landmark: Next to Mariel Carinderia (Google: Junrey's Store) and Triad Carwash</p>
 <p>Questions? Message us anytime, or call 0917.678.4871 / 0926.149.9002.</p>
 <p>See you soon!<br>— D' Econo-Space Team</p>
@@ -415,18 +416,30 @@ Total: ₱<strong>[Amount]</strong></p>
 <hr />
 
 <!-- B4 -->
-<h2 id="b4">B4. Handling Messenger</h2>
-<p>Guests reach you through the <strong>D' Econo-Space near CBEC</strong> Facebook Page inbox. Common messages and how to respond:</p>
+<h2 id="b4">B4. Handling the Facebook Group Chat (Payment Channel)</h2>
+<p>Once a booking is confirmed, the guest is added to the <strong>D' Econo-Space Payment Group Chat</strong> on Facebook Messenger. This is the primary channel for receiving proof of payment. The FB Page inbox is still open for public inquiries.</p>
+
+<h3>In the Group Chat</h3>
+<table>
+  <tr><th>Situation</th><th>What you do</th></tr>
+  <tr><td>Guest posts a payment screenshot</td><td>Verify: does the <strong>amount</strong> match the booking total, and does the <strong>sender name</strong> match? If yes: log in the sheet, set Status → Paid, reply with the keyholder PIN in the same GC thread.</td></tr>
+  <tr><td>Screenshot amount is short</td><td>Reply in the GC: "We received ₱[amount] — your total is ₱[total]. Please send the remaining ₱[difference] and we'll confirm your booking." Do not set status to Paid until full amount received.</td></tr>
+  <tr><td>Guest asks "did you receive my payment?"</td><td>Check the sheet. If already logged, confirm in the GC. If not found, ask them to re-send the screenshot.</td></tr>
+  <tr><td>"I want to cancel"</td><td>Direct them to the cancellation link on their booking confirmation page. If the window has passed, handle manually — update the sheet and send the Cancellation Acknowledgement email.</td></tr>
+  <tr><td>"Can I change my dates?"</td><td>Check the new dates for availability in the sheet. If free, update the booking row (dates + total) and re-send the Confirmation Email with new details.</td></tr>
+  <tr><td>Special request (early check-in, extra guests, etc.)</td><td>Note it in the sheet's Special Requests column. Coordinate with the keyholder. Reply in the GC when confirmed.</td></tr>
+</table>
+
+<h3>In the FB Page Inbox (public inquiries)</h3>
 <table>
   <tr><th>What the guest says</th><th>What you do</th></tr>
-  <tr><td>"Is [date] available for [room]?"</td><td>Check the sheet for that room + dates. Reply with yes/no and direct them to book on the website if available.</td></tr>
-  <tr><td>"I already paid" (with screenshot)</td><td>Verify amount and sender name. Log in the sheet. Set Status → Paid. Send the keyholder PIN.</td></tr>
-  <tr><td>"I want to cancel"</td><td>Ask them to use the cancellation link on their confirmation page, or update the sheet manually and send the Cancellation Acknowledgement email.</td></tr>
-  <tr><td>"Can I change my dates?"</td><td>Check the new dates for availability. If free, update the booking row (dates, total price) and re-confirm via email.</td></tr>
-  <tr><td>"Can I add more guests?"</td><td>Check the new guest count is within room capacity. Recalculate the total and update the sheet. Re-send Confirmation email with new total.</td></tr>
-  <tr><td>Special request (early check-in, etc.)</td><td>Note it in the sheet's Special Requests column. Coordinate with the keyholder. Reply to the guest when confirmed.</td></tr>
+  <tr><td>"Is [date] available for [room]?"</td><td>Check the sheet for that room + dates. Reply with yes/no and share the booking link: d-econo-space-agus.vercel.app</td></tr>
+  <tr><td>"How much is a room?"</td><td>Share the rates and direct them to the site to book.</td></tr>
+  <tr><td>General questions about location, amenities</td><td>Answer based on the property details. The site also has all this info.</td></tr>
 </table>
+
 <div class="tip"><strong>When unsure</strong> — a double-booking, a payment mismatch, a special situation — don't guess. Say <em>"Let me check and get back to you shortly."</em> Then ask the owner.</div>
+<div class="note"><strong>Note to owner:</strong> The Confirmation Email template in <a href="#b3">B3</a> contains a <code>[PASTE GC LINK HERE]</code> placeholder. Replace this with the actual Facebook Group Chat invite link before sending any confirmation email to guests.</div>
 
 <hr />
 
