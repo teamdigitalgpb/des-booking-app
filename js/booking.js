@@ -396,20 +396,19 @@ document.getElementById('booking-form').addEventListener('submit', async (e) => 
 
     sessionStorage.removeItem('des_voucher_approved');
     sessionStorage.setItem('des_booking_summary', JSON.stringify({
-      name, email, mobile, room, checkin, checkout, guests, totalPrice, nights, rateType: activeVoucherType,
-    }));
-
-    const q = new URLSearchParams({
-      name, email, room, checkin, checkout,
-      nights: nights.toString(), guests: guests.toString(),
-      totalPrice: totalPrice.toString(), rateType: activeVoucherType,
+      name, email, mobile, room, checkin, checkout, guests, totalPrice, nights,
+      rateType: activeVoucherType,
       verified: activeVoucherType !== 'regular' ? '1' : '0',
-    }).toString();
-    window.location.href = 'payment.html?' + q;
+      donation: _donationReservation ? '1' : '0',
+    }));
+    sessionStorage.setItem('des_booking_submitted', JSON.stringify({
+      timestamp: Date.now(), room, checkin,
+    }));
+    window.location.href = 'thankyou-booking.html';
   } catch (err) {
     showAlert('Something went wrong. Please try again or contact us directly.');
     btn.disabled = false;
-    btn.textContent = 'Confirm Booking';
+    btn.textContent = 'Submit Reservation Request';
   }
 });
 
@@ -572,6 +571,28 @@ document.getElementById('jw-ans').addEventListener('input', async (e) => {
 // ── Pre-select room from URL param ───────────────────────────────────────────
 
 (function () {
+  // Double-submission guard — block re-submit within 30 minutes of a recent booking
+  const prevSubmit = sessionStorage.getItem('des_booking_submitted');
+  if (prevSubmit) {
+    try {
+      const sub = JSON.parse(prevSubmit);
+      if (Date.now() - (sub.timestamp || 0) < 30 * 60 * 1000) {
+        const alertEl = document.getElementById('booking-alert');
+        const btn     = document.getElementById('submit-btn');
+        if (alertEl) {
+          alertEl.innerHTML = 'You have a pending booking that was just submitted. Check your email — or <a href="#" style="color:var(--navy);font-weight:700;text-decoration:underline;" onclick="event.preventDefault();sessionStorage.removeItem(\'des_booking_submitted\');location.reload();">start a new booking</a>.';
+          alertEl.style.cssText = 'background:#fff8e8;border:1px solid #e6c84a;border-radius:var(--radius);padding:.85rem 1rem;margin-bottom:1rem;font-size:.86rem;color:#6b4a00;line-height:1.55;';
+          alertEl.classList.remove('hidden');
+        }
+        if (btn) { btn.disabled = true; btn.textContent = 'Booking Pending…'; }
+      } else {
+        sessionStorage.removeItem('des_booking_submitted');
+      }
+    } catch (e) {
+      sessionStorage.removeItem('des_booking_submitted');
+    }
+  }
+
   const params  = new URLSearchParams(window.location.search);
   const room    = params.get('room');
   const guests  = params.get('guests');

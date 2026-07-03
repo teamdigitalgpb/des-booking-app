@@ -12,6 +12,12 @@
     rateType:   params.get('rateType')   || 'regular',
   };
 
+  // Guard: if no booking data in URL, send back to start
+  if (!data.room || !data.checkin) {
+    window.location.replace('booking.html');
+    return;
+  }
+
   const roomLabels = { d1: 'Room D1', d2: 'Room D2', whole: "D' Whole Space" };
   const rateLabels = {
     regular: 'Regular Rate',
@@ -175,9 +181,7 @@
           }),
         }).catch(() => {});
       }
-      window.location.href = 'index.html';
-    } else {
-      window.location.href = 'thankyou-voucher.html';
     }
+    window.location.href = 'thankyou-payment.html';
   });
 })();

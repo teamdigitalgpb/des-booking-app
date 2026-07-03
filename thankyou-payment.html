@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Payment Submitted — D' Econo-Space</title>
+  <link rel="stylesheet" href="assets/style.css" />
+</head>
+<body>
+
+  <div class="thankyou-wrap">
+    <div class="thankyou-card">
+      <div class="check">💛</div>
+      <h1>Payment Screenshot Sent!</h1>
+      <p class="subtitle">Thank you. Once we confirm your payment, we'll send your keyholder's PIN via the D' Econo-Space Facebook Group Chat.</p>
+
+      <!-- Shown only for donation-reservation path -->
+      <div id="donation-note" style="display:none;background:var(--off-white);border-left:3px solid var(--gold);border-radius:var(--radius);padding:.85rem 1rem;margin-bottom:1.1rem;font-size:.9rem;color:var(--text-body);line-height:1.6;">
+        💛 <strong>Your generosity means a lot.</strong> Whether you gave what you're able or more — you've kept this space open for the next volunteer who walks through that door.
+      </div>
+
+      <div class="summary-box" id="summary-box">
+        <!-- filled by JS -->
+      </div>
+
+      <div style="background:var(--cream);border-radius:var(--radius);padding:1rem 1.25rem;margin-bottom:1.75rem;text-align:left;font-size:.93rem;border-left:3px solid var(--tan);">
+        <strong style="color:var(--brown);display:block;margin-bottom:.5rem;">What happens next?</strong>
+        <ol style="padding-left:1.25rem;line-height:1.9;">
+          <li>We verify your payment screenshot — usually within a few hours.</li>
+          <li>Once confirmed, we send you the <strong>keyholder's PIN</strong> via the D' Econo-Space Facebook Group Chat.</li>
+          <li>Use the PIN to access the key holder at check-in. Welcome!</li>
+        </ol>
+      </div>
+
+      <div style="background:var(--sand);border-radius:var(--radius);padding:1rem 1.25rem;margin-bottom:1.25rem;text-align:left;font-size:.93rem;">
+        <p>🕑 Check-in: <strong>2:00 PM</strong> &nbsp;|&nbsp; Check-out: <strong>12:00 NN</strong></p>
+        <p style="margin-top:.4rem;">📍 Basak Agus Rd, Gisi, Lapu-Lapu, 6015 Cebu · Landmark: Next to Mariel Carinderia (Google: Junrey's Store) and Triad Carwash</p>
+      </div>
+
+      <!-- Key holder reminder -->
+      <div class="keyholder-box">
+        <img src="assets/images/key-holder.jpg" alt="Key holder by the front door" />
+        <p class="keyholder-caption">🔑 When checking out, always leave the keys on the holder by the front door.</p>
+      </div>
+
+      <!-- Map QR -->
+      <div class="qr-map-box">
+        <p class="qr-map-label">Scan to navigate</p>
+        <img
+          src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=https://maps.app.goo.gl/KgXawL22XTxx7zybA&bgcolor=FFFCF7&color=3A2010&margin=8"
+          alt="QR code — D' Econo-Space Google Maps location"
+          loading="lazy"
+        />
+      </div>
+
+      <a href="https://www.facebook.com/d.econo.space.agus" target="_blank" rel="noopener" class="btn btn-primary btn-full" style="margin-bottom:.75rem;">Message Us on Facebook →</a>
+      <a href="https://maps.app.goo.gl/KgXawL22XTxx7zybA" target="_blank" rel="noopener" class="btn btn-secondary btn-full" style="margin-bottom:.75rem;">Open in Google Maps</a>
+      <a href="index.html" id="back-home-btn" class="btn btn-secondary btn-full" style="margin-bottom:1.5rem;">Back to Home</a>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      // Show donation-context message if this booking came from a donation reservation
+      const urlParams = new URLSearchParams(location.search);
+      if (urlParams.get('donationContext') === '1') {
+        document.getElementById('donation-note').style.display = 'block';
+      }
+
+      const raw = sessionStorage.getItem('des_booking_summary');
+      const box = document.getElementById('summary-box');
+      if (!raw) {
+        box.innerHTML = '<p style="color:#6b5a4e;font-size:.9rem;">Booking submitted successfully.</p>';
+      } else {
+        const s = JSON.parse(raw);
+        const roomLabels = { d1: 'Room D1', d2: 'Room D2', whole: "D' Whole Space" };
+        const rateLabels = { jw: 'JW Volunteer Rate', a2a19: 'A2/A19 Volunteer Rate' };
+        const fmt = d => new Date(d + 'T00:00:00').toLocaleDateString('en-PH', { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' });
+
+        box.innerHTML = `
+          <div class="row"><span>Name</span><strong>${s.name}</strong></div>
+          <div class="row"><span>Room</span><strong>${roomLabels[s.room] || s.room}</strong></div>
+          <div class="row"><span>Check-in</span><strong>${fmt(s.checkin)}</strong></div>
+          <div class="row"><span>Check-out</span><strong>${fmt(s.checkout)}</strong></div>
+          <div class="row"><span>Nights</span><strong>${s.nights}</strong></div>
+          <div class="row"><span>Guests</span><strong>${s.guests}</strong></div>
+          <div class="row"><span>Rate</span><strong style="color:#1a7a4a;">${rateLabels[s.rateType] || s.rateType || 'Regular'}</strong></div>
+          <div class="row"><span>Total Paid</span><strong style="color:var(--brown);font-size:1.1rem;">₱${Number(s.totalPrice).toLocaleString()}</strong></div>
+        `;
+      }
+
+      // Clear session only when guest deliberately navigates home — not on accidental back
+      document.getElementById('back-home-btn').addEventListener('click', function () {
+        sessionStorage.removeItem('des_booking_summary');
+        sessionStorage.removeItem('des_booking_submitted');
+      });
+    })();
+  </script>
+
+</body>
+</html>

@@ -26,7 +26,7 @@
       <div style="background:var(--sand);border-radius:var(--radius);padding:1rem 1.25rem;margin-bottom:1.25rem;text-align:left;font-size:.93rem;">
         <strong style="color:var(--brown);display:block;margin-bottom:.5rem;">Important Reminders</strong>
         <p>🕑 Check-in: <strong>2:00 PM</strong> &nbsp;|&nbsp; Check-out: <strong>12:00 NN</strong></p>
-        <p style="margin-top:.4rem;">💳 <strong>Payment:</strong> GCash, Maya, or Bank / InstaPay. Send your screenshot via Messenger after paying.</p>
+        <p style="margin-top:.4rem;">💳 <strong>Payment:</strong> GCash, Maya, or Bank / InstaPay. Send your screenshot in the D' Econo-Space Facebook Group Chat after paying.</p>
         <p style="margin-top:.4rem;">📍 Basak Agus Rd, Gisi, Lapu-Lapu, 6015 Cebu · Landmark: Next to Mariel Carinderia (Google: Junrey's Store) and Triad Carwash</p>
       </div>
 
@@ -100,12 +100,14 @@
         <div class="row"><span>Total</span><strong style="color:var(--brown);font-size:1.1rem;">₱${s.totalPrice.toLocaleString()}</strong></div>
       `;
 
-      // Build Pay Now link
+      // Build Pay Now link — carry verified, donation context, and all booking data
       const payParams = new URLSearchParams({
         name: s.name, email: s.email || '', room: s.room,
         checkin: s.checkin, checkout: s.checkout,
         nights: s.nights, guests: s.guests,
         totalPrice: s.totalPrice, rateType: s.rateType || 'regular',
+        verified: s.verified || '0',
+        ...(s.donation === '1' ? { donationContext: '1' } : {}),
       });
       document.getElementById('pay-now-btn').href = 'payment.html?' + payParams.toString();
 
@@ -120,7 +122,8 @@
         document.getElementById('cancel-link').href = 'cancel.html?' + p.toString();
       }
 
-      sessionStorage.removeItem('des_booking_summary');
+      // Do NOT clear sessionStorage here — thankyou-payment.html still needs it.
+      // It clears only when the guest clicks "Back to Home" on the final page.
     })();
   </script>
 
