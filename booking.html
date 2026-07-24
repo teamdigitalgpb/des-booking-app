@@ -101,15 +101,19 @@
         <!-- A2/A19 panel -->
         <div id="a2a19-panel" class="disc-panel hidden">
           <div id="a2a19-gate">
-            <p class="disc-intro">Enter your A2/A19 account number:</p>
+            <p class="disc-intro">Confirm both details to unlock the A2/A19 volunteer rate:</p>
+            <p id="a2a19-jw-q" class="disc-question"></p>
+            <input type="text" id="a2a19-jw-ans" placeholder="Enter song number" inputmode="numeric" autocomplete="off" />
+            <div id="a2a19-jw-ans-status" class="voucher-status" style="margin-top:.5rem;"></div>
+            <p class="disc-intro" style="margin-top:1.25rem;">Enter your A2/A19 account number:</p>
             <input type="text" id="a2a19-acct" inputmode="numeric" autocomplete="off" maxlength="7" />
             <div id="a2a19-acct-status" class="voucher-status" style="margin-top:.5rem;"></div>
           </div>
           <div id="a2a19-msg" style="display:none;">
-          <div id="a2a19-donate-wrap" class="donate-wrap hidden">
-            <p class="donate-note">As a fellow volunteer, give what you're able. Payment is via GCash, Maya, or Bank transfer — no cash on arrival.</p>
-            <a id="a2a19-donate-btn" href="#" target="_blank" rel="noopener" class="btn btn-donate">Give a Donation Instead</a>
-          </div>
+            <div id="a2a19-donate-wrap" class="donate-wrap hidden">
+              <p class="donate-note">As a fellow volunteer, give what you're able. Payment is via GCash, Maya, or Bank transfer — no cash on arrival.</p>
+              <a id="a2a19-donate-btn" href="#" target="_blank" rel="noopener" class="btn btn-donate">Give a Donation Instead</a>
+            </div>
           </div>
         </div>
 
@@ -150,6 +154,18 @@
           </select>
           <p id="guests-note" class="card-note hidden" style="margin-top:.4rem;">For more than 8 guests, please <a href="mailto:d.econospace.cebu@gmail.com" style="color:var(--navy);">contact our support team</a> for a special arrangement.</p>
         </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="femaleGuests">Female Guests *</label>
+            <input type="number" id="femaleGuests" name="femaleGuests" min="0" placeholder="0" required />
+          </div>
+          <div class="form-group">
+            <label for="maleGuests">Male Guests *</label>
+            <input type="number" id="maleGuests" name="maleGuests" min="0" placeholder="0" required />
+          </div>
+        </div>
+        <p id="gender-count-note" class="card-note" style="margin-top:.4rem;">If all guests are the same gender, we can better accommodate them in a shared room. Female and male guest totals must add up to the number of guests.</p>
 
         <!-- Solo Share Waitlist (only shown for 1 guest in D1/D2) -->
         <div id="share-waitlist" class="form-group hidden" style="background:var(--cream);border-radius:var(--radius);padding:1rem;">

@@ -1,8 +1,9 @@
 // Shared calendar engine — reads BLOCKED_DATES_CSV + optional BOOKINGS_CALENDAR_CSV
 (function () {
 
-  const ROOM_LABELS = { d1: 'Room D1', d2: 'Room D2', whole: "D' Whole Space" };
-  const ROOM_KEYS   = ['d1', 'd2', 'whole'];
+  const ROOM_LABELS    = { d1: 'Room D1', d2: 'Room D2' };
+  const ROOM_KEYS      = ['d1', 'd2'];
+  const ROOM_CAPACITY  = { d1: 4, d2: 4, whole: 8 };
 
   let _blocks   = [];
   let _bookings = [];
@@ -25,6 +26,33 @@
     }).filter(r => Object.values(r).some(v => v));
   }
 
+  function loadLocalBookings() {
+    try {
+      const raw = localStorage.getItem('des_bookings') || '[]';
+      const bookings = JSON.parse(raw);
+      if (!Array.isArray(bookings)) return [];
+
+      const now = Date.now();
+      const valid = bookings.filter(b => {
+        if (!b || !b.room || !b.checkin || !b.checkout) return false;
+        if (b.status === 'pending' && b.createdAt) {
+          const age = now - new Date(b.createdAt).getTime();
+          return age < 24 * 60 * 60 * 1000;
+        }
+        return true;
+      });
+
+      if (valid.length !== bookings.length) {
+        localStorage.setItem('des_bookings', JSON.stringify(valid));
+      }
+
+      return valid;
+    } catch (err) {
+      localStorage.removeItem('des_bookings');
+      return [];
+    }
+  }
+
   async function loadData() {
     const fetches = [];
 
@@ -43,6 +71,10 @@
     }
 
     await Promise.all(fetches);
+    const localBookings = loadLocalBookings();
+    if (localBookings.length) {
+      _bookings = _bookings.concat(localBookings);
+    }
   }
 
   function inRange(date, start, end) {
@@ -53,42 +85,68 @@
 
   // ── Status logic ─────────────────────────────────────────────────────────────
 
+  function getBookingForDate(date, room) {
+    const d = ymd(date);
+    return _bookings.find(b => {
+      const rm = (b.room || '').toLowerCase();
+      const hit = rm === room || (room !== 'whole' && rm === 'whole');
+      if (!hit) return false;
+      const ci = b.checkin  || b['check-in']  || b['checkindate']  || '';
+      const co = b.checkout || b['check-out'] || b['checkoutdate'] || '';
+      return ci && co && d >= ci && d < co;
+    }) || null;
+  }
+
   function getStatus(date, room) {
     // Admin blocks
     const blocked = _blocks.some(b => {
       const rm = (b.room || '').toLowerCase();
       const hit = rm === room || rm === 'both' ||
-                  (room === 'whole' && (rm === 'd1' || rm === 'd2' || rm === 'both'));
+                  ((room === 'd1' || room === 'd2') && rm === 'whole');
       const s = b.startdate || b['start date'] || '';
       const e = b.enddate   || b['end date']   || '';
       return hit && inRange(date, s, e);
     });
     if (blocked) return 'blocked';
 
-    // Bookings (checkin inclusive, checkout exclusive)
-    const bk = _bookings.find(b => {
-      const rm = (b.room || '').toLowerCase();
-      const hit = rm === room || (room === 'whole' && (rm === 'd1' || rm === 'd2'));
-      if (!hit) return false;
-      const ci = b.checkin  || b['check-in']  || b['checkindate']  || '';
-      const co = b.checkout || b['check-out'] || b['checkoutdate'] || '';
-      const d  = ymd(date);
-      return ci && co && d >= ci && d < co;
-    });
-    if (bk) return bk.status || 'booked';
+    const bk = getBookingForDate(date, room);
+    if (bk) {
+      const status = bk.status || 'booked';
+      return ['available', 'blocked', 'pending'].includes(status) ? status : 'booked';
+    }
 
     return 'available';
   }
 
   function getBookingInfo(date, room) {
-    return _bookings.find(b => {
+    if (room === 'whole') {
+      return getBookingForDate(date, 'whole') || getBookingForDate(date, 'd1') || getBookingForDate(date, 'd2');
+    }
+    return getBookingForDate(date, room);
+  }
+
+  function getBookedPax(date, room) {
+    const d = ymd(date);
+    let total = 0;
+    _bookings.forEach(b => {
       const rm = (b.room || '').toLowerCase();
-      if (rm !== room) return false;
+      const hit = rm === room || (room !== 'whole' && rm === 'whole');
+      if (!hit) return;
       const ci = b.checkin  || b['check-in']  || b['checkindate']  || '';
       const co = b.checkout || b['check-out'] || b['checkoutdate'] || '';
-      const d  = ymd(date);
-      return ci && co && d >= ci && d < co;
-    }) || null;
+      if (ci && co && d >= ci && d < co) {
+        const pax = parseInt(b.pax || b.guests || b['number of guests'] || '1', 10) || 1;
+        if (!isNaN(pax)) total += pax;
+      }
+    });
+    return total;
+  }
+
+  function getAvailablePax(date, room) {
+    if (room === 'whole') return null;
+    const capacity = ROOM_CAPACITY[room] || 4;
+    const booked = getBookedPax(date, room);
+    return Math.max(0, capacity - booked);
   }
 
   // ── Rendering ─────────────────────────────────────────────────────────────────
@@ -152,12 +210,23 @@
 
         let tip = ROOM_LABELS[r] + ': ';
         if (isPast)            tip += 'past';
-        else if (st === 'available') tip += 'available';
+        else if (st === 'available') {
+          tip += 'available';
+          const availPax = getAvailablePax(date, r);
+          if (availPax !== null) {
+            tip += ` — ${availPax} pax available`;
+          }
+        }
         else if (st === 'blocked')   tip += 'closed';
         else {
           tip += st;
           if (info && info.guestname) tip += ' — ' + info.guestname;
           if (info && info.status)    tip += ' (' + info.status + ')';
+          const booked = getBookedPax(date, r);
+          const avail = getAvailablePax(date, r);
+          if (booked > 0 && avail !== null && avail > 0) {
+            tip += ` — ${avail} pax still available`;
+          }
         }
         tooltip += (tooltip ? ' | ' : '') + tip;
         pips += `<span class="cp ${st}" aria-label="${tip}"></span>`;
@@ -173,9 +242,9 @@
 
     // Room key
     html += `<div class="cal-roomkey">
-      <span class="cp booked"></span> D1 &nbsp;&nbsp;
-      <span class="cp booked"></span> D2 &nbsp;&nbsp;
-      <span class="cp booked"></span> Whole Space
+      <span class="roomkey-item"><span class="cp booked"></span><span class="cp available"></span> Room D1</span>
+      <span class="roomkey-item"><span class="cp available"></span><span class="cp booked"></span> Room D2</span>
+      <span class="roomkey-item"><span class="cp booked"></span><span class="cp booked"></span> Whole Space</span>
       <small>— left to right per date</small>
     </div>`;
 

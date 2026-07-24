@@ -29,7 +29,7 @@
 
       <!-- CTA -->
       <div style="padding:1.25rem 1.5rem 1.5rem;border-top:1px solid var(--border);">
-        <a href="booking.html" class="btn btn-primary btn-full" style="margin-bottom:1rem;">Book a Room →</a>
+        <a id="btn-book-room-availability" href="booking.html" class="btn btn-primary btn-full" style="margin-bottom:1rem;">Book a Room →</a>
         <p style="text-align:center;font-size:.8rem;color:var(--text-muted);line-height:1.6;">
           Availability reflects admin-blocked dates and confirmed bookings.<br>
           Still not sure? Contact us directly.
@@ -54,6 +54,11 @@
     document.addEventListener('DOMContentLoaded', function () {
       initCalendar('cal-public', false);
     });
+    // Clear any preverified voucher token when user clicks the availability CTA
+    (function(){
+      const btn = document.getElementById('btn-book-room-availability');
+      if (btn) btn.addEventListener('click', () => sessionStorage.removeItem('des_voucher_approved'));
+    })();
   </script>
 </body>
 </html>

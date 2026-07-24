@@ -57,7 +57,7 @@
       <p class="tagline">A home kept by volunteers. Welcome to all.</p>
       <p style="color:var(--light);margin-bottom:2.25rem;font-size:.94rem;opacity:.85;">Basak Agus Rd, Gisi, Lapu-Lapu, Cebu &nbsp;·&nbsp; Near Mactan Airport &nbsp;·&nbsp; Steps from CBEC</p>
       <div class="hero-ctas">
-        <a href="#rooms" class="btn btn-gold">Book a Room</a>
+        <a id="btn-book-room" href="#rooms" class="btn btn-gold">Book a Room</a>
         <a href="availability.html" class="btn btn-secondary">Check Availability</a>
       </div>
       <a href="donate.html" style="display:inline-block;margin-top:1.25rem;color:var(--gold);font-size:.88rem;font-style:italic;text-decoration:underline;text-underline-offset:3px;letter-spacing:.01em;transition:opacity .2s;" onmouseover="this.style.opacity='.75'" onmouseout="this.style.opacity='1'">Support someone's stay.</a>
@@ -346,8 +346,13 @@
           <a id="vol-jw-book-btn" href="#" class="btn btn-gold vol-book-btn hidden">Book at JW rate →</a>
         </div>
         <div id="vol-a2a19-panel" class="vol-sub-panel hidden">
-          <p class="vol-a2a19-note">Your A2/A19 rate will be applied after a quick Bible book verification — it only takes a moment.</p>
-          <a id="vol-a2a19-book-btn" href="#" class="btn btn-gold vol-book-btn">Book and verify →</a>
+          <p id="vol-a2a19-jw-q" class="vol-jw-q"></p>
+          <input type="text" id="vol-a2a19-jw-ans" placeholder="Enter song number" inputmode="numeric" autocomplete="off" />
+          <div id="vol-a2a19-jw-status" class="vol-status"></div>
+          <p class="vol-a2a19-note" style="margin-top:1rem;">Enter your BA account number to complete verification.</p>
+          <input type="text" id="vol-a2a19-acct" placeholder="Enter BA account number" inputmode="numeric" autocomplete="off" />
+          <div id="vol-a2a19-acct-status" class="vol-status"></div>
+          <a id="vol-a2a19-book-btn" href="#" class="btn btn-gold vol-book-btn hidden">Book at A2/A19 rate →</a>
         </div>
       </div>
     </div>
@@ -424,6 +429,7 @@
         <p style="font-size:.76rem;color:rgba(242,229,204,.5);margin-top:.4rem;">Per room, per night.</p>
         <a href="donate.html?room=${room}" class="btn btn-outline" style="margin-top:1.5rem;display:inline-block;width:100%;text-align:center;color:white;">Give a donation instead →</a>`;
       document.getElementById('vol-jw-q').textContent = CONFIG.JW_QUESTION;
+      document.getElementById('vol-a2a19-jw-q').textContent = CONFIG.JW_QUESTION;
       document.getElementById('vol-jw-book-btn').href     = 'booking.html?room=' + room;
       document.getElementById('vol-a2a19-book-btn').href  = 'booking.html?room=' + room;
       document.getElementById('vol-jw-panel').classList.add('hidden');
@@ -431,6 +437,13 @@
       document.getElementById('vol-jw-ans').value = '';
       document.getElementById('vol-jw-status').className = 'vol-status';
       document.getElementById('vol-jw-book-btn').classList.add('hidden');
+      document.getElementById('vol-a2a19-jw-ans').value = '';
+      document.getElementById('vol-a2a19-acct').value = '';
+      document.getElementById('vol-a2a19-jw-status').className = 'vol-status';
+      document.getElementById('vol-a2a19-jw-status').textContent = '';
+      document.getElementById('vol-a2a19-acct-status').className = 'vol-status';
+      document.getElementById('vol-a2a19-acct-status').textContent = '';
+      document.getElementById('vol-a2a19-book-btn').classList.add('hidden');
       document.querySelectorAll('.vol-opt-btn').forEach(b => b.classList.remove('active'));
       const overlay = document.getElementById('vol-modal-overlay');
       overlay.setAttribute('aria-hidden', 'false');
@@ -477,6 +490,63 @@
         statusEl.textContent = '✗ Incorrect — try again';
         bookBtn.classList.add('hidden');
       }
+    });
+
+    function validateA2A19Modal() {
+      const jwAns    = document.getElementById('vol-a2a19-jw-ans').value.replace(/\D/g, '');
+      const acct     = document.getElementById('vol-a2a19-acct').value.trim();
+      const jwStatus = document.getElementById('vol-a2a19-jw-status');
+      const acctStatus = document.getElementById('vol-a2a19-acct-status');
+      const bookBtn  = document.getElementById('vol-a2a19-book-btn');
+      const isJwValid = jwAns && jwAns === CONFIG.JW_ANSWER;
+      const isAcctValid = /^\d{7}$/.test(acct);
+
+      if (!jwAns) {
+        jwStatus.className = 'vol-status';
+        jwStatus.textContent = '';
+      } else if (isJwValid) {
+        jwStatus.className = 'vol-status valid';
+        jwStatus.textContent = '✓ Correct song number';
+      } else {
+        jwStatus.className = 'vol-status invalid';
+        jwStatus.textContent = '✗ Incorrect — try again';
+      }
+
+      if (!acct) {
+        acctStatus.className = 'vol-status';
+        acctStatus.textContent = '';
+      } else if (isAcctValid) {
+        acctStatus.className = 'vol-status valid';
+        acctStatus.textContent = '✓ Account number looks good';
+      } else {
+        acctStatus.className = 'vol-status invalid';
+        acctStatus.textContent = 'Enter your 7-digit BA account number';
+      }
+
+      if (isJwValid && isAcctValid) {
+        bookBtn.classList.remove('hidden');
+        bookBtn.href = 'booking.html?room=' + volRoom;
+      } else {
+        bookBtn.classList.add('hidden');
+      }
+    }
+
+    document.getElementById('vol-jw-book-btn').addEventListener('click', function() {
+      sessionStorage.setItem('des_voucher_approved', JSON.stringify({ type: 'jw' }));
+    });
+
+    document.getElementById('vol-a2a19-jw-ans').addEventListener('input', validateA2A19Modal);
+    document.getElementById('vol-a2a19-acct').addEventListener('input', validateA2A19Modal);
+    document.getElementById('vol-a2a19-book-btn').addEventListener('click', function() {
+      sessionStorage.setItem('des_voucher_approved', JSON.stringify({ type: 'a2a19' }));
+    });
+
+    // Clear any preverified voucher token when user clicks the standard "Book Room" buttons
+    ['btn-d1', 'btn-d2', 'btn-whole', 'btn-book-room'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.addEventListener('click', () => {
+        sessionStorage.removeItem('des_voucher_approved');
+      });
     });
   </script>
 </body>

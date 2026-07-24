@@ -113,9 +113,90 @@ function isRangeBlocked(room, checkin, checkout) {
   return false;
 }
 
+function normalizeAnswer(s) {
+  return String(s || '').replace(/\D/g, '');
+}
+
+function isA2JWAnswerValid(code) {
+  if (!CONFIG.JW_ANSWER || CONFIG.JW_ANSWER === 'PLACEHOLDER_update_every_monday') return false;
+  return normalizeAnswer(code) === normalizeAnswer(CONFIG.JW_ANSWER);
+}
+
+function updateA2A19Validation() {
+  const jwAns = document.getElementById('a2a19-jw-ans').value.trim();
+  const acct  = document.getElementById('a2a19-acct').value.trim();
+  const jwStatus = document.getElementById('a2a19-jw-ans-status');
+  const acctStatus = document.getElementById('a2a19-acct-status');
+  const msgEl = document.getElementById('a2a19-msg');
+  const donateWrap = document.getElementById('a2a19-donate-wrap');
+  const donateBtn  = document.getElementById('a2a19-donate-btn');
+  const room = document.getElementById('room').value;
+
+  const jwValid = jwAns ? isA2JWAnswerValid(jwAns) : false;
+  const acctValid = /^\d{7}$/.test(acct);
+
+  if (jwAns) {
+    jwStatus.className = jwValid ? 'voucher-status valid' : 'voucher-status invalid';
+    jwStatus.textContent = jwValid ? '✓ Correct song number' : '✗ Incorrect song number';
+  } else {
+    jwStatus.className = 'voucher-status';
+    jwStatus.textContent = '';
+  }
+
+  if (acct) {
+    acctStatus.className = acctValid ? 'voucher-status valid' : 'voucher-status invalid';
+    acctStatus.textContent = acctValid ? '✓ Account number looks good' : 'Please enter a 7-digit account number.';
+  } else {
+    acctStatus.className = 'voucher-status';
+    acctStatus.textContent = '';
+  }
+
+  if (jwValid && acctValid) {
+    activeVoucherType = 'a2a19';
+    msgEl.style.display = '';
+    updateA2A19Panel();
+    donateBtn.href = `payment.html?donate=1&verified=1&room=${room}&rate=a2a19`;
+    donateWrap.classList.remove('hidden');
+    updatePaymentNote(true);
+  } else {
+    activeVoucherType = 'regular';
+    msgEl.style.display = 'none';
+    donateWrap.classList.add('hidden');
+    updatePaymentNote(false);
+  }
+
+  populatePaxSelect(room, activeVoucherType);
+  recalc();
+}
+
 // ── Conflict checking (localStorage) ────────────────────────────────────────
 
+function cleanupPendingBookings() {
+  try {
+    const raw = localStorage.getItem('des_bookings') || '[]';
+    const bookings = JSON.parse(raw);
+    if (!Array.isArray(bookings)) return;
+
+    const now = Date.now();
+    const valid = bookings.filter(b => {
+      if (!b || !b.room || !b.checkin || !b.checkout) return false;
+      if (b.status === 'pending' && b.createdAt) {
+        const age = now - new Date(b.createdAt).getTime();
+        return age < 24 * 60 * 60 * 1000;
+      }
+      return true;
+    });
+
+    if (valid.length !== bookings.length) {
+      localStorage.setItem('des_bookings', JSON.stringify(valid));
+    }
+  } catch (err) {
+    localStorage.removeItem('des_bookings');
+  }
+}
+
 function getBookings() {
+  cleanupPendingBookings();
   return JSON.parse(localStorage.getItem('des_bookings') || '[]');
 }
 
@@ -196,6 +277,7 @@ function applyVerified(type) {
   const room = document.getElementById('room').value;
   if (type === 'jw') {
     document.getElementById('jw-panel').classList.remove('hidden');
+    document.querySelector('#jw-panel .disc-intro').style.display = 'none';
     document.getElementById('jw-q').style.display = 'none';
     document.getElementById('jw-ans').style.display = 'none';
     const statusEl = document.getElementById('jw-ans-status');
@@ -335,7 +417,9 @@ document.getElementById('booking-form').addEventListener('submit', async (e) => 
   const room     = document.getElementById('room').value;
   const checkin  = document.getElementById('checkin').value;
   const checkout = document.getElementById('checkout').value;
-  const guests   = parseInt(document.getElementById('guests').value);
+  const guests   = parseInt(document.getElementById('guests').value, 10);
+  const femaleGuests = parseInt(document.getElementById('femaleGuests').value, 10);
+  const maleGuests   = parseInt(document.getElementById('maleGuests').value, 10);
   const referral = document.getElementById('referral').value.trim();
   const requests = document.getElementById('requests').value.trim();
 
@@ -347,12 +431,15 @@ document.getElementById('booking-form').addEventListener('submit', async (e) => 
   if (!checkin) return showAlert('Please select a check-in date.');
   if (!checkout)return showAlert('Please select a check-out date.');
   if (!guests)  return showAlert('Please select the number of guests.');
+  if (Number.isNaN(femaleGuests) || femaleGuests < 0) return showAlert('Please enter the number of female guests.');
+  if (Number.isNaN(maleGuests) || maleGuests < 0) return showAlert('Please enter the number of male guests.');
+  if (femaleGuests + maleGuests !== guests) return showAlert('The number of female and male guests must add up to your total guest count.');
 
   const nights = nightsBetween(checkin, checkout);
   if (nights < 1) return showAlert('Check-out must be after check-in.');
 
   if (document.getElementById('disc-a2a19').checked && activeVoucherType !== 'a2a19') {
-    return showAlert('Please enter your valid A2/A19 account number to apply the volunteer rate.');
+    return showAlert('Please answer the song number and enter your A2/A19 account number to apply the volunteer rate.');
   }
 
   if (isRangeBlocked(room, checkin, checkout)) {
@@ -377,7 +464,7 @@ document.getElementById('booking-form').addEventListener('submit', async (e) => 
 
   const payload = {
     firstName, lastName, name, mobile, email, room, checkin, checkout,
-    guests, discountType: activeVoucherType !== 'regular' ? activeVoucherType : '', referral, specialRequests: requests,
+    guests, femaleGuests, maleGuests, discountType: activeVoucherType !== 'regular' ? activeVoucherType : '', referral, specialRequests: requests,
     totalPrice, nights, rateType: activeVoucherType,
     shareWaitlist: shareWaitlist ? 'yes' : '',
     bookingType: _donationReservation ? 'donation-reservation' : '',
@@ -392,7 +479,17 @@ document.getElementById('booking-form').addEventListener('submit', async (e) => 
     await postToWebhook(CONFIG.WEBHOOK_BOOKING, payload);
     _bookingSubmitted = true;
 
-    saveBooking({ room, checkin, checkout, name, id: Date.now() });
+    saveBooking({
+      room,
+      checkin,
+      checkout,
+      name,
+      guests,
+      pax: guests,
+      status: 'pending',
+      createdAt: new Date().toISOString(),
+      id: Date.now(),
+    });
 
     sessionStorage.removeItem('des_voucher_approved');
     sessionStorage.setItem('des_booking_summary', JSON.stringify({
@@ -491,9 +588,13 @@ document.getElementById('disc-a2a19').addEventListener('change', (e) => {
     jwPanel.classList.add('hidden');
     a2Panel.classList.remove('hidden');
     optA2.classList.add('selected');
-    // Reset gate — discount held until account number validated
+    document.getElementById('a2a19-jw-q').textContent = CONFIG.JW_QUESTION;
+    document.getElementById('a2a19-jw-ans').value = '';
     document.getElementById('a2a19-acct').value = '';
+    const jwStatus = document.getElementById('a2a19-jw-ans-status');
     const acctStatus = document.getElementById('a2a19-acct-status');
+    jwStatus.className = 'voucher-status';
+    jwStatus.textContent = '';
     acctStatus.className = 'voucher-status';
     acctStatus.textContent = '';
     document.getElementById('a2a19-msg').style.display = 'none';
@@ -512,34 +613,8 @@ document.getElementById('disc-a2a19').addEventListener('change', (e) => {
   recalc();
 });
 
-document.getElementById('a2a19-acct').addEventListener('input', (e) => {
-  const val      = e.target.value.trim();
-  const statusEl = document.getElementById('a2a19-acct-status');
-  const msgEl    = document.getElementById('a2a19-msg');
-  const donateWrap = document.getElementById('a2a19-donate-wrap');
-  const donateBtn  = document.getElementById('a2a19-donate-btn');
-
-  if (/^\d{7}$/.test(val)) {
-    statusEl.className   = 'voucher-status valid';
-    statusEl.textContent = '✓ Account number confirmed — A2/A19 volunteer rate applied';
-    activeVoucherType = 'a2a19';
-    msgEl.style.display = '';
-    updateA2A19Panel();
-    donateBtn.href = 'payment.html?donate=1&verified=1&room=' + document.getElementById('room').value + '&rate=a2a19';
-    donateWrap.classList.remove('hidden');
-    updatePaymentNote(true);
-  } else {
-    statusEl.className   = val.length > 0 ? 'voucher-status invalid' : 'voucher-status';
-    statusEl.textContent = val.length > 0 ? 'Please enter a valid A2/A19 account number.' : '';
-    activeVoucherType = 'regular';
-    msgEl.style.display = 'none';
-    donateWrap.classList.add('hidden');
-    updatePaymentNote(false);
-  }
-  const room = document.getElementById('room').value;
-  populatePaxSelect(room, activeVoucherType);
-  recalc();
-});
+document.getElementById('a2a19-acct').addEventListener('input', updateA2A19Validation);
+document.getElementById('a2a19-jw-ans').addEventListener('input', updateA2A19Validation);
 
 document.getElementById('jw-ans').addEventListener('input', async (e) => {
   const code     = e.target.value.trim();

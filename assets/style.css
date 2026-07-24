@@ -1321,8 +1321,10 @@ footer a { color: var(--gold-light); }
   padding: .65rem 1rem; background: var(--off-white);
   font-size: .78rem; color: var(--text-muted);
   border-top: 1px solid var(--border); line-height: 1.7;
+  display: flex; flex-wrap: wrap; gap: 1.2rem; align-items: center; justify-content: center;
 }
-.cal-roomkey small { display: block; margin-top: .2rem; font-size: .72rem; }
+.cal-roomkey .roomkey-item { display: inline-flex; align-items: center; gap: .3rem; white-space: nowrap; }
+.cal-roomkey small { margin-top: 0; font-size: .72rem; }
 .cal-setup-note {
   margin: 0; padding: .85rem 1rem;
   background: #fff8e8; border-top: 1px solid #e6c84a;
