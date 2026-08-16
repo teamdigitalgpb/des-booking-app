@@ -463,6 +463,7 @@ document.getElementById('booking-form').addEventListener('submit', async (e) => 
   if (_donationReservation) tags.push('DES-donation-reservation');
 
   const payload = {
+    action: 'booking',
     firstName, lastName, name, mobile, email, room, checkin, checkout,
     guests, femaleGuests, maleGuests, discountType: activeVoucherType !== 'regular' ? activeVoucherType : '', referral, specialRequests: requests,
     totalPrice, nights, rateType: activeVoucherType,

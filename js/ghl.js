@@ -8,13 +8,30 @@ async function postToWebhook(url, payload) {
     // In dev/testing mode, simulate success so forms still work
     return { ok: true, simulated: true };
   }
+
   const isAppsScript = url.includes('script.google.com');
+  const safePayload = { ...payload };
+
+  if (isAppsScript && !safePayload.action) {
+    if (typeof CONFIG !== 'undefined') {
+      if (url === CONFIG.WEBHOOK_BOOKING) safePayload.action = 'booking';
+      else if (url === CONFIG.WEBHOOK_VOUCHER) safePayload.action = 'voucher';
+      else if (url === CONFIG.WEBHOOK_DONATION) safePayload.action = 'donation';
+      else if (url === CONFIG.WEBHOOK_ADMIN) safePayload.action = 'admin';
+      else if (url === CONFIG.WEBHOOK_STORY) safePayload.action = 'story';
+      else safePayload.action = 'booking';
+    } else {
+      safePayload.action = 'booking';
+    }
+  }
+
   const fetchOpts = {
-    method:  'POST',
-    headers: { 'Content-Type': isAppsScript ? 'text/plain' : 'application/json' },
-    body:    JSON.stringify(payload),
+    method: 'POST',
+    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+    body: JSON.stringify(safePayload),
   };
   if (isAppsScript) fetchOpts.mode = 'no-cors';
+
   const res = await fetch(url, fetchOpts);
   if (!isAppsScript && !res.ok) throw new Error(`Webhook error: ${res.status}`);
   return isAppsScript ? {} : res.json().catch(() => ({}));
