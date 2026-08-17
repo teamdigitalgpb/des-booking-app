@@ -27,7 +27,7 @@ async function postToWebhook(url, payload) {
 
   const fetchOpts = {
     method: 'POST',
-    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+    headers: { 'Content-Type': isAppsScript ? 'text/plain' : 'application/json' },
     body: JSON.stringify(safePayload),
   };
   if (isAppsScript) fetchOpts.mode = 'no-cors';
