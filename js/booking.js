@@ -325,8 +325,8 @@ function updatePaymentNote(isVolunteer) {
   const note = document.getElementById('payment-note');
   if (!note) return;
   note.innerHTML = isVolunteer
-    ? 'Payment is via GCash, Maya, or Bank transfer — send your screenshot via Messenger to confirm.<br>Check-in: 2:00 PM &nbsp;|&nbsp; Check-out: 12:00 NN'
-    : 'Payment is via GCash, Maya, or Bank transfer — send your screenshot via Messenger to confirm.<br>Check-in: 2:00 PM &nbsp;|&nbsp; Check-out: 12:00 NN';
+    ? 'Payment is via GCash, Maya, or Bank transfer — send your screenshot via Messenger to confirm.<br>Check-in: 2:00 PM &nbsp;|&nbsp; Check-out: 12:00 NN<br>Arriving before 2:00 PM? Your stay counts from the night before — e.g. arriving 5:00 AM on the 15th means booking the 14th as your check-in date.'
+    : 'Payment is via GCash, Maya, or Bank transfer — send your screenshot via Messenger to confirm.<br>Check-in: 2:00 PM &nbsp;|&nbsp; Check-out: 12:00 NN<br>Arriving before 2:00 PM? Your stay counts from the night before — e.g. arriving 5:00 AM on the 15th means booking the 14th as your check-in date.';
 }
 
 // ── Whole Space recommendation ───────────────────────────────────────────────

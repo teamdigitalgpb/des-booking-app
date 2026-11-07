@@ -106,6 +106,8 @@ Every **Monday**, update the JW verification answer in the app.
 > - Guests: [Number]
 > - Total: ₱[Amount]
 >
+> **Arriving early?** One booking night runs from 2:00 PM to 12:00 NN the next day, and it's counted under the date it starts. So if you'll arrive before 2:00 PM and need the room right away (say, 5:00 AM on the 15th), that's still the night of the 14th, and your check-in date should be the 14th. Not sure? Just send us your arrival time and we'll sort it out.
+>
 > **Payment:** Full payment is required before or upon arrival. You may settle via GCash or cash on check-in.
 >
 > **Address:** Basak Agus Rd, Gisi, Lapu-Lapu, 6015 Cebu (near CBEC / Junrey's Store)
@@ -208,6 +210,8 @@ Common inquiries to expect:
 - "Can I extend my checkout?"
 - "I want to change my room"
 - "I already booked but haven't received a confirmation"
+- "I'll arrive at 5 AM on the 15th. Which date do I book?" → the night before (the 14th). Copy-paste reply:
+  > Hi [Name]! Our check-in is 2:00 PM and check-out is 12:00 NN, so one booking night runs from 2:00 PM to 12:00 NN the next day. An arrival at [time] on [date] still falls under the night of [day before], so to have the room ready when you arrive, please book [day before] as your check-in date. 😊
 
 ---
 
@@ -224,6 +228,7 @@ Common inquiries to expect:
 - A2/A19: slightly lower than JW on most configurations
 
 **Check-in:** 2:00 PM | **Check-out:** 12:00 NN
+**One booking night:** 2:00 PM to 12:00 NN the next day, counted under the date it starts. Early-morning arrival = book the night before.
 
 **Address:** Basak Agus Rd, Gisi, Lapu-Lapu, 6015 Cebu (near CBEC / Junrey's Store)
 

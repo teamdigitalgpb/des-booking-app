@@ -92,6 +92,8 @@ Guests pay by **GCash / Maya / Bank QR** and send a **screenshot through Faceboo
 > - Guests: **[Number]**
 > - Total: ₱**[Amount]**
 >
+> **Arriving early?** One booking night runs from 2:00 PM to 12:00 NN the next day, and it's counted under the date it starts. So if you'll arrive before 2:00 PM and need the room right away (say, 5:00 AM on the 15th), that's still the night of the 14th, and your check-in date should be the 14th. Not sure? Just send us your arrival time and we'll sort it out.
+>
 > **Payment:** Full payment is required before or upon arrival. You may pay via GCash, Maya, or bank transfer — just send us a screenshot of your payment here or on Messenger.
 >
 > **Address:** Basak Agus Rd, Gisi, Lapu-Lapu, 6015 Cebu (near CBEC / Junrey's Store)
@@ -133,6 +135,11 @@ Guests reach you through the **D' Econo-Space near CBEC** Facebook Page inbox. C
 - *"I already paid"* → ask for the screenshot, then follow step ② above.
 - *"Can I change my room / dates?"* → check availability in the Sheet, update the row, reply.
 
+- *"I'll arrive at 5 AM on the 15th. Which date do I book?"* → the night before (the 14th). Copy-paste reply:
+  > Hi [Name]! Our check-in is 2:00 PM and check-out is 12:00 NN, so one booking night runs from 2:00 PM to 12:00 NN the next day. An arrival at [time] on [date] still falls under the night of [day before], so to have the room ready when you arrive, please book [day before] as your check-in date. 😊
+
+**Why:** one booking night runs from 2:00 PM to 12:00 NN the next day, and it's counted under the date it starts. Anyone arriving between 12:00 MN and 2:00 PM who needs the room right away is still inside the previous night.
+
 Keep replies warm and simple. When unsure, it's always okay to say *"Let me check and get back to you."*
 
 ---
@@ -170,6 +177,7 @@ Every **Monday**, the JW rate question needs this week's song. You do it in **on
 | D' Whole Space | up to 8 | Common AC | ₱1,700/night |
 
 **Check-in:** 2:00 PM  ·  **Check-out:** 12:00 NN
+**One booking night:** 2:00 PM to 12:00 NN the next day, counted under the date it starts. Early-morning arrival = book the night before.
 **Address:** Basak Agus Rd, Gisi, Lapu-Lapu, 6015 Cebu (near CBEC / Junrey's Store)
 **Property contacts:** 0917.678.4871 · 0926.149.9002 · d.econospace.cebu@gmail.com
 
