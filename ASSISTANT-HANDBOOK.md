@@ -21,7 +21,7 @@ You don't need any technical skills or special software. If you can use Google S
 | **Bookings Sheet** | `[PASTE YOUR DES - BOOKINGS SHEET LINK HERE]` | Your command center — every booking appears here by itself |
 | **DES Email (Gmail)** | [mail.google.com](https://mail.google.com) — sign in as **d.econospace.cebu@gmail.com** | Where you send guests their confirmations and thank-yous |
 | **Facebook Page inbox** | The **D' Econo-Space near CBEC** Page → Messages | Where guests message you and send **payment screenshots** |
-| **Booking website** *(reference only)* | [des-booking-app.vercel.app](https://des-booking-app.vercel.app) | Where guests book. **You never edit this** — just good to know it exists. |
+| **Booking website** *(reference only)* | [d-econo-space-agus.vercel.app](https://d-econo-space-agus.vercel.app) | Where guests book. **You never edit this** — just good to know it exists. |
 
 > You do **not** use GoHighLevel or any other system. Just the Sheet and the Email.
 

@@ -31,10 +31,10 @@ the live site. You do not click "deploy" — it just happens, usually within ~30
 | URL | What it is | Who can see it |
 |---|---|---|
 | **https://d-econo-space-agus.vercel.app** | The LIVE site (your main address — mirrors the FB handle) | Everyone (public) |
-| https://des-booking-app.vercel.app | The original address — still live as a backup | Everyone (public) |
+| https://des-booking-app.vercel.app | Old address — now forwards to d-econo-space-agus automatically | Nobody lands here; old links still work |
 
-> Both addresses are live and show the same V2 site. **Share `d-econo-space-agus.vercel.app`**
-> with guests going forward; the old one keeps working so nothing you've already shared breaks.
+> **Use only `d-econo-space-agus.vercel.app`.** The old address forwards there automatically
+> (set in `vercel.json`), so links already shared still work but always end up on the main address.
 
 ---
 
@@ -114,7 +114,7 @@ To attach a new address:
      fallback like `d-econo-space-agus-cebu.vercel.app` and add that instead.
 4. (Optional) Set it as the **primary** domain so it's the default link.
 
-> The old `des-booking-app.vercel.app` keeps working too — so any link you've
+> The old `des-booking-app.vercel.app` now forwards to the main address — so any link you've
 > already shared won't break. You just gain the nicer new address.
 
 ---
@@ -125,7 +125,7 @@ To attach a new address:
 |---|---|
 | The code | GitHub: `github.com/teamdigitalgpb/des-booking-app` |
 | The hosting / live site | Vercel project: **d-econospace-agus** (team: teamdigitalgpb) |
-| Live site URL | https://des-booking-app.vercel.app |
+| Live site URL | https://d-econo-space-agus.vercel.app |
 | Weekly JW answer | Google Sheet "DES bookings" → **Settings** tab |
 | Booking submissions | Make.com webhook → Google Sheet "DES - Bookings" |
 | Guest chat | Facebook Messenger (`m.me/d.econo.space.agus`) |

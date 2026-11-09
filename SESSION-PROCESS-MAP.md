@@ -89,6 +89,6 @@ What we did, start to finish: took the V2 site from "only on the laptop" to
 ## What's live now
 
 - **Site:** https://d-econo-space-agus.vercel.app (V2, des-front2 hero)
-- **Backup address:** https://des-booking-app.vercel.app (still works)
+- **Old address:** https://des-booking-app.vercel.app (forwards to d-econo-space-agus since 2026-11-10)
 - **Clean link previews:** home, booking, and voucher pages
 - **Docs added:** `VERCEL-HANDBOOK.md` (how to run it) + this process map

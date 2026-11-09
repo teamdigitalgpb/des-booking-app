@@ -15,7 +15,7 @@ The booking system is made up of five connected tools:
 | **GoHighLevel (GHL)** | CRM — stores all guest contacts and bookings | Admin |
 | **Facebook Messenger** | Guest communication channel | Admin |
 
-**Booking website URL:** your Vercel deployment URL (e.g. `des-booking-app.vercel.app`)
+**Booking website URL:** https://d-econo-space-agus.vercel.app
 
 ---
 
