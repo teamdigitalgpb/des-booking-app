@@ -5,12 +5,12 @@
 async function postToWebhook(url, payload) {
   if (!url || url.startsWith('PLACEHOLDER')) {
     console.warn('Webhook URL not configured. Payload:', payload);
-    // In dev/testing mode, simulate success so forms still work
     return { ok: true, simulated: true };
   }
 
   const isAppsScript = url.includes('script.google.com');
-  const safePayload = { ...payload };
+  const isLocalApi   = url.startsWith('/') || url.startsWith(window.location.origin);
+  const safePayload  = { ...payload };
 
   if (isAppsScript && !safePayload.action) {
     if (typeof CONFIG !== 'undefined') {
@@ -25,16 +25,42 @@ async function postToWebhook(url, payload) {
     }
   }
 
-  const fetchOpts = {
-    method: 'POST',
-    headers: { 'Content-Type': isAppsScript ? 'text/plain' : 'application/json' },
-    body: JSON.stringify(safePayload),
-  };
-  if (isAppsScript) fetchOpts.mode = 'no-cors';
+  // Handle local Vercel serverless API endpoints
+  if (isLocalApi) {
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(safePayload),
+    });
 
-  const res = await fetch(url, fetchOpts);
-  if (!isAppsScript && !res.ok) throw new Error(`Webhook error: ${res.status}`);
-  return isAppsScript ? {} : res.json().catch(() => ({}));
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      const errMsg = data.error || `Request failed with status ${res.status}`;
+      throw new Error(errMsg);
+    }
+    return data;
+  }
+
+  // Handle direct Google Apps Script
+  if (isAppsScript) {
+    const fetchOpts = {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify(safePayload),
+      mode: 'no-cors',
+    };
+    await fetch(url, fetchOpts);
+    return { success: true, mode: 'no-cors' };
+  }
+
+  // Standard external webhooks (Make.com, etc.)
+  const res = await fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(safePayload),
+  });
+  if (!res.ok) throw new Error(`Webhook error: ${res.status}`);
+  return res.json().catch(() => ({}));
 }
 
 // ── GHL API helpers (used by admin.js) ───────────────────────────────────────

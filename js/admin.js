@@ -137,8 +137,22 @@ async function removeBlock(index) {
 
 // ── Room Status Toggle ────────────────────────────────────────────────────────
 
+function getAdminTodayYMD() {
+  try {
+    return new Intl.DateTimeFormat('en-CA', {
+      timeZone: 'Asia/Manila',
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+    }).format(new Date());
+  } catch (e) {
+    const d = new Date();
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+  }
+}
+
 function isRoomCurrentlyBlocked(room) {
-  const today = new Date().toISOString().split('T')[0];
+  const today = getAdminTodayYMD();
   return _blocks.some(b => {
     if (b.room !== room && b.room !== 'both') return false;
     const end = b.endDate || b.startDate;
@@ -147,7 +161,7 @@ function isRoomCurrentlyBlocked(room) {
 }
 
 function findActiveBlock(room) {
-  const today = new Date().toISOString().split('T')[0];
+  const today = getAdminTodayYMD();
   return _blocks.find(b => {
     if (b.room !== room) return false;
     const end = b.endDate || b.startDate;
@@ -182,7 +196,7 @@ function toggleRoom(room) {
   const blocked = isRoomCurrentlyBlocked(room);
   if (blocked) {
     const idx = _blocks.findIndex(b => {
-      const today = new Date().toISOString().split('T')[0];
+      const today = getAdminTodayYMD();
       const end = b.endDate || b.startDate;
       return b.room === room && b.startDate <= today && today <= end;
     });
@@ -193,7 +207,7 @@ function toggleRoom(room) {
 }
 
 async function confirmBlock(room) {
-  const today   = new Date().toISOString().split('T')[0];
+  const today   = getAdminTodayYMD();
   const reason  = document.getElementById(`reason-${room}`).value;
   const endDate = document.getElementById(`end-${room}`).value || '2099-12-31';
   setStatus('Saving…', '');

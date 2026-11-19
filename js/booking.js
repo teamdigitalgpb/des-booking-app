@@ -1,4 +1,4 @@
-// Booking form — pricing, conflict check, GHL webhook submit
+// Booking form — pricing, conflict check, server API submit & Google Sheets sync
 
 let _bookingSubmitted = false;
 let _donationReservation = false;
@@ -30,11 +30,41 @@ function calcTotal(room, nights, pax, rateType) {
 }
 
 function nightsBetween(checkin, checkout) {
-  const ms = new Date(checkout) - new Date(checkin);
-  return Math.round(ms / 86400000);
+  if (!checkin || !checkout) return 0;
+  const d1 = new Date(checkin + 'T12:00:00+08:00');
+  const d2 = new Date(checkout + 'T12:00:00+08:00');
+  return Math.round((d2 - d1) / 86400000);
 }
 
-// ── Pax select builder ────────────────────────────────────────────────────────
+// ── Timezone-Safe Date Helpers (Asia/Manila) ──────────────────────────────────
+
+function getTodayDateStr() {
+  try {
+    return new Intl.DateTimeFormat('en-CA', {
+      timeZone: 'Asia/Manila',
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+    }).format(new Date());
+  } catch (e) {
+    const d = new Date();
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+  }
+}
+
+function normalizeDateStr(val) {
+  if (!val) return '';
+  const clean = String(val).trim().split('T')[0];
+  const match = clean.match(/^(\d{4})[-/](\d{1,2})[-/](\d{1,2})$/);
+  if (match) {
+    const m = ('0' + match[2]).slice(-2);
+    const d = ('0' + match[3]).slice(-2);
+    return `${match[1]}-${m}-${d}`;
+  }
+  return clean;
+}
+
+// ── Pax Select Builder ────────────────────────────────────────────────────────
 
 function populatePaxSelect(room, rateType) {
   const sel      = document.getElementById('guests');
@@ -68,9 +98,61 @@ function populatePaxSelect(room, rateType) {
   if (noteEl) noteEl.classList.toggle('hidden', room !== 'whole');
 }
 
-// ── Admin-blocked dates ───────────────────────────────────────────────────────
+// ── Availability & Conflict Management ────────────────────────────────────────
 
+let _serverBookings = [];
 let _blockedDates = { d1: new Set(), d2: new Set(), both: new Set() };
+
+async function fetchAvailability() {
+  // 1. Fetch live availability from Google Apps Script if configured
+  if (typeof CONFIG !== 'undefined' && CONFIG.APPS_SCRIPT_URL) {
+    try {
+      const res = await fetch(`${CONFIG.APPS_SCRIPT_URL}?action=getAvailability`, { cache: 'no-store' });
+      if (res.ok) {
+        const data = await res.json();
+        if (data && data.success) {
+          if (Array.isArray(data.bookings)) {
+            _serverBookings = data.bookings.map(b => ({
+              ...b,
+              room: (String(b.room || '').toLowerCase().indexOf('d1') !== -1) ? 'd1' : (String(b.room || '').toLowerCase().indexOf('d2') !== -1) ? 'd2' : (String(b.room || '').toLowerCase().indexOf('whole') !== -1) ? 'whole' : String(b.room || '').toLowerCase(),
+              checkin: normalizeDateStr(b.checkin),
+              checkout: normalizeDateStr(b.checkout),
+              status: String(b.status || 'booked').toLowerCase()
+            }));
+          }
+
+          if (Array.isArray(data.blocks)) {
+            _blockedDates = { d1: new Set(), d2: new Set(), both: new Set() };
+            data.blocks.forEach(b => {
+              const rawRoom = (b.room || 'both').toLowerCase();
+              const start = normalizeDateStr(b.startDate || b.startdate);
+              const end = normalizeDateStr(b.endDate || b.enddate || start);
+              if (!start) return;
+
+              const roomKey = rawRoom.includes('d1') ? 'd1' : rawRoom.includes('d2') ? 'd2' : rawRoom.includes('both') ? 'both' : 'both';
+              if (!_blockedDates[roomKey]) _blockedDates[roomKey] = new Set();
+
+              let cur = new Date(start + 'T12:00:00+08:00');
+              const endDate = new Date(end + 'T12:00:00+08:00');
+              while (cur <= endDate) {
+                const ymd = `${cur.getFullYear()}-${String(cur.getMonth() + 1).padStart(2, '0')}-${String(cur.getDate()).padStart(2, '0')}`;
+                _blockedDates[roomKey].add(ymd);
+                cur.setDate(cur.getDate() + 1);
+              }
+            });
+          }
+          recalc();
+          return;
+        }
+      }
+    } catch (e) {
+      // Continue to CSV fallback
+    }
+  }
+
+  // 2. Fallback: load directly from configured CSVs
+  fetchBlockedDates();
+}
 
 function fetchBlockedDates() {
   const url = CONFIG.BLOCKED_DATES_CSV_URL;
@@ -85,13 +167,18 @@ function fetchBlockedDates() {
         if (!room || !startStr) return;
         const key = room.toLowerCase();
         if (!_blockedDates[key]) _blockedDates[key] = new Set();
-        const start = new Date(startStr + 'T00:00:00');
-        const end   = endStr ? new Date(endStr + 'T00:00:00') : new Date(startStr + 'T00:00:00');
-        if (isNaN(start) || isNaN(end)) return;
-        for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
-          _blockedDates[key].add(d.toISOString().split('T')[0]);
+        const start = normalizeDateStr(startStr);
+        const end   = normalizeDateStr(endStr || startStr);
+        if (!start) return;
+        let cur = new Date(start + 'T12:00:00+08:00');
+        const endDate = new Date(end + 'T12:00:00+08:00');
+        while (cur <= endDate) {
+          const ymd = `${cur.getFullYear()}-${String(cur.getMonth() + 1).padStart(2, '0')}-${String(cur.getDate()).padStart(2, '0')}`;
+          _blockedDates[key].add(ymd);
+          cur.setDate(cur.getDate() + 1);
         }
       });
+      recalc();
     })
     .catch(() => {});
 }
@@ -105,13 +192,146 @@ function isDateBlocked(room, date) {
 }
 
 function isRangeBlocked(room, checkin, checkout) {
-  const start = new Date(checkin + 'T00:00:00');
-  const end   = checkout ? new Date(checkout + 'T00:00:00') : new Date(start.getTime() + 86400000);
-  for (let d = new Date(start); d < end; d.setDate(d.getDate() + 1)) {
-    if (isDateBlocked(room, d.toISOString().split('T')[0])) return true;
+  if (!checkin) return false;
+  const end = checkout || checkin;
+  let cur = new Date(checkin + 'T12:00:00+08:00');
+  const endDate = new Date(end + 'T12:00:00+08:00');
+  const isSameDay = checkin === end;
+
+  // Nights stayed are [checkin, checkout)
+  while (isSameDay ? cur <= endDate : cur < endDate) {
+    const ymd = `${cur.getFullYear()}-${String(cur.getMonth() + 1).padStart(2, '0')}-${String(cur.getDate()).padStart(2, '0')}`;
+    if (isDateBlocked(room, ymd)) return true;
+    cur.setDate(cur.getDate() + 1);
   }
   return false;
 }
+
+// ── LocalStorage Booking Cache Helpers ────────────────────────────────────────
+
+function cleanupPendingBookings() {
+  try {
+    const raw = localStorage.getItem('des_bookings') || '[]';
+    const bookings = JSON.parse(raw);
+    if (!Array.isArray(bookings)) return;
+
+    const now = Date.now();
+    const valid = bookings.filter(b => {
+      if (!b || !b.room || !b.checkin || !b.checkout) return false;
+      if (b.status === 'pending' && b.createdAt) {
+        const age = now - new Date(b.createdAt).getTime();
+        return age < 48 * 60 * 60 * 1000;
+      }
+      return true;
+    });
+
+    if (valid.length !== bookings.length) {
+      localStorage.setItem('des_bookings', JSON.stringify(valid));
+    }
+  } catch (err) {
+    localStorage.removeItem('des_bookings');
+  }
+}
+
+function getLocalBookings() {
+  cleanupPendingBookings();
+  return JSON.parse(localStorage.getItem('des_bookings') || '[]');
+}
+
+function getAllBookings() {
+  const local = getLocalBookings();
+  const all = [..._serverBookings];
+
+  local.forEach(lb => {
+    const rm = String(lb.room || '').toLowerCase();
+    const ci = normalizeDateStr(lb.checkin);
+    const co = normalizeDateStr(lb.checkout);
+    const exists = all.some(b => b.room === rm && b.checkin === ci && b.checkout === co);
+    if (!exists && ci && co) {
+      all.push({
+        room: rm,
+        checkin: ci,
+        checkout: co,
+        status: lb.status || 'pending',
+        name: lb.name || ''
+      });
+    }
+  });
+
+  return all;
+}
+
+// ── Strict Double-Booking & Overlap Check ──────────────────────────────────────
+
+function hasConflict(room, checkin, checkout) {
+  if (!room || !checkin || !checkout) return false;
+  const bookings = getAllBookings();
+
+  return bookings.some(b => {
+    const st = String(b.status || '').toLowerCase().trim();
+    if (st === 'declined' || st === 'cancelled') return false;
+
+    const bRoom = String(b.room || '').toLowerCase().trim();
+
+    // Overlap applies when:
+    // - same room (d1 with d1, d2 with d2)
+    // - either booking is 'whole' (since whole occupies both d1 and d2)
+    const isConflictRoom = (bRoom === room) ||
+                           (bRoom === 'whole') ||
+                           (room === 'whole' && (bRoom === 'd1' || bRoom === 'd2' || bRoom === 'whole'));
+
+    if (!isConflictRoom) return false;
+
+    const bIn = normalizeDateStr(b.checkin);
+    const bOut = normalizeDateStr(b.checkout);
+    if (!bIn || !bOut) return false;
+
+    // Check-in and check-out intervals: [checkin, checkout) and [bIn, bOut)
+    return (checkin < bOut && checkout > bIn);
+  });
+}
+
+function saveBooking(data) {
+  const bookings = getLocalBookings();
+  bookings.push(data);
+  localStorage.setItem('des_bookings', JSON.stringify(bookings));
+}
+
+// ── UI Helpers ────────────────────────────────────────────────────────────────
+
+function showAlert(msg, type = 'error') {
+  const el = document.getElementById('booking-alert');
+  el.className = `alert alert-${type}`;
+  el.textContent = msg;
+  el.classList.remove('hidden');
+  el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function hideAlert() {
+  document.getElementById('booking-alert').classList.add('hidden');
+}
+
+function updatePriceDisplay(room, nights, pax, rateType) {
+  const display = document.getElementById('price-display');
+  if (!room || !nights || nights < 1 || !pax) { display.style.display = 'none'; return; }
+
+  const total = calcTotal(room, nights, pax, rateType);
+  if (!total) { display.style.display = 'none'; return; }
+
+  const roomLabels = { d1: 'Room D1', d2: 'Room D2', whole: "D' Whole Space" };
+  const discountNote = rateType === 'a2a19' ? ' · A2/A19 volunteer rate' : rateType === 'jw' ? ' · JW volunteer rate' : '';
+
+  const breakdown = `${roomLabels[room] || room} · ${nights} night${nights > 1 ? 's' : ''} · ${pax} guest${pax > 1 ? 's' : ''}${discountNote}`;
+
+  document.getElementById('price-total').textContent = `₱${total.toLocaleString()}`;
+  document.getElementById('price-breakdown').textContent = breakdown;
+  display.style.display = 'block';
+}
+
+// ── Discount Eligibility ──────────────────────────────────────────────────────
+
+let activeVoucherType = 'regular';
+let preVerified       = false;
 
 function normalizeAnswer(s) {
   return String(s || '').replace(/\D/g, '');
@@ -169,106 +389,6 @@ function updateA2A19Validation() {
   recalc();
 }
 
-// ── Conflict checking (localStorage) ────────────────────────────────────────
-
-function cleanupPendingBookings() {
-  try {
-    const raw = localStorage.getItem('des_bookings') || '[]';
-    const bookings = JSON.parse(raw);
-    if (!Array.isArray(bookings)) return;
-
-    const now = Date.now();
-    const valid = bookings.filter(b => {
-      if (!b || !b.room || !b.checkin || !b.checkout) return false;
-      if (b.status === 'pending' && b.createdAt) {
-        const age = now - new Date(b.createdAt).getTime();
-        return age < 24 * 60 * 60 * 1000;
-      }
-      return true;
-    });
-
-    if (valid.length !== bookings.length) {
-      localStorage.setItem('des_bookings', JSON.stringify(valid));
-    }
-  } catch (err) {
-    localStorage.removeItem('des_bookings');
-  }
-}
-
-function getBookings() {
-  cleanupPendingBookings();
-  return JSON.parse(localStorage.getItem('des_bookings') || '[]');
-}
-
-function hasD1Booking(checkin, checkout) {
-  const newIn  = new Date(checkin).getTime();
-  const newOut = new Date(checkout).getTime();
-  return getBookings().some(b => {
-    if (b.room !== 'd1' && b.room !== 'whole') return false;
-    const bIn  = new Date(b.checkin).getTime();
-    const bOut = new Date(b.checkout).getTime();
-    return newIn < bOut && newOut > bIn;
-  });
-}
-
-function isD1Occupied(checkin, checkout) {
-  if (hasD1Booking(checkin, checkout)) return true;
-  return isRangeBlocked('d1', checkin, checkout);
-}
-
-function hasConflict(room, checkin, checkout) {
-  const newIn  = new Date(checkin).getTime();
-  const newOut = new Date(checkout).getTime();
-  return getBookings().some(b => {
-    if (b.room !== room) return false;
-    const bIn  = new Date(b.checkin).getTime();
-    const bOut = new Date(b.checkout).getTime();
-    return newIn < bOut && newOut > bIn;
-  });
-}
-
-function saveBooking(data) {
-  const bookings = getBookings();
-  bookings.push(data);
-  localStorage.setItem('des_bookings', JSON.stringify(bookings));
-}
-
-// ── UI helpers ───────────────────────────────────────────────────────────────
-
-function showAlert(msg, type = 'error') {
-  const el = document.getElementById('booking-alert');
-  el.className = `alert alert-${type}`;
-  el.textContent = msg;
-  el.classList.remove('hidden');
-  el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-}
-
-function hideAlert() {
-  document.getElementById('booking-alert').classList.add('hidden');
-}
-
-function updatePriceDisplay(room, nights, pax, rateType) {
-  const display = document.getElementById('price-display');
-  if (!room || !nights || nights < 1 || !pax) { display.style.display = 'none'; return; }
-
-  const total = calcTotal(room, nights, pax, rateType);
-  if (!total) { display.style.display = 'none'; return; }
-
-  const roomLabels = { d1: 'Room D1', d2: 'Room D2', whole: 'D\' Whole Space' };
-  const discountNote = rateType === 'a2a19' ? ' · A2/A19 volunteer rate' : rateType === 'jw' ? ' · JW volunteer rate' : '';
-
-  const breakdown = `${roomLabels[room] || room} · ${nights} night${nights > 1 ? 's' : ''} · ${pax} guest${pax > 1 ? 's' : ''}${discountNote}`;
-
-  document.getElementById('price-total').textContent = `₱${total.toLocaleString()}`;
-  document.getElementById('price-breakdown').textContent = breakdown;
-  display.style.display = 'block';
-}
-
-// ── Discount eligibility ──────────────────────────────────────────────────────
-
-let activeVoucherType = 'regular';
-let preVerified       = false;
-
 function applyVerified(type) {
   preVerified = true;
   activeVoucherType = type;
@@ -298,7 +418,6 @@ function applyVerified(type) {
   recalc();
 }
 
-
 function updateA2A19Panel() {
   const room    = document.getElementById('room').value;
   const pax     = parseInt(document.getElementById('guests').value) || 0;
@@ -307,41 +426,23 @@ function updateA2A19Panel() {
     msgEl.innerHTML = `<p class="disc-intro">A2/A19 discount applied.</p><p class="disc-info">Complete your booking — we'll verify your details and send your confirmation voucher to your email.</p>`;
     return;
   }
-  const reg    = RATES[room]?.regular?.[pax] || 0;
-  const jw     = RATES[room]?.jw?.[pax] || 0;
   const a2a19  = RATES[room]?.a2a19?.[pax] || 0;
-  if (a2a19 < jw) {
-    msgEl.innerHTML = `
-      <p class="disc-congrats">✓ Volunteer rate — ₱${a2a19.toLocaleString()}/night</p>
-      <p class="disc-info" style="margin-top:.6rem;">Submit your booking to hold your dates. If you can, a donation helps keep this place running for everyone.</p>`;
-  } else {
-    msgEl.innerHTML = `
-      <p class="disc-congrats">✓ Volunteer rate — ₱${a2a19.toLocaleString()}/night</p>
-      <p class="disc-info" style="margin-top:.6rem;">This is the lowest rate for this room and guest count. Submit your booking to hold your dates.</p>`;
-  }
+  msgEl.innerHTML = `
+    <p class="disc-congrats">✓ Volunteer rate — ₱${a2a19.toLocaleString()}/night</p>
+    <p class="disc-info" style="margin-top:.6rem;">Submit your booking to hold your dates. If you can, a donation helps keep this place running for everyone.</p>`;
 }
 
 function updatePaymentNote(isVolunteer) {
   const note = document.getElementById('payment-note');
   if (!note) return;
-  note.innerHTML = isVolunteer
-    ? 'Payment is via GCash, Maya, or Bank transfer — send your screenshot via Messenger to confirm.<br>Check-in: 2:00 PM &nbsp;|&nbsp; Check-out: 12:00 NN<br>Arriving before 2:00 PM? Your stay counts from the night before — e.g. arriving 5:00 AM on the 15th means booking the 14th as your check-in date.'
-    : 'Payment is via GCash, Maya, or Bank transfer — send your screenshot via Messenger to confirm.<br>Check-in: 2:00 PM &nbsp;|&nbsp; Check-out: 12:00 NN<br>Arriving before 2:00 PM? Your stay counts from the night before — e.g. arriving 5:00 AM on the 15th means booking the 14th as your check-in date.';
+  note.innerHTML = 'Payment is via GCash, Maya, or Bank transfer — send your screenshot via Messenger to confirm.<br>Check-in: 2:00 PM &nbsp;|&nbsp; Check-out: 12:00 NN<br>Arriving before 2:00 PM? Your stay counts from the night before — e.g. arriving 5:00 AM on the 15th means booking the 14th as your check-in date.';
 }
-
-// ── Whole Space recommendation ───────────────────────────────────────────────
-// D1 and D2 cap at 4 guests, so any party of 5+ must take the Whole Space.
-// Show the nudge whenever an individual room is selected; hide for Whole Space.
 
 function toggleWholeRec(room) {
   const rec = document.getElementById('whole-space-rec');
   if (!rec) return;
   rec.classList.toggle('hidden', !(room === 'd1' || room === 'd2'));
 }
-
-// ── Solo Share Waitlist ───────────────────────────────────────────────────────
-// Show the opt-in for D1/D2 when 1–3 guests are booking, so they can opt in
-// to share the room with another group and split the cost.
 
 function toggleShareWaitlist() {
   const wrap = document.getElementById('share-waitlist');
@@ -361,7 +462,7 @@ function toggleExclusiveNote() {
   el.classList.toggle('hidden', !(room === 'whole' && guests >= 5));
 }
 
-// ── Recalc on any field change ───────────────────────────────────────────────
+// ── Recalc on Field Changes ───────────────────────────────────────────────────
 
 function recalc() {
   const room     = document.getElementById('room').value;
@@ -369,41 +470,48 @@ function recalc() {
   const checkout = document.getElementById('checkout').value;
   const pax      = parseInt(document.getElementById('guests').value) || 0;
 
-  function hideD2Warning() {
-    const el = document.getElementById('d2-availability-warning');
-    if (el) el.classList.add('hidden');
-  }
+  // D2 is an independent room — hide any legacy coupling warning
+  const d2WarnEl = document.getElementById('d2-availability-warning');
+  if (d2WarnEl) d2WarnEl.classList.add('hidden');
 
-  if (!checkin || !checkout) { document.getElementById('price-display').style.display = 'none'; hideD2Warning(); return; }
+  if (!checkin || !checkout) {
+    document.getElementById('price-display').style.display = 'none';
+    return;
+  }
   const nights = nightsBetween(checkin, checkout);
-  if (nights < 1) { document.getElementById('price-display').style.display = 'none'; hideD2Warning(); return; }
+  if (nights < 1) {
+    document.getElementById('price-display').style.display = 'none';
+    return;
+  }
 
   updatePriceDisplay(room, nights, pax, activeVoucherType);
   if (activeVoucherType === 'a2a19') updateA2A19Panel();
 
+  let hasDateConflict = false;
+  let isBlocked = false;
+
   if (room && checkin && checkout) {
-    const conflict = hasConflict(room, checkin, checkout);
-    document.getElementById('conflict-warning').classList.toggle('hidden', !conflict);
+    hasDateConflict = hasConflict(room, checkin, checkout);
+    isBlocked = isRangeBlocked(room, checkin, checkout);
+  }
+
+  const conflictWarnEl = document.getElementById('conflict-warning');
+  if (conflictWarnEl) {
+    conflictWarnEl.classList.toggle('hidden', !hasDateConflict);
   }
 
   const blockedWarnEl = document.getElementById('blocked-dates-warning');
   if (blockedWarnEl) {
-    const blocked = !!(room && checkin && isRangeBlocked(room, checkin, checkout || checkin));
-    blockedWarnEl.classList.toggle('hidden', !blocked);
-    document.getElementById('submit-btn').disabled = blocked;
+    blockedWarnEl.classList.toggle('hidden', !isBlocked);
   }
 
-  const d2WarnEl = document.getElementById('d2-availability-warning');
-  if (d2WarnEl) {
-    if (room === 'd2' && checkin && checkout && nights >= 1) {
-      d2WarnEl.classList.toggle('hidden', isD1Occupied(checkin, checkout));
-    } else {
-      d2WarnEl.classList.add('hidden');
-    }
+  const submitBtn = document.getElementById('submit-btn');
+  if (submitBtn) {
+    submitBtn.disabled = hasDateConflict || isBlocked;
   }
 }
 
-// ── Form submit ──────────────────────────────────────────────────────────────
+// ── Form Submit: Secure Server-Side Sync ──────────────────────────────────────
 
 document.getElementById('booking-form').addEventListener('submit', async (e) => {
   e.preventDefault();
@@ -423,14 +531,15 @@ document.getElementById('booking-form').addEventListener('submit', async (e) => 
   const referral = document.getElementById('referral').value.trim();
   const requests = document.getElementById('requests').value.trim();
 
+  // Field validations
   if (!firstName) return showAlert('Please enter your first name.');
   if (!lastName)  return showAlert('Please enter your last name.');
-  if (!mobile)  return showAlert('Please enter your mobile number.');
-  if (!email)   return showAlert('Please enter your email address.');
-  if (!room)    return showAlert('Please select a room.');
-  if (!checkin) return showAlert('Please select a check-in date.');
-  if (!checkout)return showAlert('Please select a check-out date.');
-  if (!guests)  return showAlert('Please select the number of guests.');
+  if (!mobile)    return showAlert('Please enter your mobile number.');
+  if (!email)     return showAlert('Please enter your email address.');
+  if (!room)      return showAlert('Please select a room.');
+  if (!checkin)   return showAlert('Please select a check-in date.');
+  if (!checkout)  return showAlert('Please select a check-out date.');
+  if (!guests)    return showAlert('Please select the number of guests.');
   if (Number.isNaN(femaleGuests) || femaleGuests < 0) return showAlert('Please enter the number of female guests.');
   if (Number.isNaN(maleGuests) || maleGuests < 0) return showAlert('Please enter the number of male guests.');
   if (femaleGuests + maleGuests !== guests) return showAlert('The number of female and male guests must add up to your total guest count.');
@@ -438,79 +547,84 @@ document.getElementById('booking-form').addEventListener('submit', async (e) => 
   const nights = nightsBetween(checkin, checkout);
   if (nights < 1) return showAlert('Check-out must be after check-in.');
 
-  if (document.getElementById('disc-a2a19').checked && activeVoucherType !== 'a2a19') {
+  if (document.getElementById('disc-a2a19')?.checked && activeVoucherType !== 'a2a19') {
     return showAlert('Please answer the song number and enter your A2/A19 account number to apply the volunteer rate.');
   }
 
-  if (isRangeBlocked(room, checkin, checkout)) {
-    return showAlert('These dates are not available for booking. Please choose different dates or contact us.');
-  }
-
-  if (room === 'd2' && !isD1Occupied(checkin, checkout)) {
-    return showAlert('Room D2 is only available when Room D1 is occupied for the same dates. Please book Room D1 first, or contact us to arrange both rooms.');
-  }
-
+  // Double-booking check: block immediately if selected dates are reserved
   if (hasConflict(room, checkin, checkout)) {
-    showAlert('Note: these dates may overlap with a recent booking from this device. Your request will still be submitted — our team will confirm availability.', 'info');
+    return showAlert('The dates you selected are already reserved for this room. Please choose different dates or select another room.');
+  }
+
+  if (isRangeBlocked(room, checkin, checkout)) {
+    return showAlert('These dates are not available for booking (closed for maintenance or private event). Please choose different dates.');
   }
 
   const shareWrap     = document.getElementById('share-waitlist');
   const shareWaitlist = !!(shareWrap && !shareWrap.classList.contains('hidden') && document.getElementById('share-optin').checked);
-
-  const totalPrice = calcTotal(room, nights, guests, activeVoucherType);
-  const tags = ['DES', 'DES-booked', `DES-${room}`];
-  if (shareWaitlist) tags.push('DES-share-waitlist');
-  if (_donationReservation) tags.push('DES-donation-reservation');
+  const totalPrice    = calcTotal(room, nights, guests, activeVoucherType);
 
   const payload = {
     action: 'booking',
     firstName, lastName, name, mobile, email, room, checkin, checkout,
-    guests, femaleGuests, maleGuests, discountType: activeVoucherType !== 'regular' ? activeVoucherType : '', referral, specialRequests: requests,
+    guests, femaleGuests, maleGuests,
+    discountType: activeVoucherType !== 'regular' ? activeVoucherType : '',
+    referral, specialRequests: requests,
     totalPrice, nights, rateType: activeVoucherType,
     shareWaitlist: shareWaitlist ? 'yes' : '',
     bookingType: _donationReservation ? 'donation-reservation' : '',
-    tags: tags.join(','),
   };
 
   const btn = document.getElementById('submit-btn');
   btn.disabled = true;
-  btn.textContent = 'Sending…';
+  btn.textContent = 'Submitting Booking…';
 
   try {
-    await postToWebhook(CONFIG.WEBHOOK_BOOKING, payload);
+    const webhookUrl = CONFIG.WEBHOOK_BOOKING || CONFIG.APPS_SCRIPT_URL;
+    const result = await postToWebhook(webhookUrl, payload);
+
+    if (result && result.error) {
+      throw new Error(result.error);
+    }
+
     _bookingSubmitted = true;
 
+    // Save to local cache so calendar reflects it immediately on this device
     saveBooking({
+      id: result?.bookingId || ('DES-' + Date.now()),
       room,
       checkin,
       checkout,
       name,
       guests,
       pax: guests,
-      status: 'pending',
+      status: result?.status || 'New',
       createdAt: new Date().toISOString(),
-      id: Date.now(),
     });
 
+    // Populate session storage for thankyou page
     sessionStorage.removeItem('des_voucher_approved');
     sessionStorage.setItem('des_booking_summary', JSON.stringify({
       name, email, mobile, room, checkin, checkout, guests, totalPrice, nights,
       rateType: activeVoucherType,
       verified: activeVoucherType !== 'regular' ? '1' : '0',
       donation: _donationReservation ? '1' : '0',
+      bookingId: result?.bookingId || '',
     }));
     sessionStorage.setItem('des_booking_submitted', JSON.stringify({
       timestamp: Date.now(), room, checkin,
     }));
+
     window.location.href = 'thankyou-booking.html';
   } catch (err) {
-    showAlert('Something went wrong. Please try again or contact us directly.');
+    console.error('[Booking Submit Error]', err);
+    showAlert(err.message || 'Something went wrong while submitting your booking. Please try again or contact us directly.');
     btn.disabled = false;
     btn.textContent = 'Submit Reservation Request';
   }
 });
 
-// ── Wire up listeners ────────────────────────────────────────────────────────
+// ── Wire Up Event Listeners ───────────────────────────────────────────────────
 
 document.getElementById('room').addEventListener('change', (e) => {
   if (!preVerified) {
@@ -538,16 +652,18 @@ if (switchBtn) {
     roomSel.dispatchEvent(new Event('change'));
   });
 }
+
 document.getElementById('checkin').addEventListener('change', () => {
   const room = document.getElementById('room').value;
   if (room) populatePaxSelect(room, activeVoucherType);
   recalc();
 });
+
 document.getElementById('checkout').addEventListener('change', recalc);
 document.getElementById('guests').addEventListener('change', () => { toggleShareWaitlist(); toggleExclusiveNote(); recalc(); });
-// ── Discount checkbox listeners ───────────────────────────────────────────────
 
-document.getElementById('disc-jw').addEventListener('change', (e) => {
+// Discount Checkboxes
+document.getElementById('disc-jw')?.addEventListener('change', (e) => {
   const jwPanel    = document.getElementById('jw-panel');
   const a2Panel    = document.getElementById('a2a19-panel');
   const optJW      = document.getElementById('opt-jw');
@@ -577,7 +693,7 @@ document.getElementById('disc-jw').addEventListener('change', (e) => {
   recalc();
 });
 
-document.getElementById('disc-a2a19').addEventListener('change', (e) => {
+document.getElementById('disc-a2a19')?.addEventListener('change', (e) => {
   const jwPanel  = document.getElementById('jw-panel');
   const a2Panel  = document.getElementById('a2a19-panel');
   const optJW    = document.getElementById('opt-jw');
@@ -614,10 +730,10 @@ document.getElementById('disc-a2a19').addEventListener('change', (e) => {
   recalc();
 });
 
-document.getElementById('a2a19-acct').addEventListener('input', updateA2A19Validation);
-document.getElementById('a2a19-jw-ans').addEventListener('input', updateA2A19Validation);
+document.getElementById('a2a19-acct')?.addEventListener('input', updateA2A19Validation);
+document.getElementById('a2a19-jw-ans')?.addEventListener('input', updateA2A19Validation);
 
-document.getElementById('jw-ans').addEventListener('input', async (e) => {
+document.getElementById('jw-ans')?.addEventListener('input', async (e) => {
   const code     = e.target.value.trim();
   const statusEl = document.getElementById('jw-ans-status');
   if (!code) { statusEl.className = 'voucher-status'; statusEl.textContent = ''; activeVoucherType = 'regular'; recalc(); return; }
@@ -644,23 +760,21 @@ document.getElementById('jw-ans').addEventListener('input', async (e) => {
   recalc();
 });
 
-// ── Pre-select room from URL param ───────────────────────────────────────────
+// ── Initialization ────────────────────────────────────────────────────────────
 
 (function () {
-  // Double-submission guard — block re-submit within 30 minutes of a recent booking
+  // Guard against accidental double-submission within 15 minutes
   const prevSubmit = sessionStorage.getItem('des_booking_submitted');
   if (prevSubmit) {
     try {
       const sub = JSON.parse(prevSubmit);
-      if (Date.now() - (sub.timestamp || 0) < 30 * 60 * 1000) {
+      if (Date.now() - (sub.timestamp || 0) < 15 * 60 * 1000) {
         const alertEl = document.getElementById('booking-alert');
-        const btn     = document.getElementById('submit-btn');
         if (alertEl) {
-          alertEl.innerHTML = 'You have a pending booking that was just submitted. Check your email — or <a href="#" style="color:var(--navy);font-weight:700;text-decoration:underline;" onclick="event.preventDefault();sessionStorage.removeItem(\'des_booking_submitted\');location.reload();">start a new booking</a>.';
-          alertEl.style.cssText = 'background:#fff8e8;border:1px solid #e6c84a;border-radius:var(--radius);padding:.85rem 1rem;margin-bottom:1rem;font-size:.86rem;color:#6b4a00;line-height:1.55;';
+          alertEl.innerHTML = 'You recently submitted a reservation request. Check your email, or <a href="#" style="color:var(--navy);font-weight:700;text-decoration:underline;" onclick="event.preventDefault();sessionStorage.removeItem(\'des_booking_submitted\');location.reload();">start another booking</a>.';
+          alertEl.className = 'alert alert-info';
           alertEl.classList.remove('hidden');
         }
-        if (btn) { btn.disabled = true; btn.textContent = 'Booking Pending…'; }
       } else {
         sessionStorage.removeItem('des_booking_submitted');
       }
@@ -678,6 +792,7 @@ document.getElementById('jw-ans').addEventListener('input', async (e) => {
     const banner = document.getElementById('donation-rec');
     if (banner) banner.classList.remove('hidden');
   }
+
   if (room) {
     const sel = document.getElementById('room');
     if ([...sel.options].some(o => o.value === room)) {
@@ -690,13 +805,11 @@ document.getElementById('jw-ans').addEventListener('input', async (e) => {
       toggleWholeRec(room);
       toggleShareWaitlist();
       toggleExclusiveNote();
-      recalc();
     }
   }
 
-  fetchBlockedDates();
-
-  const today = new Date().toISOString().split('T')[0];
+  // Set min dates using Asia/Manila current date
+  const today = getTodayDateStr();
   document.getElementById('checkin').min  = today;
   document.getElementById('checkout').min = today;
 
@@ -713,9 +826,12 @@ document.getElementById('jw-ans').addEventListener('input', async (e) => {
     if (token.mobile)    document.getElementById('mobile').value    = token.mobile;
     if (token.email)     document.getElementById('email').value     = token.email;
   }
+
+  // Load live availability and blocked dates
+  fetchAvailability();
 })();
 
-// ── Abandoned booking follow-up ──────────────────────────────────────────────────
+// ── Abandoned Booking Follow-Up ───────────────────────────────────────────────
 
 window.addEventListener('pagehide', () => {
   if (_bookingSubmitted) return;
@@ -731,5 +847,7 @@ window.addEventListener('pagehide', () => {
     checkin:   document.getElementById('checkin')?.value          || '',
     checkout:  document.getElementById('checkout')?.value         || '',
   });
-  navigator.sendBeacon(CONFIG.WEBHOOK_ADMIN, new Blob([payload], { type: 'application/json' }));
+
+  const webhook = CONFIG.APPS_SCRIPT_URL || CONFIG.WEBHOOK_ADMIN;
+  navigator.sendBeacon(webhook, new Blob([payload], { type: 'text/plain;charset=utf-8' }));
 });
