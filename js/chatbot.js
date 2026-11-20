@@ -274,7 +274,11 @@
       • <strong>GCash</strong><br>
       • <strong>Maya</strong><br>
       • <strong>Bank / InstaPay</strong><br><br>
-      After paying, please send your screenshot to our Facebook Messenger inbox or Group Chat to secure your keyholder PIN.`,
+      After paying, please send your screenshot to our Facebook Messenger or Page (<a href="https://www.facebook.com/d.econo.space.agus" target="_blank" style="color:#BF9B30;font-weight:600;">@d.econo.space.agus</a>) to secure your keyholder PIN.<br><br>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:4px;">
+        <a href="https://www.facebook.com/messages/t/d.econo.space.agus" target="_blank" class="des-chat-link des-messenger-btn">Send on Messenger ↗</a>
+        <a href="https://www.facebook.com/d.econo.space.agus" target="_blank" class="des-chat-link" style="background:#1877F2;">Facebook Page ↗</a>
+      </div>`,
 
     location: `📍 <strong>Our Location:</strong><br>
       Basak Agus Rd, Gisi, Lapu-Lapu, 6015 Cebu.<br>
@@ -284,7 +288,10 @@
     staff: `Need help or have a special request? Reach our friendly staff directly:<br>
       • 📞 0917.678.4871 &nbsp;|&nbsp; 0926.149.9002<br>
       • ✉️ d.econospace.cebu@gmail.com<br><br>
-      <a href="https://m.me/d.econo.space.agus" target="_blank" class="des-chat-link">Chat on Messenger ↗</a>`,
+      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:6px;">
+        <a href="https://www.facebook.com/messages/t/d.econo.space.agus" target="_blank" class="des-chat-link des-messenger-btn">Chat on Messenger ↗</a>
+        <a href="https://www.facebook.com/d.econo.space.agus" target="_blank" class="des-chat-link" style="background:#1877F2;">Facebook Page ↗</a>
+      </div>`,
 
     volunteer: `We offer special rates for JW and A2/A19 volunteers! Simply select the volunteer option on our booking form and enter this week's song number to unlock your discounted rate.<br><br>
       <a href="booking.html" class="des-chat-link">Go to Booking Form →</a>`
@@ -299,10 +306,13 @@
     if (text.includes('avail') || text.includes('date') || text.includes('calendar') || text.includes('open') || text.includes('free')) return RESPONSES.availability;
     if (text.includes('location') || text.includes('where') || text.includes('address') || text.includes('saan') || text.includes('map')) return RESPONSES.location;
     if (text.includes('volunteer') || text.includes('jw') || text.includes('song') || text.includes('a2') || text.includes('discount')) return RESPONSES.volunteer;
-    if (text.includes('staff') || text.includes('human') || text.includes('contact') || text.includes('call') || text.includes('phone') || text.includes('number')) return RESPONSES.staff;
+    if (text.includes('staff') || text.includes('human') || text.includes('contact') || text.includes('call') || text.includes('phone') || text.includes('number') || text.includes('messenger') || text.includes('facebook') || text.includes('fb')) return RESPONSES.staff;
 
     return `I can help you with room rates, availability, check-in times (2 PM / 11 AM), 24-hr payment holds, and location. Or message our team directly:<br><br>
-      <a href="https://m.me/d.econo.space.agus" target="_blank" class="des-chat-link">Open Messenger Chat ↗</a>`;
+      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:4px;">
+        <a href="https://www.facebook.com/messages/t/d.econo.space.agus" target="_blank" class="des-chat-link des-messenger-btn">Open Messenger Chat ↗</a>
+        <a href="https://www.facebook.com/d.econo.space.agus" target="_blank" class="des-chat-link" style="background:#1877F2;">Facebook Page ↗</a>
+      </div>`;
   }
 
   // ── 4. Interaction Handlers ────────────────────────────────────────────────
@@ -364,5 +374,45 @@
       }, 300);
     }
   });
+
+  // ── 5. Messenger Smart Link & FAB Routing ─────────────────────────────────
+  function openMessengerTarget(e) {
+    if (e && e.preventDefault) e.preventDefault();
+    const isMobile = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
+    // On mobile: m.me opens native Facebook Messenger app directly to @d.econo.space.agus
+    // On desktop: facebook.com/messages/t/ opens chat inside Facebook without messenger.com login wall
+    const url = isMobile 
+      ? 'https://m.me/d.econo.space.agus' 
+      : 'https://www.facebook.com/messages/t/d.econo.space.agus';
+    window.open(url, '_blank', 'noopener,noreferrer');
+  }
+  window.openDesMessenger = openMessengerTarget;
+
+  // Intercept any click on .messenger-fab or .des-messenger-btn
+  document.addEventListener('click', (e) => {
+    const btn = e.target.closest('.messenger-fab, .des-messenger-btn');
+    if (btn) {
+      openMessengerTarget(e);
+    }
+  });
+
+  // Ensure .messenger-fab exists on the page
+  if (!document.querySelector('.messenger-fab')) {
+    const fab = document.createElement('a');
+    fab.href = 'https://www.facebook.com/messages/t/d.econo.space.agus';
+    fab.target = '_blank';
+    fab.rel = 'noopener noreferrer';
+    fab.className = 'messenger-fab';
+    fab.title = "Chat with D' Econo-Space on Messenger (@d.econo.space.agus)";
+    fab.setAttribute('aria-label', "Chat with D' Econo-Space on Messenger");
+    fab.innerHTML = `
+      <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="24" cy="24" r="24" fill="#0078FF"/>
+        <path d="M24 7C14.06 7 6 14.61 6 24c0 5.16 2.37 9.78 6.12 12.95L12 41l4.29-2.13C18.07 39.58 20.98 40 24 40c9.94 0 18-7.61 18-17S33.94 7 24 7z" fill="white"/>
+        <path d="M21.5 27.5l-4-4.5L10.5 27.5l8.5-9 4 4.5 7-9-8.5 9z" fill="#0078FF"/>
+      </svg>
+    `;
+    document.body.appendChild(fab);
+  }
 
 })();

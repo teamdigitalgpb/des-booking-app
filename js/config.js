@@ -26,6 +26,9 @@ const CONFIG = {
   MAPS_URL:         'https://maps.app.goo.gl/KgXawL22XTxx7zybA',
   PHONE_1:          '0917.678.4871',
   PHONE_2:          '0926.149.9002',
+  FACEBOOK_PAGE_URL: 'https://www.facebook.com/d.econo.space.agus',
+  MESSENGER_URL:     'https://m.me/d.econo.space.agus',
+  MESSENGER_DESKTOP: 'https://www.facebook.com/messages/t/d.econo.space.agus',
 
   // ── Pax Overrides ────────────────────────────────────────────────────────
   // Cap guest count for a specific room on specific check-in dates.
