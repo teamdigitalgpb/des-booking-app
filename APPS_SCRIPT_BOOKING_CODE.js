@@ -27,7 +27,7 @@ case 'booking': {
     var checkin         = data.checkin || '';
     var checkout        = data.checkout || '';
     var arrivalTime     = data.arrivalTime || '14:00';
-    var departureTime   = data.departureTime || '12:00';
+    var departureTime   = data.departureTime || '11:00';
     var guests          = Number(data.guests) || 1;
     var femaleGuests    = Number(data.femaleGuests) || 0;
     var maleGuests      = Number(data.maleGuests) || 0;
@@ -153,8 +153,8 @@ case 'booking': {
             '<p><strong>Email:</strong> ' + email + '</p>' +
             '<p><strong>Mobile:</strong> ' + mobile + '</p>' +
             '<p><strong>Room:</strong> ' + roomLabel + '</p>' +
-            '<p><strong>Check-in:</strong> ' + checkin + ' (ETA: ' + arrivalTime + ')</p>' +
-            '<p><strong>Check-out:</strong> ' + checkout + ' (ETD: ' + departureTime + ')</p>' +
+            '<p><strong>Check-in:</strong> ' + checkin + ' (ETA: ' + arrivalTime + ' — Standard: 2:00 PM)</p>' +
+            '<p><strong>Check-out:</strong> ' + checkout + ' (ETD: ' + departureTime + ' — Standard: 11:00 AM)</p>' +
             '<p><strong>Total Guests:</strong> ' + guests + ' (Female: ' + femaleGuests + ', Male: ' + maleGuests + ')</p>' +
             '<p><strong>Total Price:</strong> ₱' + totalPrice + '</p>' +
             '<p><strong>Special Requests:</strong> ' + (specialRequests || 'None') + '</p>' +
