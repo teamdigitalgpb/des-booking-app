@@ -10,7 +10,7 @@
 //
 // Source of truth
 //   CURRENT OCCUPANCY STATUS  → 5 rows per day; slots 1–4 used (slot 5 legacy)
-//   Rate table tab            → columns "JW" and "A2/A19"
+//   Rate table tab            → columns "Regular", "JW" and "A2/A19"
 //   Bookings tab              → website reservations
 //
 // This file lives in GitHub (apps-script/booking-engine). Edit it there and
@@ -29,7 +29,8 @@ var SLOTS_USED    = 4;                       // slot 5 is from the old 5-pax set
 var ROOM_COL      = { d1: 4, d2: 5 };        // 0-based: E = Room D1, F = Room D2
 var MAX_PAX       = { d1: 4, d2: 4, whole: 8 };
 var ROOM_LABEL    = { d1: 'Room D1', d2: 'Room D2', whole: "D' Whole Space" };
-var CAPACITY      = { jw: 'JW', a2: 'A-2', a19: 'A-19' };
+var CAPACITY      = { regular: 'Regular', jw: 'JW', a2: 'A-2', a19: 'A-19' };
+var RATE_COLUMN   = { regular: 'Regular', jw: 'JW', a2: 'A2/A19', a19: 'A2/A19' };
 
 var STATUS_HOLD    = 'Reserved (24h)';
 var STATUS_PAID    = 'Paid';
@@ -44,6 +45,7 @@ function doGet(e) {
   try {
     var action = (e && e.parameter && e.parameter.action) || '';
     if (action === 'availability') return json_({ ok: true, rooms: availability_(true) });
+    if (action === 'rates')        return json_({ ok: true, rates: rates_() });
     return json_({ ok: true, service: "D' Econo-Space booking engine" });
   } catch (err) {
     return json_({ ok: false, error: 'Something went wrong. Please try again.' });
@@ -142,7 +144,7 @@ function reserve_(d) {
   var nights = daysBetween_(checkin, checkout);
   if (nights > MAX_NIGHTS)                     fail_('For stays over ' + MAX_NIGHTS + ' nights, please message us on Messenger.');
   if (pax < 1 || pax > MAX_PAX[room])          fail_(ROOM_LABEL[room] + ' takes 1 to ' + MAX_PAX[room] + ' guests.');
-  if (!CAPACITY[cap])                          fail_('Please choose JW, A-2 or A-19.');
+  if (!CAPACITY[cap])                          fail_('Please choose Regular, JW, A-2 or A-19.');
   if (!name || !mobile || !email)              fail_('Please fill in your name, mobile number and email.');
   if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) fail_('Please check your email address.');
   rateLimit_(mobile);
@@ -211,8 +213,19 @@ function reserve_(d) {
 }
 
 function rate_(room, pax, cap) {
-  var ss = SpreadsheetApp.openById(SHEET_ID);
-  var tab = ss.getSheets().filter(function (s) {
+  var t = rates_();
+  var n = t[room] && t[room][RATE_COLUMN[cap]] && t[room][RATE_COLUMN[cap]][pax];
+  if (!(n > 0)) fail_('Prices are being updated. Please message us on Messenger.');
+  return n;
+}
+
+// Reads the rate table tab (found by "RATE TABLE" in A1).
+// Returns { d1: { Regular: {1: 800, …}, JW: {…}, 'A2/A19': {…} }, d2: …, whole: … }
+function rates_() {
+  var cache = CacheService.getScriptCache();
+  var hit = cache.get('rates');
+  if (hit) return JSON.parse(hit);
+  var tab = SpreadsheetApp.openById(SHEET_ID).getSheets().filter(function (s) {
     return /RATE TABLE/i.test(String(s.getRange(1, 1).getDisplayValue()));
   })[0];
   if (!tab) fail_('Prices are being updated. Please message us on Messenger.');
@@ -220,16 +233,25 @@ function rate_(room, pax, cap) {
   var h = -1;
   for (var i = 0; i < v.length; i++) if (String(v[i][0]).trim() === 'Key') { h = i; break; }
   if (h < 0) fail_('Prices are being updated. Please message us on Messenger.');
-  var col = v[h].map(function (x) { return String(x).trim(); })
-                .indexOf(cap === 'jw' ? 'JW' : 'A2/A19');
-  var key = ROOM_LABEL[room] + '|' + pax;
+  var head = v[h].map(function (x) { return String(x).trim(); });
+  var cols = ['Regular', 'JW', 'A2/A19'];
+  var keyOf = { 'Room D1': 'd1', 'Room D2': 'd2' }; keyOf[ROOM_LABEL.whole] = 'whole';
+  var out = {};
   for (var r = h + 1; r < v.length; r++) {
-    if (String(v[r][0]).trim() === key) {
-      var n = parseFloat(String(v[r][col]).replace(/[^\d.]/g, ''));
-      if (n > 0) return n;
-    }
+    var m = String(v[r][0]).trim().match(/^(.+)\|(\d+)$/);
+    if (!m) continue;
+    var room = keyOf[m[1].replace(/[\u2018\u2019]/g, "'")];
+    if (!room) continue;
+    out[room] = out[room] || {};
+    cols.forEach(function (c) {
+      var idx = head.indexOf(c);
+      if (idx < 0) return;
+      var n = parseFloat(String(v[r][idx]).replace(/[^\d.]/g, ''));
+      if (n > 0) { out[room][c] = out[room][c] || {}; out[room][c][parseInt(m[2], 10)] = n; }
+    });
   }
-  fail_('Prices are being updated. Please message us on Messenger.');
+  cache.put('rates', JSON.stringify(out), 60);
+  return out;
 }
 
 // ── 24-hour expiry (time trigger) ───────────────────────────────────────────
@@ -252,36 +274,15 @@ function expireHolds() {
 
 // ── One-time setup (safe to run again) ─────────────────────────────────────
 // Run from the editor once: it asks Google for permission, adds the missing
-// Bookings columns, applies the new rate headers, and starts the 15-min timer.
+// Bookings columns and starts the 15-min timer. It never touches the rate table.
 
 function setup() {
   ensureBookingColumns_();
-  applyNewRateHeaders_();
   var exists = ScriptApp.getProjectTriggers().some(function (t) {
     return t.getHandlerFunction() === 'expireHolds';
   });
   if (!exists) ScriptApp.newTrigger('expireHolds').timeBased().everyMinutes(15).create();
   Logger.log('Setup done.');
-}
-
-// Regular → JW, JW → A2/A19, old A2/A19 → retired (decided 2026-11-21)
-function applyNewRateHeaders_() {
-  var ss = SpreadsheetApp.openById(SHEET_ID);
-  ss.getSheets().forEach(function (s) {
-    if (!/RATE TABLE/i.test(String(s.getRange(1, 1).getDisplayValue()))) return;
-    var v = s.getDataRange().getDisplayValues();
-    for (var i = 0; i < v.length; i++) {
-      if (String(v[i][0]).trim() !== 'Key') continue;
-      var row = v[i].map(function (x) { return String(x).trim(); });
-      var reg = row.indexOf('Regular');
-      if (reg < 0) return;                             // already done
-      var jw = row.indexOf('JW'), a2 = row.indexOf('A2/A19');
-      if (a2 >= 0) s.getRange(i + 1, a2 + 1).setValue('A2/A19 (old, retired)');
-      if (jw >= 0) s.getRange(i + 1, jw + 1).setValue('A2/A19');
-      s.getRange(i + 1, reg + 1).setValue('JW');
-      return;
-    }
-  });
 }
 
 function ensureBookingColumns_() {
