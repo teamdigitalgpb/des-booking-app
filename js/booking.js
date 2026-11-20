@@ -271,6 +271,14 @@ function hasConflict(room, checkin, checkout) {
     const st = String(b.status || '').toLowerCase().trim();
     if (st === 'declined' || st === 'cancelled') return false;
 
+    // 24-hour hold expiration check: Unpaid 'new' or 'pending' reservations expire after 24 hours
+    if ((st === 'new' || st === 'pending') && b.timestamp) {
+      const bookedTime = new Date(b.timestamp).getTime();
+      if (!isNaN(bookedTime) && (Date.now() - bookedTime) > 24 * 60 * 60 * 1000) {
+        return false; // Released after 24 hours!
+      }
+    }
+
     const bRoom = String(b.room || '').toLowerCase().trim();
 
     // Overlap applies when:

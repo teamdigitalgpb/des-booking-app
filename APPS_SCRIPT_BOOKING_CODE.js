@@ -202,13 +202,35 @@ function doGet(e) {
     var ciCol   = headers.findIndex(function (h) { return h.indexOf('check-in') !== -1 || h.indexOf('checkin') !== -1; });
     var coCol   = headers.findIndex(function (h) { return h.indexOf('check-out') !== -1 || h.indexOf('checkout') !== -1; });
     var stCol   = headers.findIndex(function (h) { return h.indexOf('status') !== -1; });
-    var nameCol = headers.findIndex(function (h) { return h.indexOf('name') !== -1; });
+    var nameCol = headers.findIndex(function (h) { return h.indexOf('name') !== -1 && h.indexOf('female') === -1 && h.indexOf('male') === -1; });
+    var paxCol  = headers.findIndex(function (h) { return h.indexOf('total') !== -1 || h === 'guests' || h === 'pax'; });
+    var femCol  = headers.findIndex(function (h) { return h.indexOf('female') !== -1; });
+    var maleCol = headers.findIndex(function (h) { return h.indexOf('male') !== -1 && h.indexOf('female') === -1; });
+    var tsCol   = headers.findIndex(function (h) { return h.indexOf('timestamp') !== -1 || h === 'date'; });
 
+    var now = new Date().getTime();
     var bookings = [];
+
     for (var i = 1; i < data.length; i++) {
       var row = data[i];
       var status = String(row[stCol] || '').toLowerCase().trim();
       if (status === 'declined' || status === 'cancelled') continue;
+
+      // ── 24-Hour Hold Rule: Auto-release if unpaid after 24 hours ────────────
+      if (status === 'new' || status === 'pending') {
+        var bookedTime = 0;
+        var rawTs = row[tsCol];
+        if (rawTs instanceof Date) {
+          bookedTime = rawTs.getTime();
+        } else if (rawTs) {
+          bookedTime = new Date(rawTs).getTime();
+        }
+
+        // If booking is older than 24 hours without confirmation/payment, release the room!
+        if (bookedTime > 0 && (now - bookedTime) > 24 * 60 * 60 * 1000) {
+          continue; // Automatically released from calendar
+        }
+      }
 
       var rawRoom = String(row[roomCol] || '').toLowerCase();
       var room = (rawRoom.indexOf('d1') !== -1) ? 'd1'
@@ -233,7 +255,11 @@ function doGet(e) {
           checkin: ci,
           checkout: co,
           status: row[stCol] || 'Booked',
-          name: row[nameCol] || 'Reserved'
+          name: row[nameCol] || 'Reserved',
+          pax: Number(row[paxCol]) || 1,
+          female: Number(row[femCol]) || 0,
+          male: Number(row[maleCol]) || 0,
+          timestamp: row[tsCol] ? row[tsCol].toString() : ''
         });
       }
     }

@@ -166,7 +166,10 @@
       checkout: normalizeDateStr(b.checkout || b['check-out'] || b['checkoutdate'] || b['check_out']),
       guestname: b.guestname || b.guestName || b.name || '',
       status: String(b.status || 'booked').toLowerCase().trim(),
-      pax: parseInt(b.pax || b.guests || '1', 10) || 1
+      pax: parseInt(b.pax || b.guests || b.totalGuests || '1', 10) || 1,
+      female: parseInt(b.female || b.femaleGuests || '0', 10) || 0,
+      male: parseInt(b.male || b.maleGuests || '0', 10) || 0,
+      timestamp: b.timestamp || b.date || ''
     };
   }
 
@@ -182,6 +185,7 @@
 
   // Booking covers night where checkin <= dateStr < checkout
   function getBookingForDate(dateStr, room) {
+    const now = Date.now();
     return _bookings.find(b => {
       const rm = b.room;
       // Room match logic:
@@ -194,6 +198,14 @@
       if (!isRoomMatch) return false;
 
       if (b.status === 'declined' || b.status === 'cancelled') return false;
+
+      // 24-hour expiration for unpaid reservations (Status: new or pending)
+      if ((b.status === 'new' || b.status === 'pending') && b.timestamp) {
+        const bookedTime = new Date(b.timestamp).getTime();
+        if (!isNaN(bookedTime) && (now - bookedTime) > 24 * 60 * 60 * 1000) {
+          return false; // Released after 24 hours of non-payment!
+        }
+      }
 
       const ci = b.checkin;
       const co = b.checkout;
@@ -311,22 +323,23 @@
       let tooltipParts = [];
 
       ROOM_KEYS.forEach(r => {
-        const st   = isPast ? 'past' : getStatus(dateStr, r);
-        const info = (_isAdmin && !isPast) ? getBookingInfo(dateStr, r) : null;
+        const st = isPast ? 'past' : getStatus(dateStr, r);
+        const bk = (!isPast) ? getBookingForDate(dateStr, r) : null;
 
         let tip = ROOM_LABELS[r] + ': ';
         if (isPast) {
           tip += 'past';
         } else if (st === 'available') {
-          tip += 'available';
-          const availPax = getAvailablePax(dateStr, r);
-          if (availPax !== null) tip += ` (${availPax} pax open)`;
+          tip += 'Available (up to 4 pax)';
         } else if (st === 'blocked') {
-          tip += 'closed';
+          tip += 'Closed for maintenance/private event';
         } else {
-          tip += st;
-          if (info && info.guestname) tip += ' — ' + info.guestname;
-          if (info && info.status)    tip += ' [' + info.status + ']';
+          const isPending = bk && (bk.status === 'new' || bk.status === 'pending');
+          tip += isPending ? 'Reserved (24h Payment Hold)' : 'Booked';
+          if (bk) {
+            tip += ` — ${bk.pax} pax (${bk.female} Female, ${bk.male} Male)`;
+            if (_isAdmin && bk.guestname) tip += ` [${bk.guestname}]`;
+          }
         }
         tooltipParts.push(tip);
         pips += `<span class="cp ${st}" aria-label="${tip}"></span>`;
@@ -334,7 +347,7 @@
 
       const tooltip = tooltipParts.join(' | ');
 
-      html += `<div class="${cellCls}" title="${tooltip}">
+      html += `<div class="${cellCls}" style="cursor:pointer;" title="${tooltip}" onclick="window.calSelectDate('${dateStr}', '${containerId}')">
         <span class="cal-day-num${isToday ? ' cal-today-num' : ''}">${d}</span>
         <div class="cal-pips">${pips}</div>
       </div>`;
@@ -350,8 +363,65 @@
       <small>— left dot: D1 · right dot: D2</small>
     </div>`;
 
+    // Interactive Day Details Panel (Shows pax and male/female breakdown on click/tap)
+    html += `<div id="${containerId}-details" class="cal-day-details-panel" style="margin-top:1rem;background:var(--off-white);border:1px solid var(--border);border-radius:var(--radius);padding:1rem;font-size:.88rem;">
+      <p style="margin:0;color:var(--text-muted);text-align:center;">💡 Tap any date on the calendar to see room availability, guest count, and female/male breakdown.</p>
+    </div>`;
+
     el.innerHTML = html;
   }
+
+  // ── Date Click Handler: Detailed Pax & Gender Breakdown ─────────────────────
+
+  window.calSelectDate = function (dateStr, containerId) {
+    const panel = document.getElementById(containerId + '-details');
+    if (!panel) return;
+
+    const parts = dateStr.split('-');
+    const dt = new Date(parseInt(parts[0], 10), parseInt(parts[1], 10) - 1, parseInt(parts[2], 10));
+    const formatted = dt.toLocaleDateString('en-PH', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' });
+    const isPast = dateStr < getTodayYMD();
+
+    let d1Line = '';
+    let d2Line = '';
+
+    ['d1', 'd2'].forEach(r => {
+      const st = isPast ? 'past' : getStatus(dateStr, r);
+      const bk = (!isPast) ? getBookingForDate(dateStr, r) : null;
+      const roomTitle = r === 'd1' ? 'Room D1 (Common AC)' : 'Room D2 (Fan-cooled)';
+
+      let line = `<strong>${roomTitle}:</strong> `;
+      if (isPast) {
+        line += `<span style="color:var(--text-muted);">Past date</span>`;
+      } else if (st === 'available') {
+        line += `<span style="color:#1b7a4a;font-weight:600;">✓ Available</span> (Up to 4 guests)`;
+      } else if (st === 'blocked') {
+        line += `<span style="color:#c0392b;font-weight:600;">Closed</span> (Maintenance/Private)`;
+      } else {
+        const isPending = bk && (bk.status === 'new' || bk.status === 'pending');
+        const badgeColor = isPending ? '#b8860b' : '#c0392b';
+        const label = isPending ? 'Reserved (24h Payment Hold)' : 'Booked';
+        const pax = bk ? bk.pax : 1;
+        const female = bk ? bk.female : 0;
+        const male = bk ? bk.male : 0;
+        line += `<span style="color:${badgeColor};font-weight:600;">● ${label}</span> — ${pax} pax (${female} Female, ${male} Male)`;
+      }
+
+      if (r === 'd1') d1Line = line;
+      else d2Line = line;
+    });
+
+    const hasAvailable = !isPast && (getStatus(dateStr, 'd1') === 'available' || getStatus(dateStr, 'd2') === 'available');
+
+    panel.innerHTML = `
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.6rem;border-bottom:1px solid var(--border);padding-bottom:.4rem;">
+        <span style="font-weight:700;color:var(--text-dark);font-size:.95rem;">📅 ${formatted}</span>
+        ${hasAvailable ? `<a href="booking.html?checkin=${dateStr}" class="btn btn-gold btn-sm" style="padding:.25rem .75rem;font-size:.8rem;text-decoration:none;">Book This Date →</a>` : ''}
+      </div>
+      <div style="margin-bottom:.4rem;line-height:1.5;">${d1Line}</div>
+      <div style="line-height:1.5;">${d2Line}</div>
+    `;
+  };
 
   // ── Public Calendar API ──────────────────────────────────────────────────────
 
