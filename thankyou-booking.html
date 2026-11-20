@@ -93,8 +93,8 @@
         <div class="row"><span>Email</span><strong>${s.email || '—'}</strong></div>
         <div class="row"><span>Mobile</span><strong>${s.mobile}</strong></div>
         <div class="row"><span>Room</span><strong>${roomLabels[s.room] || s.room}</strong></div>
-        <div class="row"><span>Check-in</span><strong>${fmt(s.checkin)}</strong></div>
-        <div class="row"><span>Check-out</span><strong>${fmt(s.checkout)}</strong></div>
+        <div class="row"><span>Check-in</span><strong>${fmt(s.checkin)}${s.arrivalTime ? ` (${s.arrivalTime})` : ''}</strong></div>
+        <div class="row"><span>Check-out</span><strong>${fmt(s.checkout)}${s.departureTime ? ` (${s.departureTime})` : ''}</strong></div>
         <div class="row"><span>Nights</span><strong>${s.nights}</strong></div>
         <div class="row"><span>Guests</span><strong>${s.guests}</strong></div>
         <div class="row"><span>Rate</span><strong>${rateLabels[s.rateType] || 'Regular'}</strong></div>

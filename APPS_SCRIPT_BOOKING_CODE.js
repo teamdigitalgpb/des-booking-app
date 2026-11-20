@@ -26,6 +26,8 @@ case 'booking': {
     var room            = data.room || 'd1';
     var checkin         = data.checkin || '';
     var checkout        = data.checkout || '';
+    var arrivalTime     = data.arrivalTime || '14:00';
+    var departureTime   = data.departureTime || '12:00';
     var guests          = Number(data.guests) || 1;
     var femaleGuests    = Number(data.femaleGuests) || 0;
     var maleGuests      = Number(data.maleGuests) || 0;
@@ -51,6 +53,7 @@ case 'booking': {
     var defaultHeaders = [
       'Timestamp', 'Booking ID', 'Room', 'Check-in', 'Check-out', 'Nights',
       'Email', 'Guest Name', 'Mobile', 'Total Guests', 'Female Guests', 'Male Guests',
+      'Expected Arrival Time', 'Expected Departure Time',
       'Rate Type', 'Total Price', 'Status', 'Special Requests', 'Referral', 'Share Waitlist'
     ];
 
@@ -64,9 +67,11 @@ case 'booking': {
     var rawHeaders = sheet.getRange(1, 1, 1, lastCol).getValues()[0];
     var headers = rawHeaders.map(function(h) { return String(h || '').toLowerCase().trim(); });
 
-    // Check if Female Guests or Male Guests columns need to be added to existing sheet
-    var hasFemale = headers.some(function(h) { return h.indexOf('female') !== -1; });
-    var hasMale   = headers.some(function(h) { return h.indexOf('male') !== -1; });
+    // Check if Female Guests, Male Guests, Arrival Time, or Departure Time columns need to be added
+    var hasFemale    = headers.some(function(h) { return h.indexOf('female') !== -1; });
+    var hasMale      = headers.some(function(h) { return h.indexOf('male') !== -1; });
+    var hasArrival   = headers.some(function(h) { return h.indexOf('arrival') !== -1 || h.indexOf('eta') !== -1; });
+    var hasDeparture = headers.some(function(h) { return h.indexOf('departure') !== -1 || h.indexOf('etd') !== -1; });
 
     if (!hasFemale) {
       sheet.getRange(1, lastCol + 1).setValue('Female Guests').setFontWeight('bold');
@@ -76,6 +81,16 @@ case 'booking': {
     if (!hasMale) {
       sheet.getRange(1, lastCol + 1).setValue('Male Guests').setFontWeight('bold');
       headers.push('male guests');
+      lastCol++;
+    }
+    if (!hasArrival) {
+      sheet.getRange(1, lastCol + 1).setValue('Expected Arrival Time').setFontWeight('bold');
+      headers.push('expected arrival time');
+      lastCol++;
+    }
+    if (!hasDeparture) {
+      sheet.getRange(1, lastCol + 1).setValue('Expected Departure Time').setFontWeight('bold');
+      headers.push('expected departure time');
       lastCol++;
     }
 
@@ -95,6 +110,8 @@ case 'booking': {
       else if (h.indexOf('room') !== -1) rowData[colIdx] = roomLabel;
       else if (h.indexOf('check-in') !== -1 || h.indexOf('checkin') !== -1) rowData[colIdx] = checkin;
       else if (h.indexOf('check-out') !== -1 || h.indexOf('checkout') !== -1) rowData[colIdx] = checkout;
+      else if (h.indexOf('arrival') !== -1 || h.indexOf('eta') !== -1) rowData[colIdx] = arrivalTime;
+      else if (h.indexOf('departure') !== -1 || h.indexOf('etd') !== -1) rowData[colIdx] = departureTime;
       else if (h.indexOf('night') !== -1) rowData[colIdx] = nights;
       else if (h.indexOf('email') !== -1) rowData[colIdx] = email;
       else if (h.indexOf('guest') !== -1 && h.indexOf('name') !== -1) rowData[colIdx] = guestName;
@@ -136,8 +153,8 @@ case 'booking': {
             '<p><strong>Email:</strong> ' + email + '</p>' +
             '<p><strong>Mobile:</strong> ' + mobile + '</p>' +
             '<p><strong>Room:</strong> ' + roomLabel + '</p>' +
-            '<p><strong>Check-in:</strong> ' + checkin + ' (2:00 PM)</p>' +
-            '<p><strong>Check-out:</strong> ' + checkout + ' (12:00 NN)</p>' +
+            '<p><strong>Check-in:</strong> ' + checkin + ' (ETA: ' + arrivalTime + ')</p>' +
+            '<p><strong>Check-out:</strong> ' + checkout + ' (ETD: ' + departureTime + ')</p>' +
             '<p><strong>Total Guests:</strong> ' + guests + ' (Female: ' + femaleGuests + ', Male: ' + maleGuests + ')</p>' +
             '<p><strong>Total Price:</strong> ₱' + totalPrice + '</p>' +
             '<p><strong>Special Requests:</strong> ' + (specialRequests || 'None') + '</p>' +

@@ -525,6 +525,8 @@ document.getElementById('booking-form').addEventListener('submit', async (e) => 
   const room     = document.getElementById('room').value;
   const checkin  = document.getElementById('checkin').value;
   const checkout = document.getElementById('checkout').value;
+  const arrivalTime   = document.getElementById('arrivalTime')?.value || '14:00';
+  const departureTime = document.getElementById('departureTime')?.value || '12:00';
   const guests   = parseInt(document.getElementById('guests').value, 10);
   const femaleGuests = parseInt(document.getElementById('femaleGuests').value, 10);
   const maleGuests   = parseInt(document.getElementById('maleGuests').value, 10);
@@ -567,6 +569,7 @@ document.getElementById('booking-form').addEventListener('submit', async (e) => 
   const payload = {
     action: 'booking',
     firstName, lastName, name, mobile, email, room, checkin, checkout,
+    arrivalTime, departureTime,
     guests, femaleGuests, maleGuests,
     discountType: activeVoucherType !== 'regular' ? activeVoucherType : '',
     referral, specialRequests: requests,
@@ -605,7 +608,7 @@ document.getElementById('booking-form').addEventListener('submit', async (e) => 
     // Populate session storage for thankyou page
     sessionStorage.removeItem('des_voucher_approved');
     sessionStorage.setItem('des_booking_summary', JSON.stringify({
-      name, email, mobile, room, checkin, checkout, guests, totalPrice, nights,
+      name, email, mobile, room, checkin, checkout, arrivalTime, departureTime, guests, totalPrice, nights,
       rateType: activeVoucherType,
       verified: activeVoucherType !== 'regular' ? '1' : '0',
       donation: _donationReservation ? '1' : '0',
