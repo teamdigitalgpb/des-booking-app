@@ -184,7 +184,7 @@
 
 <script>
   // ── Board data: update these arrays as the build moves ──────────────────────
-  const UPDATED = '2026-11-20';
+  const UPDATED = '2026-11-21';
 
   const JOURNEY = [
     ['Guest asks or books', 'Chat assistant or booking form on the DES website', 'next'],
@@ -202,6 +202,7 @@
   const PHASES = [
     ['Site offline + build board', 'Maintenance page live; this board created', 'done'],
     ['Review of the live site', 'All issues listed and ranked (Site review tab)', 'done'],
+    ['Quick safety fixes', 'Key photo, admin page, staff docs, calendar details, check-out time, Messenger bubble', 'done'],
     ['Pricing & availability agreed', 'One rate table, one set of rules', 'progress'],
     ['Foundations', 'Private, server-checked bookings; no double bookings; prices set by the server', 'next'],
     ['Payment (receipt + Confirm)', 'Fund manager confirms in one tap', 'waiting'],
@@ -216,18 +217,21 @@
 
   // severity: critical | high | design | cost — status: open | fixed
   const FINDINGS = [
+    ['critical', 'The admin Google Sheet is open to anyone with the link', 'Guest names and contact numbers in the admin Sheet can be opened without signing in.', 'Set Sheet sharing to Restricted and add only the team.', 'open'],
+    ['critical', 'Staff handbook and internal notes were public pages', 'The staff handbook, setup notes and script code were reachable on the website.', 'Done: excluded from the website. They stay in the repo for the team.', 'fixed'],
+    ['critical', 'Public calendar showed guest counts and genders', 'Tapping a date showed pax and female/male numbers for each booking.', 'Done: the calendar now shows only Available / Reserved / Booked.', 'fixed'],
     ['critical', 'Guest names are publicly readable', 'The calendar data includes more guest details than a calendar needs.', 'The server sends only room + dates. Names stay in the Sheet.', 'open'],
     ['critical', 'Two guests can still book the same room', 'The website checks availability, but the server saves every request without checking again. Two people booking at the same time both get in.', 'The server checks dates inside its lock before saving.', 'open'],
     ['critical', 'The price is set by the guest\'s browser', 'The total price is calculated in the browser and the server stores whatever it receives. It can be changed before sending.', 'The server calculates the price from the official rate table.', 'open'],
     ['critical', 'Volunteer rates can be unlocked by anyone', 'The weekly JW check runs in the browser, where it can be skipped.', 'Check the answer on the server; never publish it.', 'open'],
-    ['critical', 'Admin page protected only by a visible password', 'The admin page has no real login.', 'Replace with a proper login for the new dashboard; retire the old admin page.', 'open'],
-    ['critical', 'Homepage shows where the keys are kept', 'The gallery photo "The key-holder — always leave the keys here" tells the public exactly where the keys are.', 'Remove the photo from the public site. Key details go only to paid guests.', 'open'],
+    ['critical', 'Admin page protected only by a visible password', 'The admin page has no real login.', 'Done: old admin page retired from the site. The Google Sheet is the admin tool.', 'fixed'],
+    ['critical', 'Homepage shows where the keys are kept', 'The gallery photo "The key-holder — always leave the keys here" tells the public exactly where the keys are.', 'Done: replaced with a living-area photo; the key photo can no longer be opened from the site.', 'fixed'],
     ['high', 'Prices disagree across the site', 'The chat assistant says D1 from ₱750, D2 fan-cooled for up to 4, Whole Space from ₱1,700. The booking form uses a different table. The May rate sheet has long-stay tiers the site doesn\'t use.', 'One rate table, agreed on the Pricing tab, used everywhere.', 'open'],
-    ['high', 'Check-out time disagrees', 'Every page says 11:00 AM except one note on the booking form, which still says 12:00 NN.', 'One setting for check-in/check-out times.', 'open'],
+    ['high', 'Check-out time disagrees', 'Every page says 11:00 AM except one note on the booking form, which still says 12:00 NN.', 'Done: check-out is 12:00 NN on every page.', 'fixed'],
     ['high', 'Unpaid holds don\'t release on their own', 'The live server doesn\'t send booking times, so the 24-hour release can\'t run. All bookings stay "New" until someone edits the Sheet.', 'Holds expire on the server; statuses change automatically on payment.', 'open'],
     ['high', 'The live server code differs from the copy in the repo', 'The Apps Script that\'s running returns different data from the version saved in GitHub, so changes can be lost.', 'One source of truth, deployed from the repo.', 'open'],
     ['high', 'Admin-blocked dates aren\'t reaching the site', 'The published Blocked Dates tab is empty, and dates typed as real dates in the Sheet would not be read correctly.', 'Blocks read by the server with proper date handling.', 'open'],
-    ['high', 'The chat assistant is a keyword matcher', 'It answers by spotting words ("room", "24", "pay") and can give wrong or unrelated answers. It also shows the guest\'s own typing as page code.', 'Replace with the AI assistant (Phase: AI chat).', 'open'],
+    ['high', 'The chat bubble was a keyword matcher', 'It answers by spotting words ("room", "24", "pay") and can give wrong or unrelated answers. It also shows the guest\'s own typing as page code.', 'Done: replaced by a "Talk to us" button that opens DES Messenger (m.me/890165717502663).', 'fixed'],
     ['high', 'Leftover connections', 'An old Make.com cancellation link, empty GHL placeholders and a duplicate payment script are still in the code.', 'Remove or reconnect in Foundations.', 'open'],
     ['design', 'Homepage scrolls sideways on phones', 'The amenities grid is 606px wide on a 390px phone, so the whole page wobbles left and right.', 'Single-column amenities on phones.', 'open'],
     ['design', 'Two buttons fight on every room card', 'An orange "JW or A2/A19?" button sits above the gold "Book" button. Orange is off-brand and splits attention.', 'One gold Book button; volunteer rates as a quiet link.', 'open'],
@@ -236,26 +240,27 @@
     ['design', 'Mixed emoji icons', 'Emoji render differently on every phone and look unfinished next to the brand fonts.', 'One consistent line-icon set in brand gold.', 'open'],
     ['design', 'Two floating bubbles', 'The chat bubble and the Messenger bubble are stacked in the corner and cover content on phones.', 'One bubble; Messenger offered inside the chat.', 'open'],
     ['design', 'Booking form asks a lot up front', 'Fifteen fields, including gender split and arrival/departure times, before the guest sees a price.', 'Dates and room first, price shown, then details.', 'open'],
-    ['cost', 'Vercel\'s free plan doesn\'t allow commercial use', 'DES takes payments, and Vercel\'s free Hobby plan is for non-commercial projects.', 'Move hosting to Cloudflare Pages (free, commercial use allowed). Decide before go-live.', 'open'],
+    ['cost', 'Vercel\'s free plan and payment requests', 'Vercel\'s rules count "any method of requesting or processing payment from visitors" as commercial use, even for non-profits. DES asks guests to pay through the site.', 'Option A: keep Vercel and move payment instructions off the site (Messenger only). Option B: move to Cloudflare Pages (free, allows it). glez to decide.', 'open'],
   ];
 
   const RATE_COMPARE = {
-    head: ['Item', 'Booking form (live)', 'Chat assistant', 'May rate sheet'],
+    head: ['Item', 'Admin Sheet rate table', 'Booking form (site)', 'Old chat bubble', 'May rate sheet'],
     rows: [
-      ['Room D1, 1 guest, regular', '₱650', '"from ₱750"', '₱950 (1–4 days)'],
-      ['Room D1, 4 guests, regular', '₱950', '—', '₱950'],
-      ['Room D2, max guests', '4', '4, "fan-cooled"', '2 (max 3, +₱150)'],
-      ['Room D2, 2 guests, regular', '₱600', '"from ₱550"', '₱650 (1–4 days)'],
-      ['Whole Space, 8 guests', '₱1,900', '"from ₱1,700"', '₱1,500 (+₱150 per extra)'],
-      ['Long-stay discount', 'None', 'None', '5–7, 8–15, 16–30 day tiers'],
-      ['Bunk bed (per head)', 'Not offered', '—', '₱150 / ₱140 / ₱135'],
+      ['Room D1, 1 guest, regular', '₱650', '₱650', '"from ₱750"', '₱950 (1–4 days)'],
+      ['Room D1, 4 guests, regular', '₱950', '₱950', '—', '₱950'],
+      ['Room D2, max guests', '4', '4', '4, "fan-cooled"', '2 (max 3, +₱150)'],
+      ['Room D2, 2 guests, regular', '₱600', '₱600', '"from ₱550"', '₱650 (1–4 days)'],
+      ['Whole Space, 8 guests', '₱1,900', '₱1,900', '"from ₱1,700"', '₱1,500 (+₱150 per extra)'],
+      ['Long stay', 'Monthly: D1 ₱8,000–12,300 · D2 ₱5,000–8,500', 'None', 'None', '5–7, 8–15, 16–30 day tiers'],
+      ['Bunk bed (per head)', 'Not listed', 'Not offered', '—', '₱150 / ₱140 / ₱135'],
     ],
   };
 
   const PRICING_QUESTIONS = {
     head: ['Question for glez', 'Why it matters'],
     rows: [
-      ['Which prices are correct today: the booking form, the rate sheet, or new ones?', 'Every page and the AI will use only this one table.'],
+      ['The admin Sheet rate table matches the booking form. Is it the official one?', 'If yes, the site will read prices straight from the Sheet, so you change prices in one place.'],
+      ['Should monthly long-stay rates be bookable on the site, or by Messenger only?', 'The Sheet has monthly rates the site doesn\'t offer yet.'],
       ['Price per room per night, or per person?', 'Decides how the price is shown and what the AI quotes.'],
       ['Keep long-stay discounts (5+, 8+, 16+ nights)?', 'Volunteers on long assignments are a core guest.'],
       ['Is the bunk bed still offered?', 'It is in the rate sheet but not on the site.'],
@@ -277,6 +282,11 @@
     ['2026-11-20', 'Whole site offline until everything is checked'],
     ['2026-11-20', 'Room D2 booked from Dec 6, 2026, until further notice'],
     ['2026-11-20', 'Goal: smooth transactions at zero or minimal cost'],
+    ['2026-11-21', 'The Google admin Sheet is the single admin tool; old admin page retired'],
+    ['2026-11-21', 'Check-out is 12:00 NN; check-in 2:00 PM'],
+    ['2026-11-21', 'Unpaid holds last 24 hours, then release automatically'],
+    ['2026-11-21', 'Chat bubble = "Talk to us" on DES Messenger (m.me/890165717502663)'],
+    ['2026-11-21', 'DES is not commercial (utilities share only)'],
   ];
 
   // ── Rendering ────────────────────────────────────────────────────────────────

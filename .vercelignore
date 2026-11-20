@@ -1,0 +1,11 @@
+# Internal files: kept in the repo, never served on the website
+*.md
+*.pdf
+APPS_SCRIPT_*.js
+apps-script/
+handbook.html
+admin.html
+js/admin.js
+js/payment-fixed.js
+assets/images/key-holder.jpg
+middleware.js

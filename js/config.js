@@ -27,8 +27,8 @@ const CONFIG = {
   PHONE_1:          '0917.678.4871',
   PHONE_2:          '0926.149.9002',
   FACEBOOK_PAGE_URL: 'https://www.facebook.com/d.econo.space.agus',
-  MESSENGER_URL:     'https://m.me/d.econo.space.agus',
-  MESSENGER_DESKTOP: 'https://www.facebook.com/messages/t/d.econo.space.agus',
+  MESSENGER_URL:     'https://m.me/890165717502663',
+  MESSENGER_DESKTOP: 'https://m.me/890165717502663',
 
   // ── Pax Overrides ────────────────────────────────────────────────────────
   // Cap guest count for a specific room on specific check-in dates.
@@ -44,9 +44,6 @@ const CONFIG = {
     { room: 'd2', from: '2026-12-06', until: '' },
   ],
 
-  // ── Admin ─────────────────────────────────────────────────────────────────
-  // Basic deterrent — change before going live.
-  ADMIN_PASSWORD:   '1992',
 
   // ── Donation ──────────────────────────────────────────────────────────────
   // Same Apps Script as WEBHOOK_VOUCHER — routed by action:'donation'

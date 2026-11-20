@@ -406,10 +406,7 @@
         const isPending = bk && (bk.status === 'new' || bk.status === 'pending');
         const badgeColor = isPending ? '#b8860b' : '#c0392b';
         const label = isPending ? 'Reserved (24h Payment Hold)' : 'Booked';
-        const pax = bk ? bk.pax : 1;
-        const female = bk ? bk.female : 0;
-        const male = bk ? bk.male : 0;
-        line += `<span style="color:${badgeColor};font-weight:600;">● ${label}</span> — ${pax} pax (${female} Female, ${male} Male)`;
+        line += `<span style="color:${badgeColor};font-weight:600;">● ${label}</span>`;
       }
 
       if (r === 'd1') d1Line = line;

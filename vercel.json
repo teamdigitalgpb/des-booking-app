@@ -24,6 +24,11 @@
       "permanent": true
     },
     {
+      "source": "/(admin\\.html|handbook\\.html|js/admin\\.js|js/payment-fixed\\.js|assets/images/key-holder\\.jpg|.*\\.md|.*\\.pdf|APPS_SCRIPT_.*)",
+      "destination": "/",
+      "permanent": false
+    },
+    {
       "source": "/((?!maintenance\\.html$|build\\.html$).*)",
       "destination": "/maintenance.html",
       "permanent": false
