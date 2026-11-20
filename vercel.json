@@ -22,6 +22,11 @@
       ],
       "destination": "https://d-econo-space-agus.vercel.app/:path*",
       "permanent": true
+    },
+    {
+      "source": "/((?!maintenance\\.html$).*)",
+      "destination": "/maintenance.html",
+      "permanent": false
     }
   ],
   "headers": [
