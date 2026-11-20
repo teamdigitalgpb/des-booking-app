@@ -24,7 +24,7 @@
       "permanent": true
     },
     {
-      "source": "/((?!maintenance\\.html$).*)",
+      "source": "/((?!maintenance\\.html$|build\\.html$).*)",
       "destination": "/maintenance.html",
       "permanent": false
     }

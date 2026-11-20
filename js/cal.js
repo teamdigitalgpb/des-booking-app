@@ -217,6 +217,11 @@
   }
 
   function getStatus(dateStr, room) {
+    // 0. Room closures (CONFIG.ROOM_CLOSURES) always show as booked
+    const closures = (typeof CONFIG !== 'undefined' && CONFIG.ROOM_CLOSURES) || [];
+    if (closures.some(c => (c.room === room || room === 'whole') &&
+        dateStr >= c.from && (!c.until || dateStr <= c.until))) return 'booked';
+
     // 1. Admin blocks check
     const blocked = _blocks.some(b => {
       const rm = (b.room || '').toLowerCase().trim();

@@ -1,0 +1,349 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>DES Build Board</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,500;1,500&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --ink: #2D302F;
+      --ink-2: #3F4340;
+      --gold: #BF9B30;
+      --gold-soft: #F4ECD6;
+      --paper: #F5F3F0;
+      --card: #FFFFFF;
+      --line: #E2DCD5;
+      --text: #1A1C1B;
+      --muted: #6B7068;
+      --red: #B5432F;
+      --red-soft: #F8E7E3;
+      --amber: #A9741A;
+      --amber-soft: #FBF0DC;
+      --green: #3D7A4E;
+      --green-soft: #E4F1E7;
+      --blue: #3B5F86;
+      --blue-soft: #E5EDF5;
+    }
+    * { box-sizing: border-box; margin: 0; }
+    body {
+      background: var(--paper);
+      color: var(--text);
+      font-family: Montserrat, system-ui, -apple-system, sans-serif;
+      font-size: 15px;
+      line-height: 1.55;
+    }
+    .wrap { max-width: 1080px; margin: 0 auto; padding: 0 16px; }
+
+    header { background: var(--ink); color: var(--paper); padding: 44px 0 36px; border-bottom: 3px solid var(--gold); }
+    .eyebrow { font-size: 12px; letter-spacing: .22em; text-transform: uppercase; color: var(--gold); font-weight: 600; }
+    h1 { font-family: Lora, Georgia, serif; font-weight: 500; font-size: clamp(28px, 4.4vw, 44px); margin-top: 10px; }
+    h1 em { color: var(--gold); }
+    .meta { margin-top: 14px; color: #CFC8BF; font-size: 14px; display: flex; flex-wrap: wrap; gap: 8px 20px; }
+    .live-pill { display: inline-flex; align-items: center; gap: 8px; padding: 4px 12px; border-radius: 999px; background: rgba(181,67,47,.18); color: #F2B6A9; font-weight: 600; font-size: 13px; }
+    .live-pill::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: #E0705A; }
+
+    .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-top: 28px; }
+    .stat { background: var(--ink-2); border-radius: 12px; padding: 16px; }
+    .stat b { display: block; font-family: Lora, Georgia, serif; font-size: 30px; font-weight: 500; color: var(--paper); }
+    .stat span { font-size: 12px; color: #CFC8BF; letter-spacing: .04em; }
+
+    nav.tabs { position: sticky; top: 0; z-index: 5; background: var(--paper); border-bottom: 1px solid var(--line); }
+    nav.tabs .wrap { display: flex; gap: 4px; overflow-x: auto; }
+    nav.tabs button {
+      background: none; border: 0; padding: 16px 14px; font: inherit; font-weight: 600; font-size: 14px;
+      color: var(--muted); cursor: pointer; border-bottom: 2px solid transparent; white-space: nowrap;
+    }
+    nav.tabs button[aria-selected="true"] { color: var(--ink); border-bottom-color: var(--gold); }
+
+    section { padding: 36px 0 56px; }
+    section[hidden] { display: none; }
+    h2 { font-family: Lora, Georgia, serif; font-weight: 500; font-size: 26px; }
+    .lede { color: var(--muted); margin-top: 6px; max-width: 680px; }
+
+    /* Journey */
+    .journey { margin-top: 24px; display: grid; gap: 10px; }
+    .step { display: grid; grid-template-columns: 44px 1fr auto; gap: 14px; align-items: center; background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; }
+    .step .n { width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center; background: var(--gold-soft); color: var(--ink); font-weight: 700; }
+    .step h3 { font-size: 15px; font-weight: 600; }
+    .step p { color: var(--muted); font-size: 13.5px; }
+
+    .badge { font-size: 12px; font-weight: 600; padding: 4px 10px; border-radius: 999px; white-space: nowrap; }
+    .b-done { background: var(--green-soft); color: var(--green); }
+    .b-progress { background: var(--amber-soft); color: var(--amber); }
+    .b-next { background: var(--blue-soft); color: var(--blue); }
+    .b-waiting { background: #EEEAE5; color: var(--muted); }
+    .b-critical { background: var(--red-soft); color: var(--red); }
+    .b-high { background: var(--amber-soft); color: var(--amber); }
+    .b-design { background: var(--blue-soft); color: var(--blue); }
+    .b-cost { background: var(--gold-soft); color: #7A5938; }
+
+    /* Findings */
+    .filters { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 20px; }
+    .filters button { font: inherit; font-size: 13px; font-weight: 600; padding: 7px 14px; border-radius: 999px; border: 1px solid var(--line); background: var(--card); color: var(--muted); cursor: pointer; }
+    .filters button.on { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+    .findings { margin-top: 16px; display: grid; gap: 10px; }
+    .finding { background: var(--card); border: 1px solid var(--line); border-left: 4px solid var(--line); border-radius: 10px; padding: 16px 18px; }
+    .finding.critical { border-left-color: var(--red); }
+    .finding.high { border-left-color: var(--amber); }
+    .finding.design { border-left-color: var(--blue); }
+    .finding.cost { border-left-color: var(--gold); }
+    .finding .top { display: flex; justify-content: space-between; gap: 12px; align-items: baseline; }
+    .finding h3 { font-size: 15px; font-weight: 600; }
+    .finding p { margin-top: 6px; font-size: 14px; color: var(--text); }
+    .finding .fix { margin-top: 8px; font-size: 13.5px; color: var(--muted); }
+    .finding .fix b { color: var(--ink); }
+    .finding.fixed { opacity: .62; }
+    .finding.fixed h3 { text-decoration: line-through; }
+
+    /* Tables */
+    table { width: 100%; border-collapse: collapse; margin-top: 20px; background: var(--card); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; font-size: 14px; }
+    th, td { text-align: left; padding: 12px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+    th { font-size: 12px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); background: #FAF8F5; }
+    tr:last-child td { border-bottom: 0; }
+    .table-scroll { overflow-x: auto; }
+
+    .callout { margin-top: 20px; background: var(--gold-soft); border-radius: 12px; padding: 16px 18px; font-size: 14px; }
+    .callout b { color: var(--ink); }
+
+    footer { padding: 28px 0 40px; color: var(--muted); font-size: 13px; border-top: 1px solid var(--line); }
+
+    @media (max-width: 720px) {
+      .stats { grid-template-columns: repeat(2, 1fr); }
+      .step { grid-template-columns: 36px 1fr; }
+      .step .badge { grid-column: 2; justify-self: start; }
+      .finding .top { flex-direction: column; gap: 6px; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <div class="eyebrow">D' Econo-Space · Build Board</div>
+    <h1>From booking to keys, <em>without the back-and-forth.</em></h1>
+    <div class="meta">
+      <span class="live-pill">Site offline while we rebuild</span>
+      <span id="updated"></span>
+    </div>
+    <div class="stats" id="stats"></div>
+  </div>
+</header>
+
+<nav class="tabs" aria-label="Board sections">
+  <div class="wrap" role="tablist">
+    <button role="tab" data-tab="plan" aria-selected="true">Build plan</button>
+    <button role="tab" data-tab="review" aria-selected="false">Site review</button>
+    <button role="tab" data-tab="pricing" aria-selected="false">Pricing &amp; availability</button>
+    <button role="tab" data-tab="decisions" aria-selected="false">Decisions</button>
+  </div>
+</nav>
+
+<main class="wrap">
+
+  <section id="tab-plan">
+    <h2>The guest journey we're building</h2>
+    <p class="lede">Every step runs on its own. A person only steps in to confirm a payment (until PayMongo is live) or when a guest needs help.</p>
+    <div class="journey" id="journey"></div>
+
+    <h2 style="margin-top:44px">Build phases</h2>
+    <p class="lede">Each phase is tested before the next one starts. The site goes live only after the final check on glez's phone.</p>
+    <div class="journey" id="phases"></div>
+  </section>
+
+  <section id="tab-review" hidden>
+    <h2>Site review: d-econo-space-agus.vercel.app</h2>
+    <p class="lede">Every issue found, ranked. Each one turns grey when it's fixed and tested.</p>
+    <div class="filters" id="filters"></div>
+    <div class="findings" id="findings"></div>
+  </section>
+
+  <section id="tab-pricing" hidden>
+    <h2>Pricing &amp; availability</h2>
+    <p class="lede">Today the site, the chat assistant and the May rate sheet each show different prices. We agree on one rate table here, and every page reads from it.</p>
+
+    <div class="callout"><b>Room D2: booked from Dec 6, 2026, until further notice.</b> The booking form and calendar now show D2 as booked from that night on. D' Whole Space is unavailable from the same date, because it includes D2. Room D1 is unaffected.</div>
+
+    <div class="table-scroll"><table id="rate-compare"></table></div>
+    <div class="table-scroll"><table id="pricing-questions"></table></div>
+  </section>
+
+  <section id="tab-decisions" hidden>
+    <h2>Decisions so far</h2>
+    <p class="lede">What's been agreed, and when.</p>
+    <div class="table-scroll"><table id="decisions"></table></div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap">Private working board for the DES team. Not linked from the public site.</div>
+</footer>
+
+<script>
+  // ── Board data: update these arrays as the build moves ──────────────────────
+  const UPDATED = '2026-11-20';
+
+  const JOURNEY = [
+    ['Guest asks or books', 'Chat assistant or booking form on the DES website', 'next'],
+    ['Real availability check', 'Checked against every booking, so no double bookings', 'next'],
+    ['Price and voucher rate', 'Worked out by code (JW / A2 / A19), not by the AI', 'next'],
+    ['Room held', 'Released automatically if unpaid in time', 'next'],
+    ['Payment', 'Now: receipt upload + fund manager taps Confirm. Later: PayMongo confirms by itself', 'next'],
+    ['Team notified', 'Telegram group: paid booking, money received', 'waiting'],
+    ['Room preparation', 'Cleaner gets the job and taps "Room ready"', 'waiting'],
+    ['Lockbox code', 'Cleaner sets it and sends it to the bot; the next paid guest gets it the day before', 'waiting'],
+    ['Guest emails', 'Confirmation, then directions + code the day before arrival', 'waiting'],
+    ['Check-out', 'Team reminder; the room opens up again', 'waiting'],
+  ];
+
+  const PHASES = [
+    ['Site offline + build board', 'Maintenance page live; this board created', 'done'],
+    ['Review of the live site', 'All issues listed and ranked (Site review tab)', 'done'],
+    ['Pricing & availability agreed', 'One rate table, one set of rules', 'progress'],
+    ['Foundations', 'Private, server-checked bookings; no double bookings; prices set by the server', 'next'],
+    ['Payment (receipt + Confirm)', 'Fund manager confirms in one tap', 'waiting'],
+    ['Telegram team group', 'Bot posts bookings, cleaning jobs, lockbox code, morning summary', 'waiting'],
+    ['Guest emails', 'Confirmation and day-before emails', 'waiting'],
+    ['AI chat assistant (Gemini)', 'Books end to end; hands over to Messenger when needed', 'waiting'],
+    ['Dashboard', "glez's private view: occupancy, payments, arrivals, cleaning", 'waiting'],
+    ['Design polish', 'Mobile fixes, cleaner room cards, shorter story, one icon set', 'waiting'],
+    ['Final check + go live', "Tested on glez's phone, then the maintenance page comes off", 'waiting'],
+    ['PayMongo', 'After DTI + BIR registration', 'waiting'],
+  ];
+
+  // severity: critical | high | design | cost — status: open | fixed
+  const FINDINGS = [
+    ['critical', 'Guest names are publicly readable', 'The calendar data includes more guest details than a calendar needs.', 'The server sends only room + dates. Names stay in the Sheet.', 'open'],
+    ['critical', 'Two guests can still book the same room', 'The website checks availability, but the server saves every request without checking again. Two people booking at the same time both get in.', 'The server checks dates inside its lock before saving.', 'open'],
+    ['critical', 'The price is set by the guest\'s browser', 'The total price is calculated in the browser and the server stores whatever it receives. It can be changed before sending.', 'The server calculates the price from the official rate table.', 'open'],
+    ['critical', 'Volunteer rates can be unlocked by anyone', 'The weekly JW check runs in the browser, where it can be skipped.', 'Check the answer on the server; never publish it.', 'open'],
+    ['critical', 'Admin page protected only by a visible password', 'The admin page has no real login.', 'Replace with a proper login for the new dashboard; retire the old admin page.', 'open'],
+    ['critical', 'Homepage shows where the keys are kept', 'The gallery photo "The key-holder — always leave the keys here" tells the public exactly where the keys are.', 'Remove the photo from the public site. Key details go only to paid guests.', 'open'],
+    ['high', 'Prices disagree across the site', 'The chat assistant says D1 from ₱750, D2 fan-cooled for up to 4, Whole Space from ₱1,700. The booking form uses a different table. The May rate sheet has long-stay tiers the site doesn\'t use.', 'One rate table, agreed on the Pricing tab, used everywhere.', 'open'],
+    ['high', 'Check-out time disagrees', 'Every page says 11:00 AM except one note on the booking form, which still says 12:00 NN.', 'One setting for check-in/check-out times.', 'open'],
+    ['high', 'Unpaid holds don\'t release on their own', 'The live server doesn\'t send booking times, so the 24-hour release can\'t run. All bookings stay "New" until someone edits the Sheet.', 'Holds expire on the server; statuses change automatically on payment.', 'open'],
+    ['high', 'The live server code differs from the copy in the repo', 'The Apps Script that\'s running returns different data from the version saved in GitHub, so changes can be lost.', 'One source of truth, deployed from the repo.', 'open'],
+    ['high', 'Admin-blocked dates aren\'t reaching the site', 'The published Blocked Dates tab is empty, and dates typed as real dates in the Sheet would not be read correctly.', 'Blocks read by the server with proper date handling.', 'open'],
+    ['high', 'The chat assistant is a keyword matcher', 'It answers by spotting words ("room", "24", "pay") and can give wrong or unrelated answers. It also shows the guest\'s own typing as page code.', 'Replace with the AI assistant (Phase: AI chat).', 'open'],
+    ['high', 'Leftover connections', 'An old Make.com cancellation link, empty GHL placeholders and a duplicate payment script are still in the code.', 'Remove or reconnect in Foundations.', 'open'],
+    ['design', 'Homepage scrolls sideways on phones', 'The amenities grid is 606px wide on a 390px phone, so the whole page wobbles left and right.', 'Single-column amenities on phones.', 'open'],
+    ['design', 'Two buttons fight on every room card', 'An orange "JW or A2/A19?" button sits above the gold "Book" button. Orange is off-brand and splits attention.', 'One gold Book button; volunteer rates as a quiet link.', 'open'],
+    ['design', 'Room prices are confusing', '"From ₱238/person" sits next to "₱650 total". Guests have to work out which one they pay.', 'Lead with the room price per night; per-person as a small note.', 'open'],
+    ['design', 'The story is a long italic wall', 'Six long italic paragraphs before guests see a room. Italic text is slow to read on phones.', 'Three short upright paragraphs + "Read our story".', 'open'],
+    ['design', 'Mixed emoji icons', 'Emoji render differently on every phone and look unfinished next to the brand fonts.', 'One consistent line-icon set in brand gold.', 'open'],
+    ['design', 'Two floating bubbles', 'The chat bubble and the Messenger bubble are stacked in the corner and cover content on phones.', 'One bubble; Messenger offered inside the chat.', 'open'],
+    ['design', 'Booking form asks a lot up front', 'Fifteen fields, including gender split and arrival/departure times, before the guest sees a price.', 'Dates and room first, price shown, then details.', 'open'],
+    ['cost', 'Vercel\'s free plan doesn\'t allow commercial use', 'DES takes payments, and Vercel\'s free Hobby plan is for non-commercial projects.', 'Move hosting to Cloudflare Pages (free, commercial use allowed). Decide before go-live.', 'open'],
+  ];
+
+  const RATE_COMPARE = {
+    head: ['Item', 'Booking form (live)', 'Chat assistant', 'May rate sheet'],
+    rows: [
+      ['Room D1, 1 guest, regular', '₱650', '"from ₱750"', '₱950 (1–4 days)'],
+      ['Room D1, 4 guests, regular', '₱950', '—', '₱950'],
+      ['Room D2, max guests', '4', '4, "fan-cooled"', '2 (max 3, +₱150)'],
+      ['Room D2, 2 guests, regular', '₱600', '"from ₱550"', '₱650 (1–4 days)'],
+      ['Whole Space, 8 guests', '₱1,900', '"from ₱1,700"', '₱1,500 (+₱150 per extra)'],
+      ['Long-stay discount', 'None', 'None', '5–7, 8–15, 16–30 day tiers'],
+      ['Bunk bed (per head)', 'Not offered', '—', '₱150 / ₱140 / ₱135'],
+    ],
+  };
+
+  const PRICING_QUESTIONS = {
+    head: ['Question for glez', 'Why it matters'],
+    rows: [
+      ['Which prices are correct today: the booking form, the rate sheet, or new ones?', 'Every page and the AI will use only this one table.'],
+      ['Price per room per night, or per person?', 'Decides how the price is shown and what the AI quotes.'],
+      ['Keep long-stay discounts (5+, 8+, 16+ nights)?', 'Volunteers on long assignments are a core guest.'],
+      ['Is the bunk bed still offered?', 'It is in the rate sheet but not on the site.'],
+      ['Room D2 capacity: 2, 3 or 4 guests?', 'The site and the rate sheet disagree.'],
+      ['How long is an unpaid hold: 24 hours, or shorter?', 'Shorter holds free rooms sooner for paying guests.'],
+      ['Room D2 closure: guests already booked in D2 after Dec 6?', 'They need to be contacted or moved before go-live.'],
+    ],
+  };
+
+  const DECISIONS = [
+    ['2026-11-20', 'Model repo: agente-hoteleiro-ia (ideas and structure only, no code copied)'],
+    ['2026-11-20', 'Guests book through a chat box on the DES website; Messenger stays the human channel'],
+    ['2026-11-20', 'Payment: receipt + one-tap Confirm now; PayMongo after DTI + BIR, with the fee added to the guest\'s total'],
+    ['2026-11-20', 'Team alerts in one Telegram group: glez, FB operator, cleaner, fund manager'],
+    ['2026-11-20', 'Lockbox code set by the cleaner; sent only to the next paid guest'],
+    ['2026-11-20', 'AI: Gemini API, paid tier, billed to glez\'s Google account'],
+    ['2026-11-20', 'Chats saved on the DES side; guest copy restorable from the confirmation email'],
+    ['2026-11-20', 'Old address des-booking-app.vercel.app keeps forwarding to the main site'],
+    ['2026-11-20', 'Whole site offline until everything is checked'],
+    ['2026-11-20', 'Room D2 booked from Dec 6, 2026, until further notice'],
+    ['2026-11-20', 'Goal: smooth transactions at zero or minimal cost'],
+  ];
+
+  // ── Rendering ────────────────────────────────────────────────────────────────
+  const LABEL = { done: 'Done', progress: 'In progress', next: 'Next', waiting: 'Waiting',
+                  critical: 'Critical', high: 'High', design: 'Design', cost: 'Cost' };
+  const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+
+  document.getElementById('updated').textContent = 'Last updated ' + UPDATED;
+
+  const openCount = sev => FINDINGS.filter(f => f[0] === sev && f[4] === 'open').length;
+  const phasesDone = PHASES.filter(p => p[2] === 'done').length;
+  document.getElementById('stats').innerHTML = [
+    [phasesDone + ' / ' + PHASES.length, 'Phases done'],
+    [openCount('critical'), 'Critical issues open'],
+    [openCount('high'), 'High issues open'],
+    [FINDINGS.filter(f => f[4] === 'fixed').length + ' / ' + FINDINGS.length, 'Issues fixed'],
+  ].map(([b, s]) => `<div class="stat"><b>${b}</b><span>${s}</span></div>`).join('');
+
+  const stepList = (id, items) => {
+    document.getElementById(id).innerHTML = items.map(([t, d, s], i) => `
+      <div class="step"><div class="n">${i + 1}</div>
+        <div><h3>${esc(t)}</h3><p>${esc(d)}</p></div>
+        <span class="badge b-${s}">${LABEL[s]}</span></div>`).join('');
+  };
+  stepList('journey', JOURNEY);
+  stepList('phases', PHASES);
+
+  let filter = 'all';
+  function renderFindings() {
+    const list = FINDINGS.filter(f => filter === 'all' || f[0] === filter);
+    document.getElementById('findings').innerHTML = list.map(([sev, t, p, fix, st]) => `
+      <article class="finding ${sev} ${st}">
+        <div class="top"><h3>${esc(t)}</h3>
+          <span class="badge b-${st === 'fixed' ? 'done' : sev}">${st === 'fixed' ? 'Fixed' : LABEL[sev]}</span></div>
+        <p>${esc(p)}</p>
+        <div class="fix"><b>Fix:</b> ${esc(fix)}</div>
+      </article>`).join('');
+  }
+  const FILTERS = [['all', 'All'], ['critical', 'Critical'], ['high', 'High'], ['design', 'Design'], ['cost', 'Cost']];
+  document.getElementById('filters').innerHTML = FILTERS.map(([k, l]) =>
+    `<button data-f="${k}" class="${k === 'all' ? 'on' : ''}">${l} (${k === 'all' ? FINDINGS.length : FINDINGS.filter(f => f[0] === k).length})</button>`).join('');
+  document.getElementById('filters').addEventListener('click', e => {
+    const b = e.target.closest('button'); if (!b) return;
+    filter = b.dataset.f;
+    document.querySelectorAll('#filters button').forEach(x => x.classList.toggle('on', x === b));
+    renderFindings();
+  });
+  renderFindings();
+
+  const table = (id, { head, rows }) => {
+    document.getElementById(id).innerHTML =
+      `<thead><tr>${head.map(h => `<th>${esc(h)}</th>`).join('')}</tr></thead>` +
+      `<tbody>${rows.map(r => `<tr>${r.map(c => `<td>${esc(c)}</td>`).join('')}</tr>`).join('')}</tbody>`;
+  };
+  table('rate-compare', RATE_COMPARE);
+  table('pricing-questions', PRICING_QUESTIONS);
+  table('decisions', { head: ['Date', 'Decision'], rows: DECISIONS });
+
+  // Tabs (remembers the last tab per viewer)
+  const tabs = document.querySelectorAll('nav.tabs button');
+  function show(name) {
+    tabs.forEach(t => t.setAttribute('aria-selected', String(t.dataset.tab === name)));
+    document.querySelectorAll('main > section').forEach(s => { s.hidden = s.id !== 'tab-' + name; });
+    try { localStorage.setItem('des-board-tab', name); } catch (e) {}
+  }
+  tabs.forEach(t => t.addEventListener('click', () => show(t.dataset.tab)));
+  try { const saved = localStorage.getItem('des-board-tab'); if (saved) show(saved); } catch (e) {}
+</script>
+</body>
+</html>

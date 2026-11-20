@@ -183,7 +183,15 @@ function fetchBlockedDates() {
     .catch(() => {});
 }
 
+function isRoomClosed(room, date) {
+  const closures = (typeof CONFIG !== 'undefined' && CONFIG.ROOM_CLOSURES) || [];
+  return closures.some(c =>
+    (c.room === room || room === 'whole') &&
+    date >= c.from && (!c.until || date <= c.until));
+}
+
 function isDateBlocked(room, date) {
+  if (isRoomClosed(room, date)) return true;
   if (_blockedDates.both?.has(date)) return true;
   if (room === 'd1')    return !!_blockedDates.d1?.has(date);
   if (room === 'd2')    return !!_blockedDates.d2?.has(date);

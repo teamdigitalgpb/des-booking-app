@@ -36,6 +36,14 @@ const CONFIG = {
   // Example: { d2: { '2026-06-05': 2, '2026-06-06': 2 } }
   PAX_OVERRIDES: {},
 
+  // ── Room Closures ────────────────────────────────────────────────────────
+  // Shows a room as "booked" from `from` onward. Leave `until` empty for
+  // "until further notice", or set the last closed night as 'YYYY-MM-DD'.
+  // A closed D1 or D2 also closes D' Whole Space on those nights.
+  ROOM_CLOSURES: [
+    { room: 'd2', from: '2026-12-06', until: '' },
+  ],
+
   // ── Admin ─────────────────────────────────────────────────────────────────
   // Basic deterrent — change before going live.
   ADMIN_PASSWORD:   '1992',
