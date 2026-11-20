@@ -301,9 +301,9 @@
       </div>
 
       <div class="cal-legend">
-        <span><span class="cp available"></span> Available</span>
+        <span><span class="cp available"></span> Free</span>
         <span><span class="cp booked"></span> Booked</span>
-        <span><span class="cp pending"></span> Pending</span>
+        <span><span class="cp pending"></span> Reserved · may open in 24h</span>
         <span><span class="cp blocked"></span> Closed</span>
       </div>
 
@@ -335,12 +335,12 @@
         if (isPast) {
           tip += 'past';
         } else if (st === 'available') {
-          tip += 'Available (up to 4 pax)';
+          tip += 'Free';
         } else if (st === 'blocked') {
           tip += 'Closed for maintenance/private event';
         } else {
           const isPending = bk && (bk.status === 'new' || bk.status === 'pending');
-          tip += isPending ? 'Reserved (24h Payment Hold)' : 'Booked';
+          tip += isPending ? 'Reserved: may open up within 24 hours' : 'Booked';
           if (bk) {
             tip += ` — ${bk.pax} pax (${bk.female} Female, ${bk.male} Male)`;
             if (_isAdmin && bk.guestname) tip += ` [${bk.guestname}]`;
@@ -399,14 +399,14 @@
       if (isPast) {
         line += `<span style="color:var(--text-muted);">Past date</span>`;
       } else if (st === 'available') {
-        line += `<span style="color:#1b7a4a;font-weight:600;">✓ Available</span> (Up to 4 guests)`;
+        line += `<span style="color:#1b7a4a;font-weight:600;">✓ Free</span>`;
       } else if (st === 'blocked') {
         line += `<span style="color:#c0392b;font-weight:600;">Closed</span> (Maintenance/Private)`;
       } else {
         const isPending = bk && (bk.status === 'new' || bk.status === 'pending');
         const badgeColor = isPending ? '#b8860b' : '#c0392b';
-        const label = isPending ? 'Reserved (24h Payment Hold)' : 'Booked';
-        line += `<span style="color:${badgeColor};font-weight:600;">● ${label}</span>`;
+        const label = isPending ? 'Reserved' : 'Booked';
+        line += `<span style="color:${badgeColor};font-weight:600;">● ${label}</span>` + (isPending ? ` <span style="color:var(--text-muted);font-size:.85em;">Held for 24 hours. If it isn't paid, it opens up again, so check back soon.</span>` : '');
       }
 
       if (r === 'd1') d1Line = line;

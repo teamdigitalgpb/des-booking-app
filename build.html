@@ -203,6 +203,7 @@
     ['Site offline + build board', 'Maintenance page live; this board created', 'done'],
     ['Review of the live site', 'All issues listed and ranked (Site review tab)', 'done'],
     ['Quick safety fixes', 'Key photo, admin page, staff docs, calendar details, check-out time, Messenger bubble', 'done'],
+    ['Move hosting to Cloudflare Pages', 'Build script ready; needs glez\'s Cloudflare account', 'progress'],
     ['Pricing & availability agreed', 'One rate table, one set of rules', 'progress'],
     ['Foundations', 'Private, server-checked bookings; no double bookings; prices set by the server', 'next'],
     ['Payment (receipt + Confirm)', 'Fund manager confirms in one tap', 'waiting'],
@@ -217,7 +218,7 @@
 
   // severity: critical | high | design | cost — status: open | fixed
   const FINDINGS = [
-    ['critical', 'The admin Google Sheet is open to anyone with the link', 'Guest names and contact numbers in the admin Sheet can be opened without signing in.', 'Set Sheet sharing to Restricted and add only the team.', 'open'],
+    ['critical', 'The admin Google Sheet is open to anyone with the link', 'Guest names and contact numbers in the admin Sheet can be opened without signing in.', 'Done: sharing set back to Restricted (admin members only). Checked from outside: access refused.', 'fixed'],
     ['critical', 'Staff handbook and internal notes were public pages', 'The staff handbook, setup notes and script code were reachable on the website.', 'Done: excluded from the website. They stay in the repo for the team.', 'fixed'],
     ['critical', 'Public calendar showed guest counts and genders', 'Tapping a date showed pax and female/male numbers for each booking.', 'Done: the calendar now shows only Available / Reserved / Booked.', 'fixed'],
     ['critical', 'Guest names are publicly readable', 'The calendar data includes more guest details than a calendar needs.', 'The server sends only room + dates. Names stay in the Sheet.', 'open'],
@@ -240,7 +241,7 @@
     ['design', 'Mixed emoji icons', 'Emoji render differently on every phone and look unfinished next to the brand fonts.', 'One consistent line-icon set in brand gold.', 'open'],
     ['design', 'Two floating bubbles', 'The chat bubble and the Messenger bubble are stacked in the corner and cover content on phones.', 'One bubble; Messenger offered inside the chat.', 'open'],
     ['design', 'Booking form asks a lot up front', 'Fifteen fields, including gender split and arrival/departure times, before the guest sees a price.', 'Dates and room first, price shown, then details.', 'open'],
-    ['cost', 'Vercel\'s free plan and payment requests', 'Vercel\'s rules count "any method of requesting or processing payment from visitors" as commercial use, even for non-profits. DES asks guests to pay through the site.', 'Option A: keep Vercel and move payment instructions off the site (Messenger only). Option B: move to Cloudflare Pages (free, allows it). glez to decide.', 'open'],
+    ['cost', 'Vercel\'s free plan and payment requests', 'Vercel\'s rules count "any method of requesting or processing payment from visitors" as commercial use, even for non-profits. DES asks guests to pay through the site.', 'Decided: move to Cloudflare Pages (free). Build script and settings are ready; waiting on the Cloudflare account.', 'open'],
   ];
 
   const RATE_COMPARE = {
@@ -287,6 +288,9 @@
     ['2026-11-21', 'Unpaid holds last 24 hours, then release automatically'],
     ['2026-11-21', 'Chat bubble = "Talk to us" on DES Messenger (m.me/890165717502663)'],
     ['2026-11-21', 'DES is not commercial (utilities share only)'],
+    ['2026-11-21', 'Hosting moves to Cloudflare Pages (free)'],
+    ['2026-11-21', 'Old "DES - Bookings" spreadsheet retires once the new admin Sheet runs everything'],
+    ['2026-11-21', 'Public calendar works like Airbnb/Agoda: only free, reserved or booked. No guest details'],
   ];
 
   // ── Rendering ────────────────────────────────────────────────────────────────
