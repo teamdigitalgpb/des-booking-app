@@ -4,9 +4,9 @@
 
 const CONFIG = {
   // ── Webhooks & Google Apps Script ──────────────────────────────────────────
-  APPS_SCRIPT_URL:      'https://script.google.com/macros/s/AKfycbxYNHs3HVlkXDdjfg49FCKnCIQ8j-WbWozMp6XecuqIHgPzgxoG3EHHNq8H-qP1piI3/exec',
-  WEBHOOK_BOOKING:      'https://script.google.com/macros/s/AKfycbxYNHs3HVlkXDdjfg49FCKnCIQ8j-WbWozMp6XecuqIHgPzgxoG3EHHNq8H-qP1piI3/exec',
-  WEBHOOK_VOUCHER:      'https://script.google.com/macros/s/AKfycbxYNHs3HVlkXDdjfg49FCKnCIQ8j-WbWozMp6XecuqIHgPzgxoG3EHHNq8H-qP1piI3/exec',
+  APPS_SCRIPT_URL:      'https://script.google.com/macros/s/AKfycbzpruPGDwROcQR1HmKJ_4u8Cbd3DeGHB-4_xbtroZVx4TEikQXL4nOIjKYlNvXO592Hjg/exec',
+  WEBHOOK_BOOKING:      'https://script.google.com/macros/s/AKfycbzpruPGDwROcQR1HmKJ_4u8Cbd3DeGHB-4_xbtroZVx4TEikQXL4nOIjKYlNvXO592Hjg/exec',
+  WEBHOOK_VOUCHER:      'https://script.google.com/macros/s/AKfycbzpruPGDwROcQR1HmKJ_4u8Cbd3DeGHB-4_xbtroZVx4TEikQXL4nOIjKYlNvXO592Hjg/exec',
   WEBHOOK_CANCELLATION: 'https://hook.us2.make.com/or893ovi8ddsanfzti4xifqgazbrqoj1',
 
   // ── GHL IDs ───────────────────────────────────────────────────────────────
@@ -39,11 +39,11 @@ const CONFIG = {
 
   // ── Donation ──────────────────────────────────────────────────────────────
   // Same Apps Script as WEBHOOK_VOUCHER — routed by action:'donation'
-  WEBHOOK_DONATION: 'https://script.google.com/macros/s/AKfycbxYNHs3HVlkXDdjfg49FCKnCIQ8j-WbWozMp6XecuqIHgPzgxoG3EHHNq8H-qP1piI3/exec',
+  WEBHOOK_DONATION: 'https://script.google.com/macros/s/AKfycbzpruPGDwROcQR1HmKJ_4u8Cbd3DeGHB-4_xbtroZVx4TEikQXL4nOIjKYlNvXO592Hjg/exec',
 
   // ── Admin Date Blocking ───────────────────────────────────────────────────
   // Same Apps Script — routed by action:'addBlock' / action:'removeBlock'
-  WEBHOOK_ADMIN: 'https://script.google.com/macros/s/AKfycbxYNHs3HVlkXDdjfg49FCKnCIQ8j-WbWozMp6XecuqIHgPzgxoG3EHHNq8H-qP1piI3/exec',
+  WEBHOOK_ADMIN: 'https://script.google.com/macros/s/AKfycbzpruPGDwROcQR1HmKJ_4u8Cbd3DeGHB-4_xbtroZVx4TEikQXL4nOIjKYlNvXO592Hjg/exec',
   // Publish the "Blocked Dates" sheet tab as CSV and paste the URL here:
   // DES sheet → "Blocked Dates" tab → File > Share > Publish to web > CSV
   BLOCKED_DATES_CSV_URL: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRn__x3k4QkwjhiexqZEdCYxt4FqKvb555qTRL4pdzjismSEyn32ZYlDCvboNkfsLhtTGwnhLNERWqw/pub?gid=867214119&single=true&output=csv',
@@ -72,7 +72,7 @@ const CONFIG = {
   STORIES_CSV_URL: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRn__x3k4QkwjhiexqZEdCYxt4FqKvb555qTRL4pdzjismSEyn32ZYlDCvboNkfsLhtTGwnhLNERWqw/pub?gid=1125544656&single=true&output=csv',
 
   // GHL webhook to receive story submissions for admin review.
-  WEBHOOK_STORY: 'https://script.google.com/macros/s/AKfycbxYNHs3HVlkXDdjfg49FCKnCIQ8j-WbWozMp6XecuqIHgPzgxoG3EHHNq8H-qP1piI3/exec',
+  WEBHOOK_STORY: 'https://script.google.com/macros/s/AKfycbzpruPGDwROcQR1HmKJ_4u8Cbd3DeGHB-4_xbtroZVx4TEikQXL4nOIjKYlNvXO592Hjg/exec',
 
   // ── Live Settings (Google Sheet "Settings" tab) ───────────────────────────
   // Published CSV of the Settings tab holding the JW Question + Answer. The site
