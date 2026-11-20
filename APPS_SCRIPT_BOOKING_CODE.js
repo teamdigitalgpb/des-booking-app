@@ -46,8 +46,8 @@ case 'booking': {
 
     var ss = SpreadsheetApp.getActiveSpreadsheet();
 
-    // ── Target the Bookings sheet tab ─────────────────────────────────────────
-    var sheet = ss.getSheetByName('Bookings') || ss.getSheetByName('DES - Bookings') || ss.getSheets()[0];
+    // ── Target the Reservations / Bookings sheet tab ─────────────────────────
+    var sheet = ss.getSheetByName('Reservations') || ss.getSheetByName('Bookings') || ss.getSheetByName('DES - Bookings') || ss.getSheets()[0];
 
     // Standard columns for a clean setup (Email in Column G per Assistant Handbook)
     var defaultHeaders = [
@@ -189,7 +189,7 @@ function doGet(e) {
 
   if (action === 'getAvailability') {
     var ss = SpreadsheetApp.getActiveSpreadsheet();
-    var sheet = ss.getSheetByName('Bookings') || ss.getSheetByName('DES - Bookings') || ss.getSheets()[0];
+    var sheet = ss.getSheetByName('Reservations') || ss.getSheetByName('Bookings') || ss.getSheetByName('DES - Bookings') || ss.getSheets()[0];
     var data = sheet.getDataRange().getValues();
     
     if (data.length <= 1) {
