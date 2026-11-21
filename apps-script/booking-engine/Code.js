@@ -11,6 +11,7 @@
 // Source of truth
 //   CURRENT OCCUPANCY STATUS  → 5 rows per day; slots 1–4 used (slot 5 legacy)
 //   Rate table tab            → columns "Regular", "JW" and "A2/A19"
+//   LONG STAY DISCOUNT tab    → peso off per stay at 7 / 15 / 30 nights
 //   Bookings tab              → website reservations
 //
 // This file lives in GitHub (apps-script/booking-engine). Edit it there and
@@ -37,7 +38,15 @@ var STATUS_PAID    = 'Paid';
 var STATUS_EXPIRED = 'Expired';
 
 var EXTRA_COLUMNS = ['Email', 'Congregation', 'Sisters', 'Brothers', 'Capacity',
-                     'Arrival', 'Departure', 'Purpose', 'Hold Expires', 'Source'];
+                     'Arrival', 'Departure', 'Purpose', 'Hold Expires', 'Source',
+                     'Subtotal', 'Long-stay Discount'];
+
+// Long-stay discount: peso off the whole stay. A stay gets the tier for the
+// longest length it reaches (20 nights → the 15-night tier). Whole Space gets
+// Room D1 + Room D2 added together. The Sheet tab wins; these are only the
+// starting values setup() writes when the tab doesn't exist yet.
+var DISCOUNT_TAB      = 'LONG STAY DISCOUNT';
+var DISCOUNT_DEFAULTS = [ [7, 350, 250], [15, 800, 500], [30, 2000, 1500] ];
 
 // ── Entry points ────────────────────────────────────────────────────────────
 
@@ -45,7 +54,7 @@ function doGet(e) {
   try {
     var action = (e && e.parameter && e.parameter.action) || '';
     if (action === 'availability') return json_({ ok: true, rooms: availability_(true) });
-    if (action === 'rates')        return json_({ ok: true, rates: rates_() });
+    if (action === 'rates')        return json_({ ok: true, rates: rates_(), discounts: discounts_() });
     return json_({ ok: true, service: "D' Econo-Space booking engine" });
   } catch (err) {
     return json_({ ok: false, error: 'Something went wrong. Please try again.' });
@@ -161,8 +170,10 @@ function reserve_(d) {
       });
     }
 
-    var nightly = rate_(room, pax, cap);
-    var total   = nightly * nights;
+    var nightly  = rate_(room, pax, cap);
+    var subtotal = nightly * nights;
+    var ls       = longStay_(room, nights);
+    var total    = Math.max(subtotal - ls.amount, 0);
     var expires = new Date(Date.now() + HOLD_HOURS * 3600 * 1000);
     var id      = nextBookingId_();
 
@@ -190,11 +201,13 @@ function reserve_(d) {
       'Departure': clean_(d.etd, 20),
       'Purpose': clean_(d.purpose, 300),
       'Hold Expires': expires,
-      'Source': 'Website'
+      'Source': 'Website',
+      'Subtotal': subtotal,
+      'Long-stay Discount': ls.amount
     });
     CacheService.getScriptCache().remove('availability');
 
-    notifyAdmin_(id, room, checkin, checkout, nights, pax, sisters, brothers, cap, total, d);
+    notifyAdmin_(id, room, checkin, checkout, nights, pax, sisters, brothers, cap, subtotal, ls, total, d);
 
     return {
       ok: true,
@@ -204,7 +217,11 @@ function reserve_(d) {
       checkout: checkout,
       nights: nights,
       nightly: nightly,
+      subtotal: subtotal,
+      discount: ls.amount,
+      discountTier: ls.tier,
       total: total,
+      paymentNote: paymentNote_(subtotal, ls, total),
       holdExpires: Utilities.formatDate(expires, TZ, "MMM d, yyyy 'at' h:mm a")
     };
   } finally {
@@ -254,6 +271,42 @@ function rates_() {
   return out;
 }
 
+// ── Long-stay discount ──────────────────────────────────────────────────────
+
+// Returns [{ nights: 7, d1: 350, d2: 250, whole: 600 }, …] sorted by nights.
+function discounts_() {
+  var cache = CacheService.getScriptCache();
+  var hit = cache.get('discounts');
+  if (hit) return JSON.parse(hit);
+  var rows = DISCOUNT_DEFAULTS;
+  var tab = SpreadsheetApp.openById(SHEET_ID).getSheetByName(DISCOUNT_TAB);
+  if (tab) {
+    var num = function (x) { var n = parseFloat(String(x).replace(/[^\d.]/g, '')); return n > 0 ? n : 0; };
+    rows = tab.getDataRange().getDisplayValues()
+      .map(function (r) { return [num(r[0]), num(r[1]), num(r[2])]; })
+      .filter(function (r) { return r[0] >= 2 && r[0] <= MAX_NIGHTS; });
+  }
+  var out = rows.map(function (r) { return { nights: r[0], d1: r[1], d2: r[2], whole: r[1] + r[2] }; })
+                .sort(function (a, b) { return a.nights - b.nights; });
+  cache.put('discounts', JSON.stringify(out), 60);
+  return out;
+}
+
+function longStay_(room, nights) {
+  var best = { amount: 0, tier: 0 };
+  discounts_().forEach(function (t) {
+    if (nights >= t.nights && t[room] > 0) best = { amount: t[room], tier: t.nights };
+  });
+  return best;
+}
+
+function paymentNote_(subtotal, ls, total) {
+  if (!ls.amount) return 'Please send ₱' + total.toLocaleString() + ' via GCash.';
+  return 'Please send ₱' + total.toLocaleString() + ' via GCash. That already includes your long-stay ' +
+         'discount: ₱' + ls.amount.toLocaleString() + ' off for staying ' + ls.tier + ' nights or more ' +
+         '(₱' + subtotal.toLocaleString() + ' before the discount).';
+}
+
 // ── 24-hour expiry (time trigger) ───────────────────────────────────────────
 
 function expireHolds() {
@@ -278,11 +331,27 @@ function expireHolds() {
 
 function setup() {
   ensureBookingColumns_();
+  ensureDiscountTab_();
   var exists = ScriptApp.getProjectTriggers().some(function (t) {
     return t.getHandlerFunction() === 'expireHolds';
   });
   if (!exists) ScriptApp.newTrigger('expireHolds').timeBased().everyMinutes(15).create();
   Logger.log('Setup done.');
+}
+
+// Creates the LONG STAY DISCOUNT tab with the starting values, only if missing.
+function ensureDiscountTab_() {
+  var ss = SpreadsheetApp.openById(SHEET_ID);
+  if (ss.getSheetByName(DISCOUNT_TAB)) return;
+  var tab = ss.insertSheet(DISCOUNT_TAB);
+  tab.getRange(1, 1, 1, 3).setValues([['Nights (at least)', 'Room D1 (₱ off)', 'Room D2 (₱ off)']]).setFontWeight('bold');
+  tab.getRange(2, 1, DISCOUNT_DEFAULTS.length, 3).setValues(DISCOUNT_DEFAULTS);
+  tab.getRange(2, 2, DISCOUNT_DEFAULTS.length, 2).setNumberFormat('#,##0');
+  tab.getRange(DISCOUNT_DEFAULTS.length + 3, 1).setValue(
+    'A stay gets the row for the longest length it reaches (20 nights → the 15 row). ' +
+    "D' Whole Space gets Room D1 + Room D2. Change the numbers anytime; the website follows within a minute.");
+  tab.setFrozenRows(1);
+  tab.autoResizeColumns(1, 3);
 }
 
 function ensureBookingColumns_() {
@@ -338,7 +407,7 @@ function nextBookingId_() {
   return 'BK-' + ('00' + (max + 1)).slice(-3);
 }
 
-function notifyAdmin_(id, room, ci, co, nights, pax, sis, bro, cap, total, d) {
+function notifyAdmin_(id, room, ci, co, nights, pax, sis, bro, cap, subtotal, ls, total, d) {
   try {
     MailApp.sendEmail({
       to: ADMIN_EMAIL,
@@ -347,7 +416,9 @@ function notifyAdmin_(id, room, ci, co, nights, pax, sis, bro, cap, total, d) {
         '<p><b>' + id + '</b> is reserved for 24 hours, waiting for payment.</p>' +
         '<p>' + ROOM_LABEL[room] + ' · ' + ci + ' → ' + co + ' (' + nights + ' night' + (nights > 1 ? 's' : '') + ')<br>' +
         pax + ' guest(s): ' + sis + ' sister(s), ' + bro + ' brother(s) · ' + CAPACITY[cap] + '<br>' +
-        'Total: ₱' + total.toLocaleString() + '</p>' +
+        (ls.amount ? 'Subtotal: ₱' + subtotal.toLocaleString() + '<br>Long-stay discount (' + ls.tier +
+          '+ nights): −₱' + ls.amount.toLocaleString() + '<br>' : '') +
+        'Total to pay: ₱' + total.toLocaleString() + '</p>' +
         '<p>Contact: ' + esc_(d.contactName) + ' · ' + esc_(d.mobile) + ' · ' + esc_(d.email) + '<br>' +
         'Congregation: ' + esc_(d.congregation) + '</p>' +
         '<p>Details are in the Bookings tab.</p>'
